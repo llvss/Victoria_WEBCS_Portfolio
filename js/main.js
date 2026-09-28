@@ -219,6 +219,13 @@ function turn(pointerX, pointerY) {
   }
 }
 
+// The dither is painted in a flat --ink colour, so it cannot interpolate on its
+// own. While the palette morphs it would keep the old ink, so repaint once the
+// --ink transition lands on its final value.
+document.documentElement.addEventListener('transitionend', (event) => {
+  if (event.target === document.documentElement && event.propertyName === '--ink') draw();
+});
+
 /* ==========================================================================
    CURSOR GUIDES
    ========================================================================== */
@@ -312,131 +319,14 @@ try {
   theme = localStorage.getItem(THEME_STORAGE_KEY) || 'system';
 } catch (error) {}
 
-/* ==========================================================================
-   THEME PIXEL TRANSITION
-   A grid of squares wipes in, the theme is swapped while the screen is
-   covered, then the squares clear to reveal the new theme.
-   ========================================================================== */
-const PX_CELL = 34; // px, per square
-const PX_GLITCH_RATE = 0.12; // share of squares that render in the accent colour
-const PX_COVER_SPREAD = 200; // ms, wave spread while covering
-const PX_COVER_DUR_MIN = 120;
-const PX_COVER_DUR_MAX = 180;
-const PX_REVEAL_SPREAD = 170; // ms, wave spread while revealing
-const PX_REVEAL_DUR = 150;
-const PX_HOLD = 40; // ms, full-cover pause so the swap itself is never seen
-
-// Derived from the constants above, so the timers can never drift out of sync
-// with the per-square animation values.
-const PX_COVERED_AT = PX_COVER_SPREAD + PX_COVER_DUR_MAX + PX_HOLD;
-const PX_REVEALED_AT = PX_COVERED_AT + PX_REVEAL_SPREAD + PX_REVEAL_DUR;
-
-const prefersReducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-let pxTimerSwap = null;
-let pxTimerClean = null;
-let pxRunning = false;
-
-function buildPixelGrid() {
-  const overlay = query('#px');
-  if (!overlay) return null;
-
-  const columns = Math.ceil(innerWidth / PX_CELL) + 1;
-  const rows = Math.ceil(innerHeight / PX_CELL) + 1;
-
-  let markup = '';
-  for (let row = 0; row < rows; row++) {
-    for (let column = 0; column < columns; column++) {
-      // Diagonal wave from the top-left, so the wipe reads as a scan.
-      const wave = (column / columns + row / rows) / 2;
-      const inDelay = Math.round(wave * PX_COVER_SPREAD + Math.random() * 40);
-      const inDuration =
-        PX_COVER_DUR_MIN + Math.random() * (PX_COVER_DUR_MAX - PX_COVER_DUR_MIN);
-      // The reveal runs the wave backwards, so the new theme is uncovered
-      // bottom-right first.
-      const outDelay = Math.round((1 - wave) * PX_REVEAL_SPREAD + Math.random() * 40);
-      const glitch = Math.random() < PX_GLITCH_RATE;
-
-      markup +=
-        '<i style="left:' +
-        column * PX_CELL +
-        'px;top:' +
-        row * PX_CELL +
-        'px;--px-delay:' +
-        inDelay +
-        'ms;--px-dur:' +
-        Math.round(inDuration) +
-        'ms;--px-out-delay:' +
-        outDelay +
-        'ms">' +
-        (glitch ? ' class="glitch"' : '') +
-        '</i>';
-    }
-  }
-
-  overlay.innerHTML = markup;
-  overlay.style.setProperty('--px-size', PX_CELL + 'px');
-  return overlay;
-}
-
-function playPixelTransition(applyChange) {
-  const overlay = buildPixelGrid();
-  if (!overlay) {
-    applyChange();
-    return;
-  }
-
-  pxRunning = true;
-  overlay.classList.add('run', 'in');
-
-  // Swap only once every square has finished animating in, so the colour
-  // change is never partially visible.
-  pxTimerSwap = setTimeout(() => {
-    applyChange();
-    overlay.classList.remove('in');
-    // Force a reflow so the outgoing animation restarts cleanly.
-    void overlay.offsetWidth;
-    overlay.classList.add('out');
-  }, PX_COVERED_AT);
-
-  // Clean up only after the reveal has fully finished.
-  pxTimerClean = setTimeout(() => {
-    overlay.classList.remove('run', 'in', 'out');
-    overlay.innerHTML = '';
-    pxRunning = false;
-  }, PX_REVEALED_AT + 60);
-}
-
-function cancelPixelTransition() {
-  clearTimeout(pxTimerSwap);
-  clearTimeout(pxTimerClean);
-  const overlay = query('#px');
-  if (overlay) {
-    overlay.classList.remove('run', 'in', 'out');
-    overlay.innerHTML = '';
-  }
-  pxRunning = false;
-}
-
 function setTheme(nextTheme) {
-  const previousResolved = resolveTheme();
   theme = nextTheme;
   try {
     localStorage.setItem(THEME_STORAGE_KEY, nextTheme);
   } catch (error) {}
-
-  const nextResolved = resolveTheme();
-
-  // Animate only when the visible theme actually changes. Re-picking the active
-  // option, or choosing 'system' while already on that resolved theme, is a
-  // no-op and should not flash the screen.
-  if (previousResolved === nextResolved || prefersReducedMotion) {
-    if (pxRunning) cancelPixelTransition();
-    syncTheme();
-    return;
-  }
-
-  playPixelTransition(syncTheme);
+  // The morph itself is a CSS transition on the palette, so there is nothing
+  // to orchestrate here - just apply the new values and let them blend.
+  syncTheme();
 }
 
 function resolveTheme() {
@@ -472,13 +362,8 @@ queryAll('.theme-option').forEach((button) => {
 });
 
 systemTheme.addEventListener('change', () => {
-  if (theme !== 'system') return;
-  // The OS flipped while the user is on "system" — animate that too.
-  if (prefersReducedMotion || pxRunning) {
-    syncTheme();
-    return;
-  }
-  playPixelTransition(syncTheme);
+  // The OS flipped while the user is on "system" — let the palette morph too.
+  if (theme === 'system') syncTheme();
 });
 
 /* ==========================================================================

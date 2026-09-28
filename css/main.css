@@ -1,6 +1,39 @@
 /* ==========================================================================
    Tokens
    ========================================================================== */
+/* Registered as <color> so the palette can actually be interpolated. Without
+   this, a custom property flips instantly and the theme change snaps. */
+@property --bg {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #000;
+}
+@property --ink {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #fff;
+}
+@property --dim {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #8c8c8c;
+}
+@property --line {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #8f8f8f;
+}
+@property --track-color {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #161616;
+}
+@property --side {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #111;
+}
+
 :root {
   --bg: #000;
   --ink: #fff;
@@ -1052,104 +1085,20 @@ footer {
 }
 
 /* ==========================================================================
-   Theme pixel-dissolve transition
-   A grid of squares sweeps in, the theme swaps underneath, then the squares
-   clear away. steps() easing keeps every square snapping on whole pixels.
+   Theme morph
+   The palette is declared as animatable <color> above, so switching theme
+   interpolates every colour instead of snapping. Nothing fades out, so the
+   page never blanks or flashes.
    ========================================================================== */
-#px {
-  position: fixed;
-  inset: 0;
-  z-index: 70;
-  pointer-events: none;
-  display: none;
-}
-
-#px.run {
-  display: block;
-}
-
-#px i {
-  position: absolute;
-  display: block;
-  width: var(--px-size, 34px);
-  height: var(--px-size, 34px);
-  background: var(--ink);
-  opacity: 0;
-}
-
-#px i.glitch {
-  background: var(--blue);
-  box-shadow: 0 0 12px rgba(54, 82, 255, 0.85);
-}
-
-/* Incoming sweep: squares snap up one after another. */
-#px.run.in i {
-  animation: px-in var(--px-dur, 160ms) steps(2, end) var(--px-delay, 0ms) forwards;
-}
-
-/* Outgoing sweep uses its own reversed delay, so the new theme is revealed
-   bottom-right first rather than replaying the same order. */
-#px.run.out i {
-  animation: px-out 150ms steps(2, end) var(--px-out-delay, 0ms) forwards;
-}
-
-@keyframes px-in {
-  from {
-    opacity: 0;
-    transform: scale(0.2);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
-@keyframes px-out {
-  from {
-    opacity: 1;
-    transform: scale(1);
-  }
-  to {
-    opacity: 0;
-    transform: scale(0.2);
-  }
-}
-
-/* The scanline band that races across during the swap. Kept short so it has
-   fully finished before the .in class is removed and the reveal begins. */
-#px::after {
-  content: '';
-  position: absolute;
-  left: 0;
-  right: 0;
-  height: 140px;
-  background: linear-gradient(
-    to bottom,
-    rgba(54, 82, 255, 0) 0%,
-    rgba(54, 82, 255, 0.35) 45%,
-    rgba(54, 82, 255, 0.7) 50%,
-    rgba(54, 82, 255, 0.35) 55%,
-    rgba(54, 82, 255, 0) 100%
-  );
-  mix-blend-mode: screen;
-  opacity: 0;
-}
-
-#px.run.in::after {
-  animation: px-scan 220ms linear 40ms forwards;
-}
-
-@keyframes px-scan {
-  from {
-    opacity: 0;
-    transform: translateY(-160px);
-  }
-  40% {
-    opacity: 1;
-  }
-  to {
-    opacity: 0;
-    transform: translateY(100vh);
+@media (prefers-reduced-motion: no-preference) {
+  :root {
+    transition:
+      --bg 420ms ease,
+      --ink 420ms ease,
+      --dim 420ms ease,
+      --line 420ms ease,
+      --track-color 420ms ease,
+      --side 420ms ease;
   }
 }
 
