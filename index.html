@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en" data-t="dark">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Loven Victoria — Fullstack Developer, IT Student</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=JetBrains+Mono:wght@400;500;700&family=Syne:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/css/main.css" />
+  </head>
+
+  <body>
+    <!-- Vertical guide lines + cursor crosshair -->
+    <div class="v v1"></div>
+    <div class="v v2"></div>
+    <div class="v v3"></div>
+    <div id="gx"></div>
+    <div id="gy"></div>
+    <div id="ro">X 0000 · Y 0000</div>
+
+    <!-- Sidebar -->
+    <aside>
+      <a class="brand" href="#home" data-c aria-label="Home">
+        <span class="mark">LV</span>
+        <b>Loven<br />Victoria</b>
+      </a>
+
+      <nav class="menu" aria-label="Primary">
+        <a href="#home" class="on" data-c><span>Home</span><span>01</span></a>
+        <a href="#projects" data-c><span>Projects</span><span>02</span></a>
+        <a href="#affiliations" data-c><span>Affiliations</span><span>03</span></a>
+        <a href="#github" data-c><span>Activity</span><span>04</span></a>
+        <a href="#socials" data-c><span>Socials</span><span>05</span></a>
+      </nav>
+
+      <div class="side-b">
+        <div class="st"><i></i>Open to internships</div>
+        <div class="side-r">
+          <button id="mu" aria-pressed="false">Sound: On</button>
+          <button id="th" aria-label="Toggle light and dark"><i></i></button>
+        </div>
+      </div>
+    </aside>
+
+    <div id="rail"></div>
+
+    <main>
+      <!-- Hero -->
+      <section id="home">
+        <canvas id="dz" aria-hidden="true"></canvas>
+
+        <div class="top">
+          <span class="lb">Portfolio — 2026</span>
+          <p>
+            Fullstack developer and IT student building web systems that are
+            <strong>fast</strong>, <strong>secure</strong>, and made to actually be used.
+          </p>
+        </div>
+
+        <div class="bot">
+          <h1 class="name">Loven Victoria</h1>
+          <p class="sub">Fullstack Developer, IT Student</p>
+
+          <div class="row">
+            <a class="b p" href="#projects" data-c>View selected work →</a>
+            <button class="b" data-email="hello@lovenvictoria.dev" data-c>Copy email</button>
+          </div>
+
+          <div class="stats">
+            <div class="stat"><b>04</b><span>Projects</span></div>
+            <div class="stat"><b>03</b><span>Affiliations</span></div>
+            <div class="stat"><b>02</b><span>Core stacks</span></div>
+            <div class="stat"><b>2026</b><span>Graduating</span></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Projects -->
+      <section id="projects" class="sec">
+        <span class="vt">02 — Selected work</span>
+        <h2>Projects</h2>
+        <p class="in">
+          A mix of web development, programming and UI/UX work from coursework, personal builds and
+          hackathons.
+        </p>
+        <div id="pg"></div>
+      </section>
+
+      <!-- Affiliations -->
+      <section id="affiliations" class="sec">
+        <span class="vt">03 — Communities</span>
+        <h2>Affiliations</h2>
+        <p class="in">Organizations, societies and communities I contribute to and build with.</p>
+        <div id="al" class="ls"></div>
+      </section>
+
+      <!-- GitHub activity -->
+      <section id="github" class="sec">
+        <span class="vt">04 — Activity</span>
+        <h2>GitHub</h2>
+        <p class="in">
+          Contribution history, language breakdown and the repositories I'm most proud of.
+        </p>
+
+        <div class="stats" style="padding-left: 0" id="gst"></div>
+
+        <div class="gp">
+          <div class="gh">
+            <span>Contribution activity — <span id="gt">—</span></span>
+            <a href="https://github.com/" target="_blank" rel="noopener" data-c>Open profile ↗</a>
+          </div>
+
+          <div class="gs">
+            <div class="gi">
+              <div class="gm" id="gm"></div>
+              <div class="gb">
+                <div class="gd">
+                  <span></span><span>Mon</span><span></span><span>Wed</span><span></span
+                  ><span>Fri</span><span></span>
+                </div>
+                <div class="gc" id="gc"></div>
+              </div>
+              <div class="gl">
+                <span class="lb">Sample data — replace with real stats</span>
+                <div class="sc">
+                  <span class="lb">Less</span>
+                  <i class="c"></i>
+                  <i class="c l1"></i>
+                  <i class="c l2"></i>
+                  <i class="c l3"></i>
+                  <i class="c l4"></i>
+                  <span class="lb">More</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="two">
+          <div class="pn">
+            <span class="lb">Top languages</span>
+            <div id="ll"></div>
+          </div>
+          <div class="pn">
+            <span class="lb">Repository highlights</span>
+            <div id="rl"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Socials -->
+      <section id="socials" class="sec">
+        <span class="vt">05 — Find me</span>
+        <h2>Socials</h2>
+        <p class="in">
+          Open to collaborations, internships and hackathon teams. The fastest way is email.
+        </p>
+        <div id="sl" style="border-bottom: 1px solid var(--line)"></div>
+
+        <div class="cta">
+          <div>
+            <h3>Let's build something</h3>
+            <p>Have a project, a role, or an idea worth prototyping? My inbox is always open.</p>
+          </div>
+          <button class="b p" data-email="hello@lovenvictoria.dev" data-c>Copy email →</button>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <span>Loven Victoria</span>
+      <span>Fullstack Developer — IT Student</span>
+      <span>Manila, PH · UTC+8</span>
+    </footer>
+
+    <!-- UI overlays -->
+    <div id="toast" role="status" aria-live="polite">Copied</div>
+    <div id="tip"></div>
+    <div id="glow" aria-hidden="true"></div>
+    <div id="lens" aria-hidden="true"></div>
+
+    <script src="js/main.js"></script>
+  </body>
+</html>
