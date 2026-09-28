@@ -13,9 +13,6 @@
 
   <body>
     <!-- Vertical guide lines + cursor crosshair -->
-    <div class="v v1"></div>
-    <div class="v v2"></div>
-    <div class="v v3"></div>
     <div id="gx"></div>
     <div id="gy"></div>
     <div id="ro">X 0000 · Y 0000</div>
@@ -23,8 +20,8 @@
     <!-- Sidebar -->
     <aside>
       <a class="brand" href="#home" data-c aria-label="Home">
-        <span class="mark">LV</span>
-        <b>Loven<br />Victoria</b>
+        <img class="logo" src="/public/img/logo-dark.png" alt="LogoniLoven">
+        <b>Loven Victoria</b>
       </a>
 
       <nav class="menu" aria-label="Primary">
@@ -38,8 +35,12 @@
       <div class="side-b">
         <div class="st"><i></i>Open to internships</div>
         <div class="side-r">
-          <button id="mu" aria-pressed="false">Sound: On</button>
-          <button id="th" aria-label="Toggle light and dark"><i></i></button>
+          <button id="mu" class="icon-button" type="button" aria-pressed="false" aria-label="Sound on" title="Sound on"></button>
+          <div class="theme-options" role="group" aria-label="Theme">
+            <button class="icon-button theme-option" type="button" data-theme="system" aria-pressed="true" aria-label="Use system theme" title="Use system theme"></button>
+            <button class="icon-button theme-option" type="button" data-theme="light" aria-pressed="false" aria-label="Use light theme" title="Use light theme"></button>
+            <button class="icon-button theme-option" type="button" data-theme="dark" aria-pressed="false" aria-label="Use dark theme" title="Use dark theme"></button>
+          </div>
         </div>
       </div>
     </aside>
@@ -47,6 +48,7 @@
     <div id="rail"></div>
 
     <main>
+      <div class="v v2"></div>
       <!-- Hero -->
       <section id="home">
         <canvas id="dz" aria-hidden="true"></canvas>
@@ -80,7 +82,10 @@
       <!-- Projects -->
       <section id="projects" class="sec">
         <span class="vt">02 — Selected work</span>
-        <h2>Projects</h2>
+        <div class="sec-h">
+          <h2>Projects</h2>
+          <a class="al" href="https://github.com/llvss?tab=repositories" target="_blank" rel="noopener" data-c>All projects →</a>
+        </div>
         <p class="in">
           A mix of web development, programming and UI/UX work from coursework, personal builds and
           hackathons.
@@ -91,7 +96,10 @@
       <!-- Affiliations -->
       <section id="affiliations" class="sec">
         <span class="vt">03 — Communities</span>
-        <h2>Affiliations</h2>
+        <div class="sec-h">
+          <h2>Affiliations</h2>
+          <a class="al" href="https://www.linkedin.com/" target="_blank" rel="noopener" data-c>All affiliations →</a>
+        </div>
         <p class="in">Organizations, societies and communities I contribute to and build with.</p>
         <div id="al" class="ls"></div>
       </section>
@@ -99,7 +107,10 @@
       <!-- GitHub activity -->
       <section id="github" class="sec">
         <span class="vt">04 — Activity</span>
-        <h2>GitHub</h2>
+        <div class="sec-h">
+          <h2>GitHub</h2>
+          <a class="al" href="https://github.com/llvss" target="_blank" rel="noopener" data-c>All activity →</a>
+        </div>
         <p class="in">
           Contribution history, language breakdown and the repositories I'm most proud of.
         </p>
@@ -109,7 +120,7 @@
         <div class="gp">
           <div class="gh">
             <span>Contribution activity — <span id="gt">—</span></span>
-            <a href="https://github.com/" target="_blank" rel="noopener" data-c>Open profile ↗</a>
+            <a href="https://github.com/llvss" target="_blank" rel="noopener" data-c>Open profile ↗</a>
           </div>
 
           <div class="gs">
@@ -123,7 +134,6 @@
                 <div class="gc" id="gc"></div>
               </div>
               <div class="gl">
-                <span class="lb">Sample data — replace with real stats</span>
                 <div class="sc">
                   <span class="lb">Less</span>
                   <i class="c"></i>
@@ -153,7 +163,10 @@
       <!-- Socials -->
       <section id="socials" class="sec">
         <span class="vt">05 — Find me</span>
-        <h2>Socials</h2>
+        <div class="sec-h">
+          <h2>Socials</h2>
+          <a class="al" href="mailto:hello@lovenvictoria.dev" data-c>All socials →</a>
+        </div>
         <p class="in">
           Open to collaborations, internships and hackathon teams. The fastest way is email.
         </p>

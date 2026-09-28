@@ -8,9 +8,9 @@
   --line: #8f8f8f;
   --tr: #161616;
   --blue: #3652ff;
-  --g2: 250px;
-  --g3: 289px;
-  --sb: 230px;
+  --g2: 48px;
+  --g3: 96px;
+  --sb: 220px;
   --cw: calc(100vw - var(--sb));
   --side: #111;
   --d: 'Syne', sans-serif;
@@ -55,6 +55,10 @@ body {
   overflow-x: hidden;
 }
 
+main {
+  position: relative;
+}
+
 a {
   color: inherit;
   text-decoration: none;
@@ -80,7 +84,7 @@ footer {
 
 /* Vertical guide lines */
 .v {
-  position: fixed;
+  position: absolute;
   top: 0;
   bottom: 0;
   width: 1px;
@@ -88,9 +92,7 @@ footer {
   z-index: 0;
 }
 
-.v1 { left: calc(var(--sb) + 16px); }
-.v2 { left: calc(var(--sb) + var(--g2)); }
-.v3 { left: calc(var(--sb) + var(--g3)); }
+.v2 { left: calc(var(--g3) - 12px); }
 
 /* ==========================================================================
    Sidebar (fixed)
@@ -126,9 +128,15 @@ aside {
   justify-content: center;
   font: 700 16px var(--d);
 }
+  
+.logo {
+  width: 40px;
+  height: 40px;
+  flex: none;
+}
 
 .brand b {
-  font: 700 20px/1.1 var(--d);
+  font: 700 15px/1.1 var(--d);
 }
 
 .menu {
@@ -183,40 +191,50 @@ aside {
 .side-r {
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 8px;
 }
 
-#mu {
-  flex: 1;
-  text-align: left;
-  border: 2px solid var(--ink);
-  box-shadow: 3px 3px 0 var(--ink);
-  padding: 7px 16px;
-  font: 700 11px var(--m);
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  white-space: nowrap;
-}
-
-#th {
-  width: 44px;
-  height: 22px;
+.theme-options {
+  display: flex;
   border: 1px solid var(--ink);
-  position: relative;
+}
+
+.theme-options .icon-button {
+  border: 0;
+}
+
+/* .theme-option + .theme-option {
+  border-left: 1px solid var(--ink);
+} */
+
+.icon-button {
+  width: 36px;
+  height: 36px;
+  border: 1px solid var(--ink);
+  display: grid;
+  place-items: center;
   flex: none;
 }
 
-#th i {
-  position: absolute;
-  top: 2px;
-  left: 2px;
-  width: 16px;
-  height: 16px;
+.icon-button:hover,
+.icon-button:focus-visible {
   background: var(--ink);
+  color: var(--bg);
 }
 
-[data-t='light'] #th i {
-  left: 24px;
+.theme-option.is-active {
+  background: var(--ink);
+  color: var(--bg);
+}
+
+.icon-button svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 2;
 }
 
 /* ==========================================================================
@@ -476,6 +494,34 @@ h2 {
   margin: 14px 0 44px;
   max-width: 52ch;
   color: var(--dim);
+}
+
+/* Section header row: title on the left, "view all" text link on the right */
+.sec-h {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+.al {
+  flex: none;
+  display: inline-block;
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 5px;
+  font: 500 11px var(--m);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--dim);
+  white-space: nowrap;
+  transition: color 0.2s, border-color 0.2s;
+}
+
+.al:hover,
+.al:focus-visible {
+  color: var(--ink);
+  border-color: var(--ink);
 }
 
 /* ==========================================================================
@@ -947,8 +993,10 @@ footer {
     --sb: 0px;
   }
 
-  .v2,
-  .v3,
+  .v2 {
+    left: 20px;
+  }
+
   .vt,
   .st {
     display: none;
@@ -973,12 +1021,6 @@ footer {
     display: none;
   }
 
-  .mark {
-    width: 32px;
-    height: 32px;
-    font-size: 13px;
-  }
-
   .menu {
     margin: 0 0 0 auto;
     flex-direction: row;
@@ -1000,11 +1042,9 @@ footer {
     margin: 0;
   }
 
-  #mu {
-    flex: none;
-    padding: 5px 8px;
-    font-size: 10px;
-    box-shadow: 2px 2px 0 var(--ink);
+  .icon-button {
+    width: 32px;
+    height: 32px;
   }
 
   section,
@@ -1037,6 +1077,10 @@ footer {
 
   .sec {
     padding: 64px 20px 64px 32px;
+  }
+
+  .sec-h {
+    gap: 12px;
   }
 
   footer {

@@ -3,6 +3,8 @@
    ========================================================================== */
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+const GITHUB_USER = 'llvss';
+const GITHUB_PROFILE = `https://github.com/${GITHUB_USER}`;
 
 const esc = (s) =>
   String(s).replace(/[&<>"']/g, (c) => ({
@@ -77,7 +79,7 @@ const AFFS = [
 ];
 
 const SOCIALS = [
-  { n: 'GitHub', u: 'https://github.com/', h: '@username' },
+  { n: 'GitHub', u: GITHUB_PROFILE, h: '@llvss' },
   { n: 'LinkedIn', u: 'https://www.linkedin.com/', h: 'in/username' },
   { n: 'Instagram', u: 'https://www.instagram.com/', h: '@username' },
   { n: 'Email', copy: 'hello@lovenvictoria.dev', h: 'Copy address ⧉' },
@@ -118,6 +120,40 @@ function box(p, i, c) {
         <a href="${p.repo}" data-c>Code ↗</a>
       </div>
     </article>`;
+}
+
+function renderGithubDetails(repos) {
+  const languages = repos.reduce((counts, repo) => {
+    if (repo.language) counts.set(repo.language, (counts.get(repo.language) || 0) + 1);
+    return counts;
+  }, new Map());
+  const languageEntries = [...languages.entries()].sort((a, b) => b[1] - a[1]);
+  const languageTotal = languageEntries.reduce((total, [, count]) => total + count, 0) || 1;
+
+  $('#ll').innerHTML = languageEntries.length
+    ? languageEntries
+        .map(([name, count]) => {
+          const percent = Math.round((count / languageTotal) * 100);
+          return `
+            <div class="lg3">
+              <div><span>${esc(name)}</span><span>${percent}%</span></div>
+              <div class="br"><i style="width:${percent}%"></i></div>
+            </div>`;
+        })
+        .join('')
+    : '<p class="dm">No public repository languages available.</p>';
+
+  $('#rl').innerHTML = repos.length
+    ? repos
+        .map(
+          (repo) => `
+            <a class="rp" href="${esc(repo.html_url)}" target="_blank" rel="noopener" data-c>
+              <div><h4>${esc(repo.name)}</h4><p class="dm">${esc(repo.description || 'No description provided.')}</p></div>
+              <span class="mm">${esc(repo.language || 'Other')} · ★ ${repo.stargazers_count}</span>
+            </a>`
+        )
+        .join('')
+    : '<p class="dm">No public repositories available.</p>';
 }
 
 function renderAll() {
@@ -161,7 +197,7 @@ function renderAll() {
 
   $('#rl').innerHTML = REPOS.map(
     (r) => `
-    <a class="rp" href="https://github.com/" target="_blank" rel="noopener" data-c>
+    <a class="rp" href="${GITHUB_PROFILE}" target="_blank" rel="noopener" data-c>
       <div><h4>${r.n}</h4><p class="dm">${r.d}</p></div>
       <span class="mm">${r.lang} · ★ ${r.stars}</span>
     </a>`
@@ -169,14 +205,12 @@ function renderAll() {
 }
 
 /* ==========================================================================
-   GITHUB CONTRIBUTION GRAPH (seeded sample data)
+   GITHUB CONTRIBUTION GRAPH
    ========================================================================== */
-function graph() {
-  let seed = 20260214;
-  const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
-
+function renderGraph(contributions, total, publicRepos) {
   const W = 53;
   const M = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  const byDate = new Map(contributions.map((day) => [day.date, day]));
 
   const today = new Date();
   today.setHours(0, 0, 0, 0);
@@ -206,12 +240,17 @@ function graph() {
         continue;
       }
 
-      const x = rnd();
-      const n = x < 0.34 ? 0 : Math.floor(x * (d === 0 || d === 6 ? 7 : 13));
+      const key = [
+        dt.getFullYear(),
+        String(dt.getMonth() + 1).padStart(2, '0'),
+        String(dt.getDate()).padStart(2, '0'),
+      ].join('-');
+      const entry = byDate.get(key);
+      const n = entry ? entry.count : 0;
+      const l = entry ? entry.level : 0;
       tot += n;
       days.push(n);
 
-      const l = n === 0 ? 0 : n < 3 ? 1 : n < 6 ? 2 : n < 9 ? 3 : 4;
       const label = dt.toLocaleDateString('en-US', {
         month: 'short',
         day: 'numeric',
@@ -238,12 +277,12 @@ function graph() {
   });
   for (let i = days.length - 1; i >= 0 && days[i] > 0; i--) cur++;
 
-  $('#gt').textContent = tot.toLocaleString() + ' in the last year';
+  $('#gt').textContent = total.toLocaleString() + ' in the last year';
   $('#gst').innerHTML = [
-    [tot.toLocaleString(), 'Contributions'],
+    [total.toLocaleString(), 'Contributions'],
     [cur, 'Current streak'],
     [lg, 'Longest streak'],
-    [REPOS.length, 'Public repos'],
+    [publicRepos, 'Public repos'],
   ]
     .map((a) => `<div class="stat"><b>${a[0]}</b><span>${a[1]}</span></div>`)
     .join('');
@@ -268,6 +307,36 @@ function graph() {
   });
 
   gc.addEventListener('pointerleave', () => (tip.style.display = 'none'));
+}
+
+async function graph() {
+  const contributionsUrl = `https://github-contributions-api.jogruber.de/v4/${GITHUB_USER}?y=last`;
+  const userUrl = `https://api.github.com/users/${GITHUB_USER}`;
+  const reposUrl = `https://api.github.com/users/${GITHUB_USER}/repos?sort=updated&per_page=4&type=owner`;
+
+  try {
+    const [contributionResponse, userResponse, reposResponse] = await Promise.all([
+      fetch(contributionsUrl),
+      fetch(userUrl),
+      fetch(reposUrl),
+    ]);
+
+    if (!contributionResponse.ok || !userResponse.ok || !reposResponse.ok) {
+      throw new Error('GitHub data unavailable');
+    }
+
+    const contributionData = await contributionResponse.json();
+    const userData = await userResponse.json();
+    const reposData = await reposResponse.json();
+    renderGraph(
+      contributionData.contributions,
+      contributionData.total.lastYear,
+      userData.public_repos
+    );
+    renderGithubDetails(reposData);
+  } catch (error) {
+    $('#gt').textContent = 'unavailable';
+  }
 }
 
 /* ==========================================================================
@@ -396,21 +465,50 @@ function spy() {
 /* ==========================================================================
    THEME
    ========================================================================== */
-let theme = 'dark';
+const icons = {
+  soundOn: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19 5a10 10 0 0 1 0 14"/></svg>',
+  soundOff: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="m23 9-6 6"/><path d="m17 9 6 6"/></svg>',
+  system: '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="12" rx="1"/><path d="M8 20h8"/><path d="M12 16v4"/></svg>',
+  light: '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>',
+  dark: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 14.5A8.5 8.5 0 0 1 9.5 3.5 8.5 8.5 0 1 0 20.5 14.5z"/></svg>',
+};
+
+const systemTheme = matchMedia('(prefers-color-scheme: dark)');
+let theme = 'system';
 try {
-  theme = localStorage.getItem('lv-theme') || 'dark';
+  theme = localStorage.getItem('lv-theme') || 'system';
 } catch (_) {}
 
 function setTheme(t) {
   theme = t;
-  document.documentElement.dataset.t = t;
   try {
     localStorage.setItem('lv-theme', t);
   } catch (_) {}
+  syncTheme();
+}
+
+function syncTheme() {
+  const resolvedTheme = theme === 'system' ? (systemTheme.matches ? 'dark' : 'light') : theme;
+
+  document.documentElement.dataset.t = resolvedTheme;
+  $$('.theme-option').forEach((button) => {
+    const active = button.dataset.theme === theme;
+    button.innerHTML = icons[button.dataset.theme];
+    button.classList.toggle('is-active', active);
+    button.setAttribute('aria-pressed', String(active));
+  });
   draw();
 }
 
-$('#th').addEventListener('click', () => setTheme(theme === 'dark' ? 'light' : 'dark'));
+$$('.theme-option').forEach((button) => {
+  button.addEventListener('click', () => {
+    setTheme(button.dataset.theme);
+  });
+});
+
+systemTheme.addEventListener('change', () => {
+  if (theme === 'system') syncTheme();
+});
 
 /* ==========================================================================
    CLACK SOUND
@@ -469,10 +567,79 @@ document.addEventListener('pointerdown', (e) => {
   if (e.target.closest('button,[data-c],.bx,.af,.rp,.so')) clack();
 });
 
+/* ==========================================================================
+   HOVER SFX
+   -------------------------------------------------------------------------- */
+/* Every button (and the button-like elements that share their look) plays
+   public/sfx/button-hover.mp3 on hover. Reuses the existing `muted` flag so
+   the #mu toggle silences hovers too. */
+const HOVER_SFX_SRC = '/public/sfx/button-hover.mp3';
+const HOVER_SFX_VOL = 0.35;
+const HOVER_SFX_GAP = 60; // ms — stops machine-gunning when sweeping across a row
+const HOVER_SEL = 'button,[data-c],.bx,.af,.rp,.so';
+
+const hoverSfx = new Audio(HOVER_SFX_SRC);
+hoverSfx.preload = 'auto';
+hoverSfx.volume = HOVER_SFX_VOL;
+
+let hoverAt = 0;
+
+function hoverPlay() {
+  if (muted) return;
+  const now = performance.now();
+  if (now - hoverAt < HOVER_SFX_GAP) return;
+  hoverAt = now;
+  try {
+    hoverSfx.currentTime = 0;
+    hoverSfx.play().catch(() => {});
+  } catch (_) {}
+}
+
+if (fine) {
+  // pointerover bubbles (pointerenter does not), so one delegated listener
+  // covers every button, including ones rendered later by main.js.
+  document.addEventListener(
+    'pointerover',
+    (e) => {
+      if (e.pointerType === 'touch') return;
+      const el = e.target.closest(HOVER_SEL);
+      if (!el) return;
+      // Ignore moves that stay inside the same button (e.g. onto a child span).
+      if (el.contains(e.relatedTarget)) return;
+      hoverPlay();
+    },
+    { passive: true }
+  );
+
+  // Keyboard users get the same feedback when tabbing to a button.
+  document.addEventListener('focusin', (e) => {
+    const el = e.target.closest(HOVER_SEL);
+    if (el && el.matches(':focus-visible')) hoverPlay();
+  });
+
+  // Autoplay policies block audio until a gesture; unlock it silently so the
+  // very first hover is not swallowed.
+  const unlock = () => {
+    if (muted) return;
+    try {
+      const p = hoverSfx.play();
+      hoverSfx.pause();
+      hoverSfx.currentTime = 0;
+      if (p && p.catch) p.catch(() => {});
+    } catch (_) {}
+  };
+  addEventListener('pointerdown', unlock, { once: true, passive: true });
+  addEventListener('keydown', unlock, { once: true, passive: true });
+  addEventListener('touchstart', unlock, { once: true, passive: true });
+}
+
 const mu = $('#mu');
 const syncMu = () => {
   mu.setAttribute('aria-pressed', String(muted));
-  mu.textContent = 'Sound: ' + (muted ? 'Off' : 'On');
+  mu.innerHTML = muted ? icons.soundOff : icons.soundOn;
+  const label = muted ? 'Sound off' : 'Sound on';
+  mu.setAttribute('aria-label', label);
+  mu.title = label;
 };
 
 mu.addEventListener('click', () => {
@@ -622,9 +789,15 @@ document.addEventListener('click', async (e) => {
 /* ==========================================================================
    INIT
    ========================================================================== */
-document.documentElement.dataset.t = theme;
+syncTheme();
 
-[renderAll, graph, spy, fit].forEach((f) => {
+function alignProjectGuide() {
+  const guide = $('.v2');
+  const projects = $('#projects');
+  if (guide && projects) guide.style.top = `${projects.offsetTop}px`;
+}
+
+[renderAll, graph, spy, fit, alignProjectGuide].forEach((f) => {
   try {
     f();
   } catch (err) {
@@ -633,3 +806,5 @@ document.documentElement.dataset.t = theme;
 });
 
 addEventListener('resize', fit);
+addEventListener('resize', alignProjectGuide);
+document.fonts?.ready.then(alignProjectGuide);
