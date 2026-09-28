@@ -85,19 +85,69 @@ const SOCIALS = [
   { n: 'Email', copy: 'hello@lovenvictoria.dev', h: 'Copy address ⧉' },
 ];
 
-const REPOS = [
-  { n: 'portfolio', d: 'This site — hand-built, no framework.', lang: 'TypeScript', stars: 42 },
-  { n: 'api-starter', d: 'Opinionated REST API boilerplate with auth.', lang: 'Node.js', stars: 31 },
-  { n: 'ds-toolkit', d: 'Data structures and algorithms, documented and tested.', lang: 'TypeScript', stars: 18 },
-  { n: 'ui-patterns', d: 'Reusable interface patterns and micro-interactions.', lang: 'CSS', stars: 12 },
+const EXPERIENCE = [
+  {
+    y: '2026 — Now',
+    r: 'Fullstack Developer (Intern)',
+    w: 'Tech Company — Manila, PH',
+    d: 'Building and shipping features end to end, from database schema to the interface, inside an agile team.',
+  },
+  {
+    y: '2025 — 2026',
+    r: 'Web Development Lead',
+    w: 'University Org — Manila, PH',
+    d: 'Led a small team building internal web tools, ran code reviews and onboarded new members.',
+  },
+  {
+    y: '2024 — 2025',
+    r: 'Frontend Developer (Part-time)',
+    w: 'Freelance / Remote',
+    d: 'Delivered client sites and dashboards, from wireframes through deployment and handoff.',
+  },
 ];
 
-const LANGS = [
-  { n: 'TypeScript', p: 34 },
-  { n: 'JavaScript', p: 26 },
-  { n: 'CSS', p: 18 },
-  { n: 'Python', p: 14 },
-  { n: 'Other', p: 8 },
+const RECOMMENDATIONS = [
+  {
+    img: '',
+    n: 'Alex Rivera',
+    r: 'Engineering Manager, Tech Company',
+    q: 'Reliable end to end. Takes a vague requirement and turns it into something shipped, tested and easy for the rest of the team to maintain.',
+  },
+  {
+    img: '',
+    n: 'Jamie Cruz',
+    r: 'Team Lead, University Org',
+    q: 'The person everyone asks when a project needs rescuing. Calm under deadline pressure and genuinely good at breaking work down.',
+  },
+  {
+    img: '',
+    n: 'Sam Patel',
+    r: 'Product Designer, Freelance',
+    q: 'Understands design intent properly and pushes back with better ideas. Our cleanest handover of any collaborator so far.',
+  },
+];
+
+const STACKS = [
+  {
+    n: 'Frontend',
+    d: 'Interfaces, component systems and design tokens.',
+    t: ['TypeScript', 'React', 'Next.js', 'CSS', 'Tailwind'],
+  },
+  {
+    n: 'Backend',
+    d: 'APIs, data modelling and auth.',
+    t: ['Node.js', 'Express', 'PostgreSQL', 'Prisma', 'REST'],
+  },
+  {
+    n: 'Tooling',
+    d: 'Build, test and ship workflow.',
+    t: ['Git', 'Vite', 'Vitest', 'Docker', 'CI/CD'],
+  },
+  {
+    n: 'Practices',
+    d: 'How the work gets planned and reviewed.',
+    t: ['Agile', 'Code Review', 'Testing', 'Accessibility'],
+  },
 ];
 
 /* ==========================================================================
@@ -120,40 +170,6 @@ function box(p, i, c) {
         <a href="${p.repo}" data-c>Code ↗</a>
       </div>
     </article>`;
-}
-
-function renderGithubDetails(repos) {
-  const languages = repos.reduce((counts, repo) => {
-    if (repo.language) counts.set(repo.language, (counts.get(repo.language) || 0) + 1);
-    return counts;
-  }, new Map());
-  const languageEntries = [...languages.entries()].sort((a, b) => b[1] - a[1]);
-  const languageTotal = languageEntries.reduce((total, [, count]) => total + count, 0) || 1;
-
-  $('#ll').innerHTML = languageEntries.length
-    ? languageEntries
-        .map(([name, count]) => {
-          const percent = Math.round((count / languageTotal) * 100);
-          return `
-            <div class="lg3">
-              <div><span>${esc(name)}</span><span>${percent}%</span></div>
-              <div class="br"><i style="width:${percent}%"></i></div>
-            </div>`;
-        })
-        .join('')
-    : '<p class="dm">No public repository languages available.</p>';
-
-  $('#rl').innerHTML = repos.length
-    ? repos
-        .map(
-          (repo) => `
-            <a class="rp" href="${esc(repo.html_url)}" target="_blank" rel="noopener" data-c>
-              <div><h4>${esc(repo.name)}</h4><p class="dm">${esc(repo.description || 'No description provided.')}</p></div>
-              <span class="mm">${esc(repo.language || 'Other')} · ★ ${repo.stargazers_count}</span>
-            </a>`
-        )
-        .join('')
-    : '<p class="dm">No public repositories available.</p>';
 }
 
 function renderAll() {
@@ -187,20 +203,38 @@ function renderAll() {
       : `<a class="so" href="${s.u}" target="_blank" rel="noopener" data-c>${s.n}<span>${s.h} ↗</span></a>`
   ).join('');
 
-  $('#ll').innerHTML = LANGS.map(
-    (l) => `
-    <div class="lg3">
-      <div><span>${l.n}</span><span>${l.p}%</span></div>
-      <div class="br"><i style="width:${l.p}%"></i></div>
+  $('#ts').innerHTML = STACKS.map(
+    (s) => `
+    <div class="sk">
+      <div class="hd"><h3>${esc(s.n)}</h3><p class="dm">${esc(s.d)}</p></div>
+      <div class="tg">${s.t.map((t) => `<span class="tag">${esc(t)}</span>`).join('')}</div>
     </div>`
   ).join('');
 
-  $('#rl').innerHTML = REPOS.map(
+  $('#ex').innerHTML = EXPERIENCE.map(
+    (e) => `
+    <article class="ex">
+      <span class="y">${esc(e.y)}</span>
+      <div>
+        <h3>${esc(e.r)}</h3>
+        <p class="dm">${esc(e.w)}</p>
+      </div>
+      <p class="dm">${esc(e.d)}</p>
+    </article>`
+  ).join('');
+
+  $('#rc').innerHTML = RECOMMENDATIONS.map(
     (r) => `
-    <a class="rp" href="${GITHUB_PROFILE}" target="_blank" rel="noopener" data-c>
-      <div><h4>${r.n}</h4><p class="dm">${r.d}</p></div>
-      <span class="mm">${r.lang} · ★ ${r.stars}</span>
-    </a>`
+    <article class="rc">
+      ${
+        r.img
+          ? `<img class="av" src="${esc(r.img)}" alt="${esc(r.n)}" loading="lazy">`
+          : '<div class="av ph" aria-hidden="true"></div>'
+      }
+      <h3>${esc(r.n)}</h3>
+      <p class="dm">${esc(r.r)}</p>
+      <blockquote>${esc(r.q)}</blockquote>
+    </article>`
   ).join('');
 }
 
@@ -312,28 +346,24 @@ function renderGraph(contributions, total, publicRepos) {
 async function graph() {
   const contributionsUrl = `https://github-contributions-api.jogruber.de/v4/${GITHUB_USER}?y=last`;
   const userUrl = `https://api.github.com/users/${GITHUB_USER}`;
-  const reposUrl = `https://api.github.com/users/${GITHUB_USER}/repos?sort=updated&per_page=4&type=owner`;
 
   try {
-    const [contributionResponse, userResponse, reposResponse] = await Promise.all([
+    const [contributionResponse, userResponse] = await Promise.all([
       fetch(contributionsUrl),
       fetch(userUrl),
-      fetch(reposUrl),
     ]);
 
-    if (!contributionResponse.ok || !userResponse.ok || !reposResponse.ok) {
+    if (!contributionResponse.ok || !userResponse.ok) {
       throw new Error('GitHub data unavailable');
     }
 
     const contributionData = await contributionResponse.json();
     const userData = await userResponse.json();
-    const reposData = await reposResponse.json();
     renderGraph(
       contributionData.contributions,
       contributionData.total.lastYear,
       userData.public_repos
     );
-    renderGithubDetails(reposData);
   } catch (error) {
     $('#gt').textContent = 'unavailable';
   }
@@ -427,7 +457,7 @@ if (fine) {
    NAV STATE (scroll spy + progress rail)
    ========================================================================== */
 function spy() {
-  const ids = ['home', 'projects', 'affiliations', 'github', 'socials'];
+  const ids = ['home', 'projects', 'experience', 'affiliations', 'github', 'recommendations', 'socials'];
   const ln = ids.map((i) => [i, $(`nav a[href="#${i}"]`)]);
   const rail = $('#rail');
   let t = false;
@@ -491,6 +521,15 @@ function syncTheme() {
   const resolvedTheme = theme === 'system' ? (systemTheme.matches ? 'dark' : 'light') : theme;
 
   document.documentElement.dataset.t = resolvedTheme;
+
+  // Logo artwork is inverted per theme: the light-theme mark is dark-on-light,
+  // so it only reads correctly on a light background (and vice versa).
+  const logo = $('.logo');
+  if (logo) {
+    const src = `/public/img/logo-${resolvedTheme}.png`;
+    if (logo.getAttribute('src') !== src) logo.setAttribute('src', src);
+  }
+
   $$('.theme-option').forEach((button) => {
     const active = button.dataset.theme === theme;
     button.innerHTML = icons[button.dataset.theme];
