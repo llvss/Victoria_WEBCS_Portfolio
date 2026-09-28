@@ -6,16 +6,16 @@
   --ink: #fff;
   --dim: #8c8c8c;
   --line: #8f8f8f;
-  --tr: #161616;
+  --track-color: #161616;
   --blue: #3652ff;
-  --g2: 48px;
-  --g3: 96px;
-  --sb: 220px;
-  --cw: calc(100vw - var(--sb));
+  --gutter-narrow: 48px;
+  --gutter-wide: 96px;
+  --sidebar-width: 220px;
+  --content-width: calc(100vw - var(--sidebar-width));
   --side: #111;
-  --d: 'Syne', sans-serif;
-  --m: 'JetBrains Mono', monospace;
-  --s: 'Inter', sans-serif;
+  --font-display: 'Syne', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+  --font-sans: 'Inter', sans-serif;
 }
 
 [data-t='light'] {
@@ -23,7 +23,7 @@
   --ink: #000;
   --dim: #5c5c5c;
   --line: #7a7a7a;
-  --tr: #e4e4e4;
+  --track-color: #e4e4e4;
   --side: #f2f2f2;
 }
 
@@ -48,10 +48,10 @@ html {
 }
 
 body {
-  padding-left: var(--sb);
+  padding-left: var(--sidebar-width);
   background: var(--bg);
   color: var(--ink);
-  font: 400 16px/1.6 var(--s);
+  font: 400 16px/1.6 var(--font-sans);
   overflow-x: hidden;
 }
 
@@ -92,7 +92,7 @@ footer {
   z-index: 0;
 }
 
-.v2 { left: calc(var(--g3) - 12px); }
+.v2 { left: calc(var(--gutter-wide) - 12px); }
 
 /* ==========================================================================
    Sidebar (fixed)
@@ -102,7 +102,7 @@ aside {
   left: 0;
   top: 0;
   bottom: 0;
-  width: var(--sb);
+  width: var(--sidebar-width);
   z-index: 20;
   background: var(--side);
   border-right: 1px solid var(--line);
@@ -126,7 +126,7 @@ aside {
   display: flex;
   align-items: center;
   justify-content: center;
-  font: 700 16px var(--d);
+  font: 700 16px var(--font-display);
 }
   
 .logo {
@@ -136,7 +136,7 @@ aside {
 }
 
 .brand b {
-  font: 700 15px/1.1 var(--d);
+  font: 700 15px/1.1 var(--font-display);
 }
 
 .menu {
@@ -152,7 +152,7 @@ aside {
   align-items: center;
   height: 40px;
   padding: 0 18px;
-  font: 700 11px var(--m);
+  font: 700 11px var(--font-mono);
   letter-spacing: 0.14em;
   text-transform: uppercase;
 }
@@ -177,7 +177,7 @@ aside {
   display: flex;
   align-items: center;
   gap: 8px;
-  font: 700 11px var(--m);
+  font: 700 11px var(--font-mono);
   letter-spacing: 0.14em;
   text-transform: uppercase;
 }
@@ -243,7 +243,7 @@ aside {
 #rail {
   position: fixed;
   top: 0;
-  left: var(--sb);
+  left: var(--sidebar-width);
   right: 0;
   height: 2px;
   background: var(--blue);
@@ -275,10 +275,10 @@ aside {
 
 #ro {
   position: fixed;
-  left: calc(var(--sb) + 24px);
+  left: calc(var(--sidebar-width) + 24px);
   bottom: 14px;
   z-index: 16;
-  font: 500 10px var(--m);
+  font: 500 10px var(--font-mono);
   letter-spacing: 0.1em;
   color: var(--dim);
   display: none;
@@ -292,7 +292,7 @@ aside {
   background: var(--ink);
   color: var(--bg);
   padding: 14px 20px;
-  font: 700 11px var(--m);
+  font: 700 11px var(--font-mono);
   letter-spacing: 0.1em;
   text-transform: uppercase;
   display: none;
@@ -311,7 +311,7 @@ aside {
   background: var(--bg);
   color: var(--ink);
   padding: 14px 22px;
-  font: 500 12px var(--m);
+  font: 500 12px var(--font-mono);
   letter-spacing: 0.12em;
   text-transform: uppercase;
 }
@@ -337,13 +337,13 @@ aside {
   display: inline-block;
   border: 1px solid currentColor;
   padding: 3px 8px;
-  font: 500 10px var(--m);
+  font: 500 10px var(--font-mono);
   letter-spacing: 0.1em;
   text-transform: uppercase;
 }
 
 .lb {
-  font: 500 10px var(--m);
+  font: 500 10px var(--font-mono);
   letter-spacing: 0.16em;
   text-transform: uppercase;
   color: var(--dim);
@@ -358,7 +358,9 @@ aside {
   padding-top: 0;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  /* The hero is a single bottom-anchored block, so the page height (and every
+     section below it) is unchanged from the previous two-block layout. */
+  justify-content: flex-end;
   z-index: 1;
 }
 
@@ -371,25 +373,6 @@ aside {
   z-index: 0;
 }
 
-.top {
-  position: relative;
-  z-index: 2;
-  padding: 48px 40px 0 calc(var(--g3) + 40px);
-  max-width: calc(var(--g3) + 560px);
-}
-
-.top p {
-  margin-top: 14px;
-  font-size: 17px;
-  max-width: 38ch;
-  color: var(--dim);
-}
-
-.top strong {
-  color: var(--ink);
-  font-weight: 500;
-}
-
 .bot {
   position: relative;
   z-index: 2;
@@ -398,15 +381,28 @@ aside {
 
 .name {
   width: fit-content;
-  font: 400 clamp(44px, calc(var(--cw) * 0.094), 140px) / 1 var(--d);
+  font: 400 clamp(44px, calc(var(--content-width) * 0.094), 140px) / 1 var(--font-display);
   text-transform: uppercase;
   letter-spacing: -0.025em;
 }
 
 .sub {
-  margin: 6px 0 20px 4px;
-  font: 500 12px var(--m);
+  margin: 6px 0 12px 4px;
+  font: 500 12px var(--font-mono);
   letter-spacing: 0.16em;
+}
+
+/* Hero description, sitting under the subtitle. */
+.desc {
+  margin: 0 0 26px 4px;
+  font-size: 17px;
+  max-width: 38ch;
+  color: var(--dim);
+}
+
+.desc strong {
+  color: var(--ink);
+  font-weight: 500;
 }
 
 .row {
@@ -447,11 +443,11 @@ aside {
 
 .stat b {
   display: block;
-  font: 500 30px/1.1 var(--d);
+  font: 500 30px/1.1 var(--font-display);
 }
 
 .stat span {
-  font: 500 9px var(--m);
+  font: 500 9px var(--font-mono);
   letter-spacing: 0.16em;
   text-transform: uppercase;
   color: var(--dim);
@@ -470,22 +466,22 @@ aside {
   position: relative;
   z-index: 1;
   border-top: 1px solid var(--line);
-  padding: 88px 40px 96px calc(var(--g3) + 40px);
+  padding: 88px 40px 96px calc(var(--gutter-wide) + 40px);
 }
 
 .vt {
   position: absolute;
   top: 24px;
-  left: calc(var(--g2) + 12px);
+  left: calc(var(--gutter-narrow) + 12px);
   writing-mode: vertical-rl;
-  font: 500 11px var(--m);
+  font: 500 11px var(--font-mono);
   letter-spacing: 0.22em;
   text-transform: uppercase;
   color: var(--dim);
 }
 
 h2 {
-  font: 400 clamp(40px, calc(var(--cw) * 0.075), 104px) / 1 var(--d);
+  font: 400 clamp(40px, calc(var(--content-width) * 0.075), 104px) / 1 var(--font-display);
   text-transform: uppercase;
   letter-spacing: -0.025em;
 }
@@ -510,7 +506,7 @@ h2 {
   display: inline-block;
   border-bottom: 1px solid var(--line);
   padding-bottom: 5px;
-  font: 500 11px var(--m);
+  font: 500 11px var(--font-mono);
   letter-spacing: 0.16em;
   text-transform: uppercase;
   color: var(--dim);
@@ -545,12 +541,12 @@ h2 {
 .bx .mt {
   display: flex;
   justify-content: space-between;
-  font: 500 10px var(--m);
+  font: 500 10px var(--font-mono);
   letter-spacing: 0.16em;
 }
 
 .bx h3 {
-  font: 500 22px/1.1 var(--d);
+  font: 500 22px/1.1 var(--font-display);
   text-transform: uppercase;
   letter-spacing: 0.02em;
 }
@@ -570,7 +566,7 @@ h2 {
 .big {
   flex: 1;
   margin-top: auto;
-  font: 400 clamp(90px, calc(var(--cw) * 0.15), 220px) / 0.85 var(--d);
+  font: 400 clamp(90px, calc(var(--content-width) * 0.15), 220px) / 0.85 var(--font-display);
   -webkit-text-stroke: 1px currentColor;
   color: transparent;
   display: flex;
@@ -590,7 +586,7 @@ h2 {
 .lk {
   display: flex;
   gap: 16px;
-  font: 500 11px var(--m);
+  font: 500 11px var(--font-mono);
   letter-spacing: 0.12em;
   text-transform: uppercase;
 }
@@ -648,13 +644,13 @@ h2 {
 }
 
 .af .n {
-  font: 400 40px/1 var(--d);
+  font: 400 40px/1 var(--font-display);
   -webkit-text-stroke: 1px currentColor;
   color: transparent;
 }
 
 .af h3 {
-  font: 500 24px/1.1 var(--d);
+  font: 500 24px/1.1 var(--font-display);
   text-transform: uppercase;
 }
 
@@ -679,7 +675,7 @@ h2 {
   gap: 12px;
   flex-wrap: wrap;
   margin-bottom: 16px;
-  font: 500 11px var(--m);
+  font: 500 11px var(--font-mono);
   letter-spacing: 0.1em;
   text-transform: uppercase;
 }
@@ -703,7 +699,7 @@ h2 {
 }
 
 .gm span {
-  font: 500 9px var(--m);
+  font: 500 9px var(--font-mono);
   color: var(--dim);
   text-transform: uppercase;
   white-space: nowrap;
@@ -722,7 +718,7 @@ h2 {
 }
 
 .gd span {
-  font: 500 9px/12px var(--m);
+  font: 500 9px/12px var(--font-mono);
   color: var(--dim);
   text-transform: uppercase;
 }
@@ -738,7 +734,7 @@ h2 {
 .c {
   width: 12px;
   height: 12px;
-  background: var(--tr);
+  background: var(--track-color);
 }
 
 .c.l1,
@@ -783,7 +779,7 @@ h2 {
   pointer-events: none;
   background: var(--ink);
   color: var(--bg);
-  font: 700 10px var(--m);
+  font: 700 10px var(--font-mono);
   padding: 6px 10px;
   white-space: nowrap;
   display: none;
@@ -812,7 +808,7 @@ h2 {
 }
 
 .sk h3 {
-  font: 500 18px/1.1 var(--d);
+  font: 500 18px/1.1 var(--font-display);
   text-transform: uppercase;
   letter-spacing: 0.02em;
 }
@@ -848,7 +844,7 @@ h2 {
 }
 
 .ex .y {
-  font: 500 12px var(--m);
+  font: 500 12px var(--font-mono);
   letter-spacing: 0.12em;
   color: var(--dim);
 }
@@ -858,7 +854,7 @@ h2 {
 }
 
 .ex h3 {
-  font: 500 22px/1.15 var(--d);
+  font: 500 22px/1.15 var(--font-display);
   text-transform: uppercase;
 }
 
@@ -894,12 +890,12 @@ h2 {
 
 /* Placeholder for a photo that has not been added yet */
 .av.ph {
-  background: var(--tr);
+  background: var(--track-color);
   border: 1px dashed var(--line);
 }
 
 .rc h3 {
-  font: 500 20px/1.15 var(--d);
+  font: 500 20px/1.15 var(--font-display);
   text-transform: uppercase;
 }
 
@@ -918,7 +914,7 @@ h2 {
 .rc blockquote::before {
   content: '\201C';
   display: block;
-  font: 400 40px/0.6 var(--d);
+  font: 400 40px/0.6 var(--font-display);
   color: var(--dim);
   margin-bottom: 6px;
 }
@@ -947,12 +943,12 @@ h2 {
   padding: 18px 16px;
   margin: 0 -16px;
   width: calc(100% + 32px);
-  font: 400 clamp(28px, calc(var(--cw) * 0.054), 72px) / 1.05 var(--d);
+  font: 400 clamp(28px, calc(var(--content-width) * 0.054), 72px) / 1.05 var(--font-display);
   text-transform: uppercase;
 }
 
 .so span {
-  font: 500 11px var(--m);
+  font: 500 11px var(--font-mono);
   letter-spacing: 0.12em;
   text-transform: none;
 }
@@ -975,7 +971,7 @@ h2 {
 }
 
 .cta h3 {
-  font: 500 clamp(22px, calc(var(--cw) * 0.03), 34px) / 1.1 var(--d);
+  font: 500 clamp(22px, calc(var(--content-width) * 0.03), 34px) / 1.1 var(--font-display);
   text-transform: uppercase;
   margin-bottom: 6px;
 }
@@ -992,12 +988,12 @@ footer {
   position: relative;
   z-index: 1;
   border-top: 1px solid var(--line);
-  padding: 24px 40px 32px calc(var(--g3) + 40px);
+  padding: 24px 40px 32px calc(var(--gutter-wide) + 40px);
   display: flex;
   justify-content: space-between;
   flex-wrap: wrap;
   gap: 12px;
-  font: 500 10px var(--m);
+  font: 500 10px var(--font-mono);
   letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--dim);
@@ -1056,13 +1052,115 @@ footer {
 }
 
 /* ==========================================================================
+   Theme pixel-dissolve transition
+   A grid of squares sweeps in, the theme swaps underneath, then the squares
+   clear away. steps() easing keeps every square snapping on whole pixels.
+   ========================================================================== */
+#px {
+  position: fixed;
+  inset: 0;
+  z-index: 70;
+  pointer-events: none;
+  display: none;
+}
+
+#px.run {
+  display: block;
+}
+
+#px i {
+  position: absolute;
+  display: block;
+  width: var(--px-size, 34px);
+  height: var(--px-size, 34px);
+  background: var(--ink);
+  opacity: 0;
+}
+
+#px i.glitch {
+  background: var(--blue);
+  box-shadow: 0 0 12px rgba(54, 82, 255, 0.85);
+}
+
+/* Incoming sweep: squares snap up one after another. */
+#px.run.in i {
+  animation: px-in var(--px-dur, 160ms) steps(2, end) var(--px-delay, 0ms) forwards;
+}
+
+/* Outgoing sweep uses its own reversed delay, so the new theme is revealed
+   bottom-right first rather than replaying the same order. */
+#px.run.out i {
+  animation: px-out 150ms steps(2, end) var(--px-out-delay, 0ms) forwards;
+}
+
+@keyframes px-in {
+  from {
+    opacity: 0;
+    transform: scale(0.2);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes px-out {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.2);
+  }
+}
+
+/* The scanline band that races across during the swap. Kept short so it has
+   fully finished before the .in class is removed and the reveal begins. */
+#px::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 140px;
+  background: linear-gradient(
+    to bottom,
+    rgba(54, 82, 255, 0) 0%,
+    rgba(54, 82, 255, 0.35) 45%,
+    rgba(54, 82, 255, 0.7) 50%,
+    rgba(54, 82, 255, 0.35) 55%,
+    rgba(54, 82, 255, 0) 100%
+  );
+  mix-blend-mode: screen;
+  opacity: 0;
+}
+
+#px.run.in::after {
+  animation: px-scan 220ms linear 40ms forwards;
+}
+
+@keyframes px-scan {
+  from {
+    opacity: 0;
+    transform: translateY(-160px);
+  }
+  40% {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+    transform: translateY(100vh);
+  }
+}
+
+/* ==========================================================================
    Responsive (<= 900px)
    ========================================================================== */
 @media (max-width: 900px) {
   :root {
-    --g2: 0px;
-    --g3: 16px;
-    --sb: 0px;
+    --gutter-narrow: 0px;
+    --gutter-wide: 16px;
+    --sidebar-width: 0px;
   }
 
   .v2 {
@@ -1139,10 +1237,6 @@ footer {
     height: calc(100% - 56px);
   }
 
-  .top {
-    padding: 32px 20px 0 32px;
-  }
-
   .bot {
     padding-left: 20px;
   }
@@ -1184,10 +1278,5 @@ footer {
 
   .af > :nth-child(n + 3) {
     grid-column: 2;
-  }
-
-  .rp {
-    flex-direction: column;
-    gap: 4px;
   }
 }

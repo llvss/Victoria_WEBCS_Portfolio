@@ -1,346 +1,129 @@
 /* ==========================================================================
    Helpers
    ========================================================================== */
-const $ = (s, r = document) => r.querySelector(s);
-const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+const query = (selector, root = document) => root.querySelector(selector);
+const queryAll = (selector, root = document) => [...root.querySelectorAll(selector)];
 const GITHUB_USER = 'llvss';
-const GITHUB_PROFILE = `https://github.com/${GITHUB_USER}`;
 
-const esc = (s) =>
-  String(s).replace(/[&<>"']/g, (c) => ({
-    '&': '&amp;',
-    '<': '&lt;',
-    '>': '&gt;',
-    '"': '&quot;',
-    "'": '&#39;',
-  }[c]));
+const THEME_STORAGE_KEY = 'lv-theme';
+const MUTED_STORAGE_KEY = 'lv-muted';
+const CLICK_SFX_SRC = '/public/sfx/button-click.mp3';
+const CLICK_SFX_VOL = 0.3;
+const CLICK_SFX_GAP = 40; // ms — stops machine-gunning on rapid repeat clicks
+const HOVER_SFX_SRC = '/public/sfx/button-hover.mp3';
+const HOVER_SFX_VOL = 0.35;
+const HOVER_SFX_GAP = 60; // ms — stops machine-gunning when sweeping across a row
 
-/* ==========================================================================
-   DATA — edit these (img: '' shows the outlined number)
-   ========================================================================== */
-const PROJECTS = [
-  {
-    t: 'Project One',
-    year: '2025',
-    img: '',
-    d: 'Full-stack web app with a REST API, authentication and a responsive admin dashboard.',
-    tags: ['React', 'Node.js', 'PostgreSQL'],
-    href: '#',
-    repo: '#',
-  },
-  {
-    t: 'Project Two',
-    year: '2025',
-    img: '',
-    d: 'UI/UX case study: user research, wireframes and a tested interactive prototype.',
-    tags: ['Figma', 'UX Research'],
-    href: '#',
-    repo: '#',
-  },
-  {
-    t: 'Project Three',
-    year: '2024',
-    img: '',
-    d: 'Algorithms and data-structure toolkit for a programming course, fully unit tested.',
-    tags: ['TypeScript', 'Vitest'],
-    href: '#',
-    repo: '#',
-  },
-  {
-    t: 'Project Four',
-    year: '2024',
-    img: '',
-    d: 'Hackathon build: a working demo shipped in a single weekend with a small team.',
-    tags: ['Hackathon', 'API'],
-    href: '#',
-    repo: '#',
-  },
-];
-
-const AFFS = [
-  {
-    n: 'Organization One',
-    r: 'Member — Web Development Committee',
-    y: '2025 — Now',
-    d: 'Building and maintaining internal web tools, reviewing pull requests and running onboarding sessions.',
-  },
-  {
-    n: 'Organization Two',
-    r: 'Member — IT Student Society',
-    y: '2024 — Now',
-    d: 'Helping organise tech talks, study groups and the annual campus coding challenge.',
-  },
-  {
-    n: 'Organization Three',
-    r: 'Participant — Hackathon Community',
-    y: '2025',
-    d: 'Teaming up for weekend builds, shipping prototypes and demoing under time pressure.',
-  },
-];
-
-const SOCIALS = [
-  { n: 'GitHub', u: GITHUB_PROFILE, h: '@llvss' },
-  { n: 'LinkedIn', u: 'https://www.linkedin.com/', h: 'in/username' },
-  { n: 'Instagram', u: 'https://www.instagram.com/', h: '@username' },
-  { n: 'Email', copy: 'hello@lovenvictoria.dev', h: 'Copy address ⧉' },
-];
-
-const EXPERIENCE = [
-  {
-    y: '2026 — Now',
-    r: 'Fullstack Developer (Intern)',
-    w: 'Tech Company — Manila, PH',
-    d: 'Building and shipping features end to end, from database schema to the interface, inside an agile team.',
-  },
-  {
-    y: '2025 — 2026',
-    r: 'Web Development Lead',
-    w: 'University Org — Manila, PH',
-    d: 'Led a small team building internal web tools, ran code reviews and onboarded new members.',
-  },
-  {
-    y: '2024 — 2025',
-    r: 'Frontend Developer (Part-time)',
-    w: 'Freelance / Remote',
-    d: 'Delivered client sites and dashboards, from wireframes through deployment and handoff.',
-  },
-];
-
-const RECOMMENDATIONS = [
-  {
-    img: '',
-    n: 'Alex Rivera',
-    r: 'Engineering Manager, Tech Company',
-    q: 'Reliable end to end. Takes a vague requirement and turns it into something shipped, tested and easy for the rest of the team to maintain.',
-  },
-  {
-    img: '',
-    n: 'Jamie Cruz',
-    r: 'Team Lead, University Org',
-    q: 'The person everyone asks when a project needs rescuing. Calm under deadline pressure and genuinely good at breaking work down.',
-  },
-  {
-    img: '',
-    n: 'Sam Patel',
-    r: 'Product Designer, Freelance',
-    q: 'Understands design intent properly and pushes back with better ideas. Our cleanest handover of any collaborator so far.',
-  },
-];
-
-const STACKS = [
-  {
-    n: 'Frontend',
-    d: 'Interfaces, component systems and design tokens.',
-    t: ['TypeScript', 'React', 'Next.js', 'CSS', 'Tailwind'],
-  },
-  {
-    n: 'Backend',
-    d: 'APIs, data modelling and auth.',
-    t: ['Node.js', 'Express', 'PostgreSQL', 'Prisma', 'REST'],
-  },
-  {
-    n: 'Tooling',
-    d: 'Build, test and ship workflow.',
-    t: ['Git', 'Vite', 'Vitest', 'Docker', 'CI/CD'],
-  },
-  {
-    n: 'Practices',
-    d: 'How the work gets planned and reviewed.',
-    t: ['Agile', 'Code Review', 'Testing', 'Accessibility'],
-  },
-];
-
-/* ==========================================================================
-   RENDER
-   ========================================================================== */
-function box(p, i, c) {
-  const media = p.img
-    ? `<img src="${esc(p.img)}" alt="${esc(p.t)} screenshot" loading="lazy">`
-    : `<div class="big">0${i + 1}</div>`;
-
-  return `
-    <article class="bx ${c}">
-      <div class="mt"><span>0${i + 1}</span><span>${p.year}</span></div>
-      ${media}
-      <h3>${p.t}</h3>
-      <p>${p.d}</p>
-      <div class="tg">${p.tags.map((t) => `<span class="tag">${t}</span>`).join('')}</div>
-      <div class="lk">
-        <a href="${p.href}" data-c>Live ↗</a>
-        <a href="${p.repo}" data-c>Code ↗</a>
-      </div>
-    </article>`;
-}
-
-function renderAll() {
-  const P = PROJECTS;
-
-  $('#pg').innerHTML = `
-    <div class="bento">
-      ${box(P[0], 0, 'lg2')}
-      <div class="col">
-        ${box(P[1], 1, '')}
-        <div class="pair">
-          ${box(P[2], 2, 'sm')}
-          ${box(P[3], 3, 'sm')}
-        </div>
-      </div>
-    </div>`;
-
-  $('#al').innerHTML = AFFS.map(
-    (a, i) => `
-    <article class="af">
-      <span class="n">0${i + 1}</span>
-      <div><h3>${a.n}</h3><p class="dm">${a.r}</p></div>
-      <p class="dm">${a.d}</p>
-      <span class="tag">${a.y}</span>
-    </article>`
-  ).join('');
-
-  $('#sl').innerHTML = SOCIALS.map((s) =>
-    s.copy
-      ? `<button class="so" data-email="${s.copy}" data-c>${s.n}<span>${s.h}</span></button>`
-      : `<a class="so" href="${s.u}" target="_blank" rel="noopener" data-c>${s.n}<span>${s.h} ↗</span></a>`
-  ).join('');
-
-  $('#ts').innerHTML = STACKS.map(
-    (s) => `
-    <div class="sk">
-      <div class="hd"><h3>${esc(s.n)}</h3><p class="dm">${esc(s.d)}</p></div>
-      <div class="tg">${s.t.map((t) => `<span class="tag">${esc(t)}</span>`).join('')}</div>
-    </div>`
-  ).join('');
-
-  $('#ex').innerHTML = EXPERIENCE.map(
-    (e) => `
-    <article class="ex">
-      <span class="y">${esc(e.y)}</span>
-      <div>
-        <h3>${esc(e.r)}</h3>
-        <p class="dm">${esc(e.w)}</p>
-      </div>
-      <p class="dm">${esc(e.d)}</p>
-    </article>`
-  ).join('');
-
-  $('#rc').innerHTML = RECOMMENDATIONS.map(
-    (r) => `
-    <article class="rc">
-      ${
-        r.img
-          ? `<img class="av" src="${esc(r.img)}" alt="${esc(r.n)}" loading="lazy">`
-          : '<div class="av ph" aria-hidden="true"></div>'
-      }
-      <h3>${esc(r.n)}</h3>
-      <p class="dm">${esc(r.r)}</p>
-      <blockquote>${esc(r.q)}</blockquote>
-    </article>`
-  ).join('');
-}
+// Anything that should react to click and hover feedback.
+const CLICKABLE_SELECTOR = 'button,[data-c],.bx,.af,.so';
+const HOVER_SFX_SELECTOR = CLICKABLE_SELECTOR;
 
 /* ==========================================================================
    GITHUB CONTRIBUTION GRAPH
    ========================================================================== */
 function renderGraph(contributions, total, publicRepos) {
-  const W = 53;
-  const M = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  const WEEKS = 53;
+  const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
   const byDate = new Map(contributions.map((day) => [day.date, day]));
 
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
-  const st = new Date(today);
-  st.setDate(st.getDate() - (W * 7 - 1));
-  st.setDate(st.getDate() - st.getDay());
+  // Start of the grid: WEEKS*7 days back, rewound to the previous Sunday.
+  const gridStart = new Date(today);
+  gridStart.setDate(gridStart.getDate() - (WEEKS * 7 - 1));
+  gridStart.setDate(gridStart.getDate() - gridStart.getDay());
 
-  let h = '';
-  let mh = '';
-  let tot = 0;
-  let lm = -1;
-  const days = [];
+  let cells = '';
+  let monthLabels = '';
+  let contributionsTotal = 0;
+  let lastMonthIndex = -1;
+  const dailyCounts = [];
 
-  for (let w = 0; w < W; w++) {
-    const wk = new Date(st);
-    wk.setDate(st.getDate() + w * 7);
-    mh += `<span>${wk.getMonth() !== lm ? M[wk.getMonth()] : ''}</span>`;
-    lm = wk.getMonth();
+  for (let week = 0; week < WEEKS; week++) {
+    const weekStart = new Date(gridStart);
+    weekStart.setDate(gridStart.getDate() + week * 7);
+    monthLabels += `<span>${
+      weekStart.getMonth() !== lastMonthIndex ? MONTHS[weekStart.getMonth()] : ''
+    }</span>`;
+    lastMonthIndex = weekStart.getMonth();
 
-    for (let d = 0; d < 7; d++) {
-      const dt = new Date(st);
-      dt.setDate(st.getDate() + w * 7 + d);
+    for (let dayOfWeek = 0; dayOfWeek < 7; dayOfWeek++) {
+      const dayDate = new Date(gridStart);
+      dayDate.setDate(gridStart.getDate() + week * 7 + dayOfWeek);
 
-      if (dt > today) {
-        h += '<i class="c e"></i>';
+      if (dayDate > today) {
+        cells += '<i class="c e"></i>';
         continue;
       }
 
-      const key = [
-        dt.getFullYear(),
-        String(dt.getMonth() + 1).padStart(2, '0'),
-        String(dt.getDate()).padStart(2, '0'),
+      const dateKey = [
+        dayDate.getFullYear(),
+        String(dayDate.getMonth() + 1).padStart(2, '0'),
+        String(dayDate.getDate()).padStart(2, '0'),
       ].join('-');
-      const entry = byDate.get(key);
-      const n = entry ? entry.count : 0;
-      const l = entry ? entry.level : 0;
-      tot += n;
-      days.push(n);
+      const entry = byDate.get(dateKey);
+      const count = entry ? entry.count : 0;
+      const level = entry ? entry.level : 0;
+      contributionsTotal += count;
+      dailyCounts.push(count);
 
-      const label = dt.toLocaleDateString('en-US', {
+      const label = dayDate.toLocaleDateString('en-US', {
         month: 'short',
         day: 'numeric',
         year: 'numeric',
       });
-      h += `<i class="c l${l}" data-n="${n}" data-d="${label}"></i>`;
+      cells += `<i class="c l${level}" data-n="${count}" data-d="${label}"></i>`;
     }
   }
 
-  $('#gc').innerHTML = h;
-  $('#gm').innerHTML = mh;
+  query('#gc').innerHTML = cells;
+  query('#gm').innerHTML = monthLabels;
 
   // Streaks
-  let run = 0;
-  let lg = 0;
-  let cur = 0;
-  days.forEach((n) => {
-    if (n > 0) {
-      run++;
-      lg = Math.max(lg, run);
+  let runningStreak = 0;
+  let longestStreak = 0;
+  let currentStreak = 0;
+  dailyCounts.forEach((count) => {
+    if (count > 0) {
+      runningStreak++;
+      longestStreak = Math.max(longestStreak, runningStreak);
     } else {
-      run = 0;
+      runningStreak = 0;
     }
   });
-  for (let i = days.length - 1; i >= 0 && days[i] > 0; i--) cur++;
+  for (let day = dailyCounts.length - 1; day >= 0 && dailyCounts[day] > 0; day--) currentStreak++;
 
-  $('#gt').textContent = total.toLocaleString() + ' in the last year';
-  $('#gst').innerHTML = [
+  query('#gt').textContent = total.toLocaleString() + ' in the last year';
+  query('#gst').innerHTML = [
     [total.toLocaleString(), 'Contributions'],
-    [cur, 'Current streak'],
-    [lg, 'Longest streak'],
+    [currentStreak, 'Current streak'],
+    [longestStreak, 'Longest streak'],
     [publicRepos, 'Public repos'],
   ]
-    .map((a) => `<div class="stat"><b>${a[0]}</b><span>${a[1]}</span></div>`)
+    .map(([value, caption]) => `<div class="stat"><b>${value}</b><span>${caption}</span></div>`)
     .join('');
 
   // Tooltip
-  const tip = $('#tip');
-  const gc = $('#gc');
+  const tip = query('#tip');
+  const graphGrid = query('#gc');
 
-  gc.addEventListener('pointerover', (e) => {
-    const c = e.target.closest('.c');
-    if (!c || !c.dataset.d) {
+  graphGrid.addEventListener('pointerover', (event) => {
+    const cell = event.target.closest('.c');
+    if (!cell || !cell.dataset.d) {
       tip.style.display = 'none';
       return;
     }
-    tip.textContent = `${c.dataset.n} contributions · ${c.dataset.d}`;
+    tip.textContent = `${cell.dataset.n} contributions · ${cell.dataset.d}`;
     tip.style.display = 'block';
   });
 
-  gc.addEventListener('pointermove', (e) => {
-    tip.style.left = e.clientX + 'px';
-    tip.style.top = e.clientY + 'px';
+  graphGrid.addEventListener('pointermove', (event) => {
+    tip.style.left = event.clientX + 'px';
+    tip.style.top = event.clientY + 'px';
   });
 
-  gc.addEventListener('pointerleave', () => (tip.style.display = 'none'));
+  graphGrid.addEventListener('pointerleave', () => (tip.style.display = 'none'));
 }
 
 async function graph() {
@@ -365,66 +148,72 @@ async function graph() {
       userData.public_repos
     );
   } catch (error) {
-    $('#gt').textContent = 'unavailable';
+    query('#gt').textContent = 'unavailable';
   }
 }
 
 /* ==========================================================================
    DITHERED ART — the object turns as you move the cursor
    ========================================================================== */
-const BAY = [0, 8, 2, 10, 12, 4, 14, 6, 3, 11, 1, 9, 15, 7, 13, 5].map((v) => (v + 0.5) / 16);
+/* 4x4 ordered-dither threshold matrix, normalised to 0..1 */
+const BAYER_THRESHOLDS = [0, 8, 2, 10, 12, 4, 14, 6, 3, 11, 1, 9, 15, 7, 13, 5].map(
+  (value) => (value + 0.5) / 16
+);
 
-let DW = 0;
-let DH = 0;
-let ang = 0.42;
-const S = 5;
-const cv = $('#dz');
-const cx = cv.getContext('2d');
+let gridWidth = 0;
+let gridHeight = 0;
+let angle = 0.42;
+const PIXEL_SIZE = 5;
+const canvas = query('#dz');
+const context = canvas.getContext('2d');
 
 function fit() {
-  DW = Math.ceil(cv.clientWidth / S);
-  DH = Math.ceil(cv.clientHeight / S);
-  cv.width = DW * S;
-  cv.height = DH * S;
+  gridWidth = Math.ceil(canvas.clientWidth / PIXEL_SIZE);
+  gridHeight = Math.ceil(canvas.clientHeight / PIXEL_SIZE);
+  canvas.width = gridWidth * PIXEL_SIZE;
+  canvas.height = gridHeight * PIXEL_SIZE;
   draw();
 }
 
 function draw() {
-  cx.clearRect(0, 0, cv.width, cv.height);
-  cx.fillStyle = getComputedStyle(document.body).getPropertyValue('--ink').trim();
-  cx.globalAlpha = 0.3;
+  context.clearRect(0, 0, canvas.width, canvas.height);
+  context.fillStyle = getComputedStyle(document.body).getPropertyValue('--ink').trim();
+  context.globalAlpha = 0.3;
 
-  const co = Math.cos(ang);
-  const si = Math.sin(ang);
+  const cosAngle = Math.cos(angle);
+  const sinAngle = Math.sin(angle);
 
-  for (let y = 0; y < DH; y++) {
-    for (let x = 0; x < DW; x++) {
-      const a = (x - DW * 0.62) / DH;
-      const b = (y - DH * 0.5) / DH;
-      const u = a * co + b * si;
-      const v = -a * si + b * co;
-      let val = 0;
+  for (let row = 0; row < gridHeight; row++) {
+    for (let column = 0; column < gridWidth; column++) {
+      // Rotate into the object's local space, then apply the silhouette rules.
+      const localX = (column - gridWidth * 0.62) / gridHeight;
+      const localY = (row - gridHeight * 0.5) / gridHeight;
+      const rotatedX = localX * cosAngle + localY * sinAngle;
+      const rotatedY = -localX * sinAngle + localY * cosAngle;
+      let shade = 0;
 
-      if (Math.abs(u) < 0.06 && Math.abs(v) < 0.7) val = 0.55;
-      if (Math.abs(u) < 0.3 && v > -0.05 && v < 0.3) val = 0.8;
-      if (Math.abs(u) < 0.22 && v > 0.03 && v < 0.22) val = 0.28;
-      if (Math.abs(u + 0.03) < 0.17 && v > -0.32 && v < -0.14) val = 0.65;
-      if (Math.abs(u - 0.13) < 0.04 && v > 0.3 && v < 0.6) val = 0.7;
+      if (Math.abs(rotatedX) < 0.06 && Math.abs(rotatedY) < 0.7) shade = 0.55;
+      if (Math.abs(rotatedX) < 0.3 && rotatedY > -0.05 && rotatedY < 0.3) shade = 0.8;
+      if (Math.abs(rotatedX) < 0.22 && rotatedY > 0.03 && rotatedY < 0.22) shade = 0.28;
+      if (Math.abs(rotatedX + 0.03) < 0.17 && rotatedY > -0.32 && rotatedY < -0.14) shade = 0.65;
+      if (Math.abs(rotatedX - 0.13) < 0.04 && rotatedY > 0.3 && rotatedY < 0.6) shade = 0.7;
 
-      val *= 0.6 + 0.4 * (0.5 - u);
+      shade *= 0.6 + 0.4 * (0.5 - rotatedX);
 
-      if (val > BAY[(y & 3) * 4 + (x & 3)]) cx.fillRect(x * S, y * S, S, S);
+      if (shade > BAYER_THRESHOLDS[(row & 3) * 4 + (column & 3)]) {
+        context.fillRect(column * PIXEL_SIZE, row * PIXEL_SIZE, PIXEL_SIZE, PIXEL_SIZE);
+      }
     }
   }
 }
 
-let pend = false;
-function turn(mx, my) {
-  ang = 0.42 + (mx / innerWidth - 0.5) * 1.3 - (my / innerHeight - 0.5) * 0.4;
-  if (!pend) {
-    pend = true;
+let drawQueued = false;
+function turn(pointerX, pointerY) {
+  angle = 0.42 + (pointerX / innerWidth - 0.5) * 1.3 - (pointerY / innerHeight - 0.5) * 0.4;
+  if (!drawQueued) {
+    drawQueued = true;
     requestAnimationFrame(() => {
-      pend = false;
+      drawQueued = false;
       draw();
     });
   }
@@ -433,21 +222,23 @@ function turn(mx, my) {
 /* ==========================================================================
    CURSOR GUIDES
    ========================================================================== */
-const fine = matchMedia('(hover:hover) and (pointer:fine)').matches;
+const finePointer = matchMedia('(hover:hover) and (pointer:fine)').matches;
 
-if (fine) {
+if (finePointer) {
   addEventListener(
     'pointermove',
-    (e) => {
-      const gx = $('#gx');
-      const gy = $('#gy');
-      const ro = $('#ro');
+    (event) => {
+      const guideVertical = query('#gx');
+      const guideHorizontal = query('#gy');
+      const readout = query('#ro');
 
-      gx.style.display = gy.style.display = ro.style.display = 'block';
-      gx.style.top = e.clientY + 'px';
-      gy.style.left = e.clientX + 'px';
-      ro.textContent = `X ${String(e.clientX).padStart(4, '0')} · Y ${String(e.clientY).padStart(4, '0')}`;
-      turn(e.clientX, e.clientY);
+      guideVertical.style.display = guideHorizontal.style.display = readout.style.display = 'block';
+      guideVertical.style.top = event.clientY + 'px';
+      guideHorizontal.style.left = event.clientX + 'px';
+      readout.textContent = `X ${String(event.clientX).padStart(4, '0')} · Y ${String(
+        event.clientY
+      ).padStart(4, '0')}`;
+      turn(event.clientX, event.clientY);
     },
     { passive: true }
   );
@@ -457,45 +248,57 @@ if (fine) {
    NAV STATE (scroll spy + progress rail)
    ========================================================================== */
 function spy() {
-  const ids = ['home', 'projects', 'experience', 'affiliations', 'github', 'recommendations', 'socials'];
-  const ln = ids.map((i) => [i, $(`nav a[href="#${i}"]`)]);
-  const rail = $('#rail');
-  let t = false;
+  const sectionIds = [
+    'home',
+    'projects',
+    'experience',
+    'affiliations',
+    'github',
+    'recommendations',
+    'socials',
+  ];
+  const navLinks = sectionIds.map((sectionId) => [sectionId, query(`nav a[href="#${sectionId}"]`)]);
+  const rail = query('#rail');
+  let updateQueued = false;
 
-  const up = () => {
-    t = false;
-    const pr = scrollY + innerHeight * 0.4;
-    let a = ids[0];
+  const update = () => {
+    updateQueued = false;
+    const probe = scrollY + innerHeight * 0.4;
+    let activeId = sectionIds[0];
 
-    for (const i of ids) {
-      const el = document.getElementById(i);
-      if (el && el.offsetTop <= pr) a = i;
+    for (const sectionId of sectionIds) {
+      const section = document.getElementById(sectionId);
+      if (section && section.offsetTop <= probe) activeId = sectionId;
     }
 
-    if (innerHeight + scrollY >= document.body.scrollHeight - 4) a = ids[ids.length - 1];
+    // Snap to the last section once the page is scrolled to the very bottom,
+    // otherwise short final sections can never win the probe above.
+    if (innerHeight + scrollY >= document.body.scrollHeight - 4) {
+      activeId = sectionIds[sectionIds.length - 1];
+    }
 
-    ln.forEach(([i, el]) => el && el.classList.toggle('on', i === a));
+    navLinks.forEach(([sectionId, link]) => link && link.classList.toggle('on', sectionId === activeId));
 
-    const m = document.body.scrollHeight - innerHeight;
-    rail.style.transform = 'scaleX(' + (m > 0 ? Math.min(1, scrollY / m) : 0) + ')';
+    const maxScroll = document.body.scrollHeight - innerHeight;
+    rail.style.transform = 'scaleX(' + (maxScroll > 0 ? Math.min(1, scrollY / maxScroll) : 0) + ')';
   };
 
-  const f = () => {
-    if (!t) {
-      t = true;
-      requestAnimationFrame(up);
+  const scheduleUpdate = () => {
+    if (!updateQueued) {
+      updateQueued = true;
+      requestAnimationFrame(update);
     }
   };
 
-  addEventListener('scroll', f, { passive: true });
-  addEventListener('resize', f, { passive: true });
-  up();
+  addEventListener('scroll', scheduleUpdate, { passive: true });
+  addEventListener('resize', scheduleUpdate, { passive: true });
+  update();
 }
 
 /* ==========================================================================
    THEME
    ========================================================================== */
-const icons = {
+const THEME_ICONS = {
   soundOn: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19 5a10 10 0 0 1 0 14"/></svg>',
   soundOff: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="m23 9-6 6"/><path d="m17 9 6 6"/></svg>',
   system: '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="12" rx="1"/><path d="M8 20h8"/><path d="M12 16v4"/></svg>',
@@ -506,104 +309,209 @@ const icons = {
 const systemTheme = matchMedia('(prefers-color-scheme: dark)');
 let theme = 'system';
 try {
-  theme = localStorage.getItem('lv-theme') || 'system';
-} catch (_) {}
+  theme = localStorage.getItem(THEME_STORAGE_KEY) || 'system';
+} catch (error) {}
 
-function setTheme(t) {
-  theme = t;
+/* ==========================================================================
+   THEME PIXEL TRANSITION
+   A grid of squares wipes in, the theme is swapped while the screen is
+   covered, then the squares clear to reveal the new theme.
+   ========================================================================== */
+const PX_CELL = 34; // px, per square
+const PX_GLITCH_RATE = 0.12; // share of squares that render in the accent colour
+const PX_COVER_SPREAD = 200; // ms, wave spread while covering
+const PX_COVER_DUR_MIN = 120;
+const PX_COVER_DUR_MAX = 180;
+const PX_REVEAL_SPREAD = 170; // ms, wave spread while revealing
+const PX_REVEAL_DUR = 150;
+const PX_HOLD = 40; // ms, full-cover pause so the swap itself is never seen
+
+// Derived from the constants above, so the timers can never drift out of sync
+// with the per-square animation values.
+const PX_COVERED_AT = PX_COVER_SPREAD + PX_COVER_DUR_MAX + PX_HOLD;
+const PX_REVEALED_AT = PX_COVERED_AT + PX_REVEAL_SPREAD + PX_REVEAL_DUR;
+
+const prefersReducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+let pxTimerSwap = null;
+let pxTimerClean = null;
+let pxRunning = false;
+
+function buildPixelGrid() {
+  const overlay = query('#px');
+  if (!overlay) return null;
+
+  const columns = Math.ceil(innerWidth / PX_CELL) + 1;
+  const rows = Math.ceil(innerHeight / PX_CELL) + 1;
+
+  let markup = '';
+  for (let row = 0; row < rows; row++) {
+    for (let column = 0; column < columns; column++) {
+      // Diagonal wave from the top-left, so the wipe reads as a scan.
+      const wave = (column / columns + row / rows) / 2;
+      const inDelay = Math.round(wave * PX_COVER_SPREAD + Math.random() * 40);
+      const inDuration =
+        PX_COVER_DUR_MIN + Math.random() * (PX_COVER_DUR_MAX - PX_COVER_DUR_MIN);
+      // The reveal runs the wave backwards, so the new theme is uncovered
+      // bottom-right first.
+      const outDelay = Math.round((1 - wave) * PX_REVEAL_SPREAD + Math.random() * 40);
+      const glitch = Math.random() < PX_GLITCH_RATE;
+
+      markup +=
+        '<i style="left:' +
+        column * PX_CELL +
+        'px;top:' +
+        row * PX_CELL +
+        'px;--px-delay:' +
+        inDelay +
+        'ms;--px-dur:' +
+        Math.round(inDuration) +
+        'ms;--px-out-delay:' +
+        outDelay +
+        'ms">' +
+        (glitch ? ' class="glitch"' : '') +
+        '</i>';
+    }
+  }
+
+  overlay.innerHTML = markup;
+  overlay.style.setProperty('--px-size', PX_CELL + 'px');
+  return overlay;
+}
+
+function playPixelTransition(applyChange) {
+  const overlay = buildPixelGrid();
+  if (!overlay) {
+    applyChange();
+    return;
+  }
+
+  pxRunning = true;
+  overlay.classList.add('run', 'in');
+
+  // Swap only once every square has finished animating in, so the colour
+  // change is never partially visible.
+  pxTimerSwap = setTimeout(() => {
+    applyChange();
+    overlay.classList.remove('in');
+    // Force a reflow so the outgoing animation restarts cleanly.
+    void overlay.offsetWidth;
+    overlay.classList.add('out');
+  }, PX_COVERED_AT);
+
+  // Clean up only after the reveal has fully finished.
+  pxTimerClean = setTimeout(() => {
+    overlay.classList.remove('run', 'in', 'out');
+    overlay.innerHTML = '';
+    pxRunning = false;
+  }, PX_REVEALED_AT + 60);
+}
+
+function cancelPixelTransition() {
+  clearTimeout(pxTimerSwap);
+  clearTimeout(pxTimerClean);
+  const overlay = query('#px');
+  if (overlay) {
+    overlay.classList.remove('run', 'in', 'out');
+    overlay.innerHTML = '';
+  }
+  pxRunning = false;
+}
+
+function setTheme(nextTheme) {
+  const previousResolved = resolveTheme();
+  theme = nextTheme;
   try {
-    localStorage.setItem('lv-theme', t);
-  } catch (_) {}
-  syncTheme();
+    localStorage.setItem(THEME_STORAGE_KEY, nextTheme);
+  } catch (error) {}
+
+  const nextResolved = resolveTheme();
+
+  // Animate only when the visible theme actually changes. Re-picking the active
+  // option, or choosing 'system' while already on that resolved theme, is a
+  // no-op and should not flash the screen.
+  if (previousResolved === nextResolved || prefersReducedMotion) {
+    if (pxRunning) cancelPixelTransition();
+    syncTheme();
+    return;
+  }
+
+  playPixelTransition(syncTheme);
+}
+
+function resolveTheme() {
+  return theme === 'system' ? (systemTheme.matches ? 'dark' : 'light') : theme;
 }
 
 function syncTheme() {
-  const resolvedTheme = theme === 'system' ? (systemTheme.matches ? 'dark' : 'light') : theme;
+  const resolvedTheme = resolveTheme();
 
   document.documentElement.dataset.t = resolvedTheme;
 
   // Logo artwork is inverted per theme: the light-theme mark is dark-on-light,
   // so it only reads correctly on a light background (and vice versa).
-  const logo = $('.logo');
+  const logo = query('.logo');
   if (logo) {
-    const src = `/public/img/logo-${resolvedTheme}.png`;
-    if (logo.getAttribute('src') !== src) logo.setAttribute('src', src);
+    const source = `/public/img/logo-${resolvedTheme}.png`;
+    if (logo.getAttribute('src') !== source) logo.setAttribute('src', source);
   }
 
-  $$('.theme-option').forEach((button) => {
-    const active = button.dataset.theme === theme;
-    button.innerHTML = icons[button.dataset.theme];
-    button.classList.toggle('is-active', active);
-    button.setAttribute('aria-pressed', String(active));
+  queryAll('.theme-option').forEach((button) => {
+    const isActive = button.dataset.theme === theme;
+    button.innerHTML = THEME_ICONS[button.dataset.theme];
+    button.classList.toggle('is-active', isActive);
+    button.setAttribute('aria-pressed', String(isActive));
   });
   draw();
 }
 
-$$('.theme-option').forEach((button) => {
+queryAll('.theme-option').forEach((button) => {
   button.addEventListener('click', () => {
     setTheme(button.dataset.theme);
   });
 });
 
 systemTheme.addEventListener('change', () => {
-  if (theme === 'system') syncTheme();
+  if (theme !== 'system') return;
+  // The OS flipped while the user is on "system" — animate that too.
+  if (prefersReducedMotion || pxRunning) {
+    syncTheme();
+    return;
+  }
+  playPixelTransition(syncTheme);
 });
 
 /* ==========================================================================
-   CLACK SOUND
-   ========================================================================== */
-let actx = null;
+   CLICK SOUND
+   --------------------------------------------------------------------------
+   Preloaded audio clip, played from one delegated pointerdown listener.
+   Shares the `muted` flag, so the sound toggle silences it too. */
+const clickSfx = new Audio(CLICK_SFX_SRC);
+clickSfx.preload = 'auto';
+clickSfx.volume = CLICK_SFX_VOL;
+
 let muted = false;
 try {
-  muted = localStorage.getItem('lv-muted') === '1';
-} catch (_) {}
+  muted = localStorage.getItem(MUTED_STORAGE_KEY) === '1';
+} catch (error) {}
 
-function clack() {
+let lastClickAt = -Infinity;
+
+function playClickSound() {
   if (muted) return;
-
+  const now = performance.now();
+  // -Infinity (not 0) so the very first click is never swallowed by the gap
+  // check, even if it happens <40ms after page load.
+  if (now - lastClickAt < CLICK_SFX_GAP) return;
+  lastClickAt = now;
   try {
-    actx = actx || new (window.AudioContext || window.webkitAudioContext)();
-    if (actx.state === 'suspended') actx.resume();
-
-    const t = actx.currentTime;
-    const len = Math.floor(actx.sampleRate * 0.035);
-    const buf = actx.createBuffer(1, len, actx.sampleRate);
-    const d = buf.getChannelData(0);
-
-    for (let i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, 3.5);
-
-    // Noise burst
-    const s = actx.createBufferSource();
-    s.buffer = buf;
-
-    const bp = actx.createBiquadFilter();
-    bp.type = 'bandpass';
-    bp.frequency.value = 2200;
-    bp.Q.value = 1.1;
-
-    const g = actx.createGain();
-    g.gain.value = 0.26;
-
-    s.connect(bp).connect(g).connect(actx.destination);
-    s.start(t);
-
-    // Low thump
-    const o = actx.createOscillator();
-    const og = actx.createGain();
-    o.type = 'square';
-    o.frequency.setValueAtTime(160, t);
-    o.frequency.exponentialRampToValueAtTime(55, t + 0.05);
-    og.gain.setValueAtTime(0.1, t);
-    og.gain.exponentialRampToValueAtTime(0.0005, t + 0.06);
-
-    o.connect(og).connect(actx.destination);
-    o.start(t);
-    o.stop(t + 0.07);
-  } catch (_) {}
+    clickSfx.currentTime = 0;
+    clickSfx.play().catch(() => {});
+  } catch (error) {}
 }
 
-document.addEventListener('pointerdown', (e) => {
-  if (e.target.closest('button,[data-c],.bx,.af,.rp,.so')) clack();
+document.addEventListener('pointerdown', (event) => {
+  if (event.target.closest(CLICKABLE_SELECTOR)) playClickSound();
 });
 
 /* ==========================================================================
@@ -611,186 +519,197 @@ document.addEventListener('pointerdown', (e) => {
    -------------------------------------------------------------------------- */
 /* Every button (and the button-like elements that share their look) plays
    public/sfx/button-hover.mp3 on hover. Reuses the existing `muted` flag so
-   the #mu toggle silences hovers too. */
-const HOVER_SFX_SRC = '/public/sfx/button-hover.mp3';
-const HOVER_SFX_VOL = 0.35;
-const HOVER_SFX_GAP = 60; // ms — stops machine-gunning when sweeping across a row
-const HOVER_SEL = 'button,[data-c],.bx,.af,.rp,.so';
-
+   the sound toggle silences hovers too. */
 const hoverSfx = new Audio(HOVER_SFX_SRC);
 hoverSfx.preload = 'auto';
 hoverSfx.volume = HOVER_SFX_VOL;
 
-let hoverAt = 0;
+let lastHoverAt = -Infinity;
 
-function hoverPlay() {
+function playHoverSound() {
   if (muted) return;
   const now = performance.now();
-  if (now - hoverAt < HOVER_SFX_GAP) return;
-  hoverAt = now;
+  if (now - lastHoverAt < HOVER_SFX_GAP) return;
+  lastHoverAt = now;
   try {
     hoverSfx.currentTime = 0;
     hoverSfx.play().catch(() => {});
-  } catch (_) {}
+  } catch (error) {}
 }
 
-if (fine) {
+if (finePointer) {
   // pointerover bubbles (pointerenter does not), so one delegated listener
-  // covers every button, including ones rendered later by main.js.
+  // covers every button, including ones added to the page later.
   document.addEventListener(
     'pointerover',
-    (e) => {
-      if (e.pointerType === 'touch') return;
-      const el = e.target.closest(HOVER_SEL);
-      if (!el) return;
+    (event) => {
+      if (event.pointerType === 'touch') return;
+      const element = event.target.closest(HOVER_SFX_SELECTOR);
+      if (!element) return;
       // Ignore moves that stay inside the same button (e.g. onto a child span).
-      if (el.contains(e.relatedTarget)) return;
-      hoverPlay();
+      if (element.contains(event.relatedTarget)) return;
+      playHoverSound();
     },
     { passive: true }
   );
 
   // Keyboard users get the same feedback when tabbing to a button.
-  document.addEventListener('focusin', (e) => {
-    const el = e.target.closest(HOVER_SEL);
-    if (el && el.matches(':focus-visible')) hoverPlay();
+  document.addEventListener('focusin', (event) => {
+    const element = event.target.closest(HOVER_SFX_SELECTOR);
+    if (element && element.matches(':focus-visible')) playHoverSound();
   });
 
-  // Autoplay policies block audio until a gesture; unlock it silently so the
-  // very first hover is not swallowed.
-  const unlock = () => {
+  // Autoplay policies block audio until a gesture; unlock both clips silently
+  // so the very first hover/click is not swallowed.
+  const unlockAudio = () => {
     if (muted) return;
-    try {
-      const p = hoverSfx.play();
-      hoverSfx.pause();
-      hoverSfx.currentTime = 0;
-      if (p && p.catch) p.catch(() => {});
-    } catch (_) {}
+    for (const clip of [clickSfx, hoverSfx]) {
+      try {
+        const playRequest = clip.play();
+        clip.pause();
+        clip.currentTime = 0;
+        if (playRequest && playRequest.catch) playRequest.catch(() => {});
+      } catch (error) {}
+    }
   };
-  addEventListener('pointerdown', unlock, { once: true, passive: true });
-  addEventListener('keydown', unlock, { once: true, passive: true });
-  addEventListener('touchstart', unlock, { once: true, passive: true });
+  addEventListener('pointerdown', unlockAudio, { once: true, passive: true });
+  addEventListener('keydown', unlockAudio, { once: true, passive: true });
+  addEventListener('touchstart', unlockAudio, { once: true, passive: true });
 }
 
-const mu = $('#mu');
-const syncMu = () => {
-  mu.setAttribute('aria-pressed', String(muted));
-  mu.innerHTML = muted ? icons.soundOff : icons.soundOn;
+const soundToggle = query('#mu');
+const syncSoundToggle = () => {
+  soundToggle.setAttribute('aria-pressed', String(muted));
+  soundToggle.innerHTML = muted ? THEME_ICONS.soundOff : THEME_ICONS.soundOn;
   const label = muted ? 'Sound off' : 'Sound on';
-  mu.setAttribute('aria-label', label);
-  mu.title = label;
+  soundToggle.setAttribute('aria-label', label);
+  soundToggle.title = label;
 };
 
-mu.addEventListener('click', () => {
+soundToggle.addEventListener('click', () => {
   muted = !muted;
   try {
-    localStorage.setItem('lv-muted', muted ? '1' : '0');
-  } catch (_) {}
-  syncMu();
+    localStorage.setItem(MUTED_STORAGE_KEY, muted ? '1' : '0');
+  } catch (error) {}
+  syncSoundToggle();
 });
-syncMu();
+syncSoundToggle();
 
 /* ==========================================================================
    COPY EMAIL + TOAST
    ========================================================================== */
-let tt;
-function toast(m) {
-  const t = $('#toast');
-  t.textContent = m;
-  t.classList.add('show');
-  clearTimeout(tt);
-  tt = setTimeout(() => t.classList.remove('show'), 2200);
+let toastTimer;
+function toast(message) {
+  const element = query('#toast');
+  element.textContent = message;
+  element.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => element.classList.remove('show'), 2200);
 }
 
-document.addEventListener('click', async (e) => {
-  const b = e.target.closest('[data-email]');
+document.addEventListener('click', async (event) => {
+  const copyTrigger = event.target.closest('[data-email]');
 
-  if (b) {
-    const v = b.dataset.email;
+  if (copyTrigger) {
+    const emailAddress = copyTrigger.dataset.email;
     try {
-      await navigator.clipboard.writeText(v);
+      await navigator.clipboard.writeText(emailAddress);
       toast('Copied to clipboard!');
-    } catch (_) {
+    } catch (error) {
       // Fallback for browsers/contexts without the async clipboard API
-      const ta = document.createElement('textarea');
-      ta.value = v;
-      ta.style.cssText = 'position:fixed;opacity:0';
-      document.body.appendChild(ta);
-      ta.select();
+      const fallbackInput = document.createElement('textarea');
+      fallbackInput.value = emailAddress;
+      fallbackInput.style.cssText = 'position:fixed;opacity:0';
+      document.body.appendChild(fallbackInput);
+      fallbackInput.select();
       try {
         document.execCommand('copy');
         toast('Copied to clipboard!');
-      } catch (__) {
-        toast(v);
+      } catch (copyError) {
+        toast(emailAddress);
       }
-      ta.remove();
+      fallbackInput.remove();
     }
   }
 
-  if (e.target.closest('a[href="#"]')) e.preventDefault();
+  if (event.target.closest('a[href="#"]')) event.preventDefault();
 });
 
 /* ==========================================================================
    CURSOR GLOW + NAME LENS
    ========================================================================== */
 (function () {
-  if (!fine) return;
+  if (!finePointer) return;
 
-  const glow = $('#glow');
-  const lens = $('#lens');
-  const nm = $('.name');
-  const R = 95;
-  const rm = matchMedia('(prefers-reduced-motion:reduce)').matches;
+  const glow = query('#glow');
+  const lens = query('#lens');
+  const nameElement = query('.name');
+  const LENS_RADIUS = 95;
+  const reduceMotion = matchMedia('(prefers-reduced-motion:reduce)').matches;
 
-  let mx = 0, my = 0;
-  let gx = 0, gy = 0;
-  let lx = 0, ly = 0;
-  let ls = 0, lt = 0;
-  let seen = false;
-  let run = false;
+  // Target vs. current position for the glow, the lens, and the lens scale.
+  let pointerX = 0;
+  let pointerY = 0;
+  let glowX = 0;
+  let glowY = 0;
+  let lensX = 0;
+  let lensY = 0;
+  let lensScale = 0;
+  let lensTarget = 0;
+  let seenPointer = false;
+  let animationRunning = false;
 
-  const kg = rm ? 1 : 0.12;
-  const kl = rm ? 1 : 0.22;
-  const ks = rm ? 1 : 0.16;
+  // Easing factors (1 = instant, lower = lazier follow).
+  const glowEase = reduceMotion ? 1 : 0.12;
+  const lensEase = reduceMotion ? 1 : 0.22;
+  const scaleEase = reduceMotion ? 1 : 0.16;
 
   function frame() {
-    gx += (mx - gx) * kg;
-    gy += (my - gy) * kg;
-    lx += (mx - lx) * kl;
-    ly += (my - ly) * kl;
-    ls += (lt - ls) * ks;
+    glowX += (pointerX - glowX) * glowEase;
+    glowY += (pointerY - glowY) * glowEase;
+    lensX += (pointerX - lensX) * lensEase;
+    lensY += (pointerY - lensY) * lensEase;
+    lensScale += (lensTarget - lensScale) * scaleEase;
 
-    glow.style.transform = 'translate3d(' + (gx - 280) + 'px,' + (gy - 280) + 'px,0)';
-    lens.style.transform = 'translate3d(' + (lx - R) + 'px,' + (ly - R) + 'px,0) scale(' + ls + ')';
-    lens.style.opacity = Math.min(1, ls * 1.5);
-    lens.style.visibility = ls < 0.01 ? 'hidden' : 'visible';
+    glow.style.transform = 'translate3d(' + (glowX - 280) + 'px,' + (glowY - 280) + 'px,0)';
+    lens.style.transform =
+      'translate3d(' +
+      (lensX - LENS_RADIUS) +
+      'px,' +
+      (lensY - LENS_RADIUS) +
+      'px,0) scale(' +
+      lensScale +
+      ')';
+    lens.style.opacity = Math.min(1, lensScale * 1.5);
+    lens.style.visibility = lensScale < 0.01 ? 'hidden' : 'visible';
 
-    const busy =
-      Math.abs(mx - gx) > 0.1 ||
-      Math.abs(my - gy) > 0.1 ||
-      Math.abs(lt - ls) > 0.004 ||
-      (ls > 0.01 && (Math.abs(mx - lx) > 0.1 || Math.abs(my - ly) > 0.1));
+    const stillMoving =
+      Math.abs(pointerX - glowX) > 0.1 ||
+      Math.abs(pointerY - glowY) > 0.1 ||
+      Math.abs(lensTarget - lensScale) > 0.004 ||
+      (lensScale > 0.01 &&
+        (Math.abs(pointerX - lensX) > 0.1 || Math.abs(pointerY - lensY) > 0.1));
 
-    if (busy) requestAnimationFrame(frame);
-    else run = false;
+    if (stillMoving) requestAnimationFrame(frame);
+    else animationRunning = false;
   }
 
   const kick = () => {
-    if (!run) {
-      run = true;
+    if (!animationRunning) {
+      animationRunning = true;
       requestAnimationFrame(frame);
     }
   };
 
   addEventListener(
     'pointermove',
-    (e) => {
-      mx = e.clientX;
-      my = e.clientY;
-      if (!seen) {
-        seen = true;
-        gx = lx = mx;
-        gy = ly = my;
+    (event) => {
+      pointerX = event.clientX;
+      pointerY = event.clientY;
+      if (!seenPointer) {
+        seenPointer = true;
+        glowX = lensX = pointerX;
+        glowY = lensY = pointerY;
         glow.style.opacity = 1;
       }
       kick();
@@ -800,27 +719,27 @@ document.addEventListener('click', async (e) => {
 
   document.documentElement.addEventListener('pointerleave', () => {
     glow.style.opacity = 0;
-    lt = 0;
+    lensTarget = 0;
     kick();
   });
 
   document.documentElement.addEventListener('pointerenter', () => {
-    if (seen) glow.style.opacity = 1;
+    if (seenPointer) glow.style.opacity = 1;
   });
 
-  nm.addEventListener('pointerenter', (e) => {
-    mx = e.clientX;
-    my = e.clientY;
-    if (ls < 0.01) {
-      lx = mx;
-      ly = my;
+  nameElement.addEventListener('pointerenter', (event) => {
+    pointerX = event.clientX;
+    pointerY = event.clientY;
+    if (lensScale < 0.01) {
+      lensX = pointerX;
+      lensY = pointerY;
     }
-    lt = 1;
+    lensTarget = 1;
     kick();
   });
 
-  nm.addEventListener('pointerleave', () => {
-    lt = 0;
+  nameElement.addEventListener('pointerleave', () => {
+    lensTarget = 0;
     kick();
   });
 })();
@@ -831,16 +750,16 @@ document.addEventListener('click', async (e) => {
 syncTheme();
 
 function alignProjectGuide() {
-  const guide = $('.v2');
-  const projects = $('#projects');
+  const guide = query('.v2');
+  const projects = query('#projects');
   if (guide && projects) guide.style.top = `${projects.offsetTop}px`;
 }
 
-[renderAll, graph, spy, fit, alignProjectGuide].forEach((f) => {
+[graph, spy, fit, alignProjectGuide].forEach((initStep) => {
   try {
-    f();
-  } catch (err) {
-    console.error(f.name, err);
+    initStep();
+  } catch (error) {
+    console.error(initStep.name, error);
   }
 });
 
