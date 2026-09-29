@@ -1,4 +1,4 @@
-/* ==========================================================================
+﻿/* ==========================================================================
    Tokens
    ========================================================================== */
 /* Registered as <color> so the palette can actually be interpolated. Without
@@ -183,7 +183,7 @@ aside {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  height: 40px;
+  height: 25px;
   padding: 0 18px;
   font: 700 11px var(--font-mono);
   letter-spacing: 0.14em;
@@ -192,11 +192,6 @@ aside {
 
 .menu a:hover {
   color: var(--blue);
-}
-
-.menu a.on {
-  background: var(--ink);
-  color: var(--bg);
 }
 
 .side-b {
@@ -423,6 +418,10 @@ aside {
   margin: 6px 0 12px 4px;
   font: 500 12px var(--font-mono);
   letter-spacing: 0.16em;
+}
+
+.sub a:hover {
+  text-decoration: underline;
 }
 
 /* Hero description, sitting under the subtitle. */
@@ -1103,6 +1102,250 @@ footer {
 }
 
 /* ==========================================================================
+   Terminal
+   ========================================================================== */
+.term-launch {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  z-index: 45;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: 1px solid var(--ink);
+  background: var(--bg);
+  color: var(--ink);
+  font: 700 13px/1 var(--font-mono);
+  letter-spacing: 0.02em;
+  display: grid;
+  place-items: center;
+  transition:
+    background 0.2s,
+    color 0.2s,
+    transform 0.2s;
+}
+
+.term-launch:hover {
+  background: var(--ink);
+  color: var(--bg);
+  transform: translateY(-2px);
+}
+
+.term-launch[aria-expanded='true'] {
+  background: var(--blue);
+  border-color: var(--blue);
+  color: #fff;
+}
+
+/* The window is a full-viewport scrim; .term-window is the draggable panel
+   inside it, so clicking anywhere off the panel dismisses the terminal. */
+.term {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 46;
+  background: rgba(0, 0, 0, 0.35);
+  padding: 24px;
+  justify-content: flex-end;
+  align-items: flex-end;
+}
+
+.term[hidden] {
+  display: none;
+}
+
+.term.is-open {
+  display: flex;
+}
+
+.term-window {
+  position: relative;
+  width: min(580px, 100%);
+  height: min(430px, 100%);
+  display: flex;
+  flex-direction: column;
+  background: var(--bg);
+  border: 1px solid var(--ink);
+  box-shadow: 0 26px 60px rgba(0, 0, 0, 0.45);
+  font: 400 12.5px/1.55 var(--font-mono);
+  transform-origin: bottom right;
+  transition: transform 0.22s ease, opacity 0.22s ease;
+}
+
+.term.is-open .term-window {
+  transform: translateY(0) scale(1);
+  opacity: 1;
+}
+
+.term.is-dragging .term-window,
+.term.is-dragging .term-bar {
+  cursor: grabbing;
+}
+
+.term.is-minimised .term-window {
+  transform: translateY(70%) scale(0.86);
+  opacity: 0;
+}
+
+/* The green light zooms the panel to fill the scrim. */
+.term.is-zoomed .term-window {
+  width: 100%;
+  height: 100%;
+}
+
+/* Title bar with the macOS traffic lights */
+.term-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 12px;
+  height: 34px;
+  flex: none;
+  background: var(--side);
+  border-bottom: 1px solid var(--line);
+  cursor: grab;
+  user-select: none;
+  touch-action: none;
+}
+
+.term-dots {
+  display: flex;
+  gap: 8px;
+  flex: none;
+}
+
+.term-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 1px solid rgba(0, 0, 0, 0.25);
+  display: grid;
+  place-items: center;
+  padding: 0;
+}
+
+.term-dot svg {
+  width: 7px;
+  height: 7px;
+  stroke: rgba(0, 0, 0, 0.55);
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  fill: none;
+  opacity: 0;
+  transition: opacity 0.12s;
+}
+
+.term-dots:hover .term-dot svg {
+  opacity: 1;
+}
+
+.term-dot.r { background: #ff5f57; }
+.term-dot.y { background: #febc2e; }
+.term-dot.g { background: #28c840; }
+
+.term-title {
+  flex: 1;
+  text-align: center;
+  font: 500 11px var(--font-mono);
+  color: var(--dim);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.term-bar-btn {
+  flex: none;
+  padding: 3px 8px;
+  border: 1px solid var(--line);
+  font: 500 9px var(--font-mono);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--dim);
+}
+
+.term-bar-btn:hover {
+  color: var(--bg);
+  background: var(--ink);
+  border-color: var(--ink);
+}
+
+/* Scrollback */
+.term-screen {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 14px 14px 6px;
+  scrollbar-width: thin;
+}
+
+.term-screen::-webkit-scrollbar {
+  width: 8px;
+}
+
+.term-screen::-webkit-scrollbar-thumb {
+  background: var(--line);
+}
+
+.term-line {
+  white-space: pre-wrap;
+  word-break: break-word;
+  color: var(--ink);
+}
+
+.term-echo .term-user {
+  color: var(--blue);
+}
+
+.term-echo .term-cmd {
+  color: var(--ink);
+  margin-left: 8px;
+}
+
+.term-dim { color: var(--dim); }
+.term-strong { color: var(--ink); font-weight: 700; }
+.term-accent { color: var(--blue); }
+.term-dir { color: var(--blue); }
+.term-file { color: var(--ink); }
+.term-error { color: #ff5f57; }
+
+[data-t='light'] .term-error { color: #d1293d; }
+
+/* Prompt row */
+.term-form {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border-top: 1px solid var(--line);
+}
+
+.term-prompt {
+  flex: none;
+  color: var(--blue);
+  white-space: nowrap;
+}
+
+.term-input {
+  flex: 1;
+  min-width: 0;
+  font: inherit;
+  color: var(--ink);
+  background: none;
+  border: 0;
+  caret-color: var(--blue);
+}
+
+.term-input:focus,
+.term-input:focus-visible {
+  outline: none;
+}
+
+.term-form:focus-within {
+  background: color-mix(in srgb, var(--blue) 6%, transparent);
+}
+
+/* ==========================================================================
    Responsive (<= 900px)
    ========================================================================== */
 @media (max-width: 900px) {
@@ -1227,5 +1470,34 @@ footer {
 
   .af > :nth-child(n + 3) {
     grid-column: 2;
+  }
+
+  /* Terminal goes full-width and docks to the bottom of the screen */
+  .term {
+    padding: 56px 0 0;
+    align-items: stretch;
+  }
+
+  .term-window {
+    width: 100%;
+    height: 100%;
+    border-width: 1px 0 0;
+    transform-origin: bottom center;
+  }
+
+  .term-launch {
+    right: 16px;
+    bottom: 16px;
+    width: 44px;
+    height: 44px;
+  }
+
+  .term-screen {
+    font-size: 12px;
+  }
+
+  /* No dragging on touch layouts — the window is already full-screen */
+  .term-bar {
+    cursor: default;
   }
 }

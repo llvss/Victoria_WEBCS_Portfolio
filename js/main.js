@@ -22,6 +22,10 @@ const HOVER_SFX_SELECTOR = CLICKABLE_SELECTOR;
    GITHUB CONTRIBUTION GRAPH
    ========================================================================== */
 function renderGraph(contributions, total, publicRepos) {
+  // Only the Activity page carries the graph markup.
+  const graphGrid = query('#gc');
+  if (!graphGrid) return;
+
   const WEEKS = 53;
   const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
   const byDate = new Map(contributions.map((day) => [day.date, day]));
@@ -94,19 +98,24 @@ function renderGraph(contributions, total, publicRepos) {
   });
   for (let day = dailyCounts.length - 1; day >= 0 && dailyCounts[day] > 0; day--) currentStreak++;
 
-  query('#gt').textContent = total.toLocaleString() + ' in the last year';
-  query('#gst').innerHTML = [
-    [total.toLocaleString(), 'Contributions'],
-    [currentStreak, 'Current streak'],
-    [longestStreak, 'Longest streak'],
-    [publicRepos, 'Public repos'],
-  ]
-    .map(([value, caption]) => `<div class="stat"><b>${value}</b><span>${caption}</span></div>`)
-    .join('');
+  const totalLabel = query('#gt');
+  if (totalLabel) totalLabel.textContent = total.toLocaleString() + ' in the last year';
+
+  const statGrid = query('#gst');
+  if (statGrid) {
+    statGrid.innerHTML = [
+      [total.toLocaleString(), 'Contributions'],
+      [currentStreak, 'Current streak'],
+      [longestStreak, 'Longest streak'],
+      [publicRepos, 'Public repos'],
+    ]
+      .map(([value, caption]) => `<div class="stat"><b>${value}</b><span>${caption}</span></div>`)
+      .join('');
+  }
 
   // Tooltip
   const tip = query('#tip');
-  const graphGrid = query('#gc');
+  if (!tip) return;
 
   graphGrid.addEventListener('pointerover', (event) => {
     const cell = event.target.closest('.c');
@@ -127,6 +136,8 @@ function renderGraph(contributions, total, publicRepos) {
 }
 
 async function graph() {
+  if (!query('#gc')) return;
+
   const contributionsUrl = `https://github-contributions-api.jogruber.de/v4/${GITHUB_USER}?y=last`;
   const userUrl = `https://api.github.com/users/${GITHUB_USER}`;
 
@@ -148,7 +159,8 @@ async function graph() {
       userData.public_repos
     );
   } catch (error) {
-    query('#gt').textContent = 'unavailable';
+    const totalLabel = query('#gt');
+    if (totalLabel) totalLabel.textContent = 'unavailable';
   }
 }
 
@@ -164,10 +176,13 @@ let gridWidth = 0;
 let gridHeight = 0;
 let angle = 0.42;
 const PIXEL_SIZE = 5;
+// Only the home page carries the dithered hero canvas.
 const canvas = query('#dz');
-const context = canvas.getContext('2d');
+const context = canvas ? canvas.getContext('2d') : null;
 
 function fit() {
+  if (!canvas) return;
+
   gridWidth = Math.ceil(canvas.clientWidth / PIXEL_SIZE);
   gridHeight = Math.ceil(canvas.clientHeight / PIXEL_SIZE);
   canvas.width = gridWidth * PIXEL_SIZE;
@@ -176,6 +191,8 @@ function fit() {
 }
 
 function draw() {
+  if (!context) return;
+
   context.clearRect(0, 0, canvas.width, canvas.height);
   context.fillStyle = getComputedStyle(document.body).getPropertyValue('--ink').trim();
   context.globalAlpha = 0.3;
@@ -252,40 +269,34 @@ if (finePointer) {
 }
 
 /* ==========================================================================
-   NAV STATE (scroll spy + progress rail)
+   NAV STATE (active page + progress rail)
+   --------------------------------------------------------------------------
+   Every nav item is its own page now, so the "active" link is resolved from
+   the current filename instead of from the scroll position. The progress rail
+   still tracks scroll, but within the current page.
    ========================================================================== */
+// Resolves to e.g. "index.html" for both "/" and "/index.html", so the site
+// works when opened straight from the filesystem as well as from a server.
+function currentPageFile() {
+  const lastSegment = location.pathname.split('/').filter(Boolean).pop();
+  return (lastSegment || 'index.html').toLowerCase();
+}
+
 function spy() {
-  const sectionIds = [
-    'home',
-    'projects',
-    'experience',
-    'affiliations',
-    'github',
-    'recommendations',
-    'socials',
-  ];
-  const navLinks = sectionIds.map((sectionId) => [sectionId, query(`nav a[href="#${sectionId}"]`)]);
+  const activeFile = currentPageFile();
   const rail = query('#rail');
+
+  queryAll('nav a').forEach((link) => {
+    const href = link.getAttribute('href') || '';
+    const linkFile = (href.split('/').filter(Boolean).pop() || 'index.html').toLowerCase();
+    link.classList.toggle('on', linkFile === activeFile);
+  });
+
   let updateQueued = false;
 
   const update = () => {
     updateQueued = false;
-    const probe = scrollY + innerHeight * 0.4;
-    let activeId = sectionIds[0];
-
-    for (const sectionId of sectionIds) {
-      const section = document.getElementById(sectionId);
-      if (section && section.offsetTop <= probe) activeId = sectionId;
-    }
-
-    // Snap to the last section once the page is scrolled to the very bottom,
-    // otherwise short final sections can never win the probe above.
-    if (innerHeight + scrollY >= document.body.scrollHeight - 4) {
-      activeId = sectionIds[sectionIds.length - 1];
-    }
-
-    navLinks.forEach(([sectionId, link]) => link && link.classList.toggle('on', sectionId === activeId));
-
+    if (!rail) return;
     const maxScroll = document.body.scrollHeight - innerHeight;
     rail.style.transform = 'scaleX(' + (maxScroll > 0 ? Math.min(1, scrollY / maxScroll) : 0) + ')';
   };
@@ -463,22 +474,25 @@ if (finePointer) {
 }
 
 const soundToggle = query('#mu');
-const syncSoundToggle = () => {
-  soundToggle.setAttribute('aria-pressed', String(muted));
-  soundToggle.innerHTML = muted ? THEME_ICONS.soundOff : THEME_ICONS.soundOn;
-  const label = muted ? 'Sound off' : 'Sound on';
-  soundToggle.setAttribute('aria-label', label);
-  soundToggle.title = label;
-};
 
-soundToggle.addEventListener('click', () => {
-  muted = !muted;
-  try {
-    localStorage.setItem(MUTED_STORAGE_KEY, muted ? '1' : '0');
-  } catch (error) {}
+if (soundToggle) {
+  const syncSoundToggle = () => {
+    soundToggle.setAttribute('aria-pressed', String(muted));
+    soundToggle.innerHTML = muted ? THEME_ICONS.soundOff : THEME_ICONS.soundOn;
+    const label = muted ? 'Sound off' : 'Sound on';
+    soundToggle.setAttribute('aria-label', label);
+    soundToggle.title = label;
+  };
+
+  soundToggle.addEventListener('click', () => {
+    muted = !muted;
+    try {
+      localStorage.setItem(MUTED_STORAGE_KEY, muted ? '1' : '0');
+    } catch (error) {}
+    syncSoundToggle();
+  });
   syncSoundToggle();
-});
-syncSoundToggle();
+}
 
 /* ==========================================================================
    COPY EMAIL + TOAST
@@ -529,6 +543,8 @@ document.addEventListener('click', async (event) => {
   const glow = query('#glow');
   const lens = query('#lens');
   const nameElement = query('.name');
+  if (!glow || !lens || !nameElement) return;
+
   const LENS_RADIUS = 95;
   const reduceMotion = matchMedia('(prefers-reduced-motion:reduce)').matches;
 
@@ -634,13 +650,15 @@ document.addEventListener('click', async (event) => {
    ========================================================================== */
 syncTheme();
 
-function alignProjectGuide() {
+// Pins the vertical guide to the top of the first content section, so it never
+// runs through the hero. On inner pages the first section starts at the top.
+function alignSectionGuide() {
   const guide = query('.v2');
-  const projects = query('#projects');
-  if (guide && projects) guide.style.top = `${projects.offsetTop}px`;
+  const firstSection = query('main .sec');
+  if (guide && firstSection) guide.style.top = `${firstSection.offsetTop}px`;
 }
 
-[graph, spy, fit, alignProjectGuide].forEach((initStep) => {
+[graph, spy, fit, alignSectionGuide].forEach((initStep) => {
   try {
     initStep();
   } catch (error) {
@@ -649,5 +667,5 @@ function alignProjectGuide() {
 });
 
 addEventListener('resize', fit);
-addEventListener('resize', alignProjectGuide);
-document.fonts?.ready.then(alignProjectGuide);
+addEventListener('resize', alignSectionGuide);
+document.fonts?.ready.then(alignSectionGuide);
