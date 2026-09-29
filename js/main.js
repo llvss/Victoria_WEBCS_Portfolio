@@ -646,6 +646,169 @@ document.addEventListener('click', async (event) => {
 })();
 
 /* ==========================================================================
+   MOBILE MENU
+   --------------------------------------------------------------------------
+   Below 900px the sidebar is hidden and this builds a top bar with a
+   hamburger plus a full-screen drawer. The markup is generated from the
+   sidebar that is already in the page, so the two can never drift apart and
+   no page needs duplicate nav markup.
+
+   Follows the pattern on bryllim.com: reveal the panel, lock the page scroll,
+   then add `.is-open` on the next frame so the transition actually plays.
+   ========================================================================== */
+(function () {
+  'use strict';
+
+  const menu = query('aside .menu');
+  const sideBottom = query('aside .side-b');
+  const brand = query('aside .brand');
+  if (!menu) return;
+
+  const desktopQuery = matchMedia('(min-width: 901px)');
+
+  /* ---- Build the markup --------------------------------------------- */
+
+  // The drawer mirrors the desktop nav, keeping the same order and labels.
+  const links = queryAll('a', menu)
+    .map((link) => `<a href="${link.getAttribute('href')}" data-c>${(link.textContent || '').trim()}</a>`)
+    .join('');
+
+  const homeHref = (brand && brand.getAttribute('href')) || '/';
+  const brandEl = brand && brand.querySelector('b');
+  const brandName = brandEl ? brandEl.textContent : '';
+
+  // The sound and theme controls are MOVED, never cloned, so there is only ever
+  // one #mu / .term-open in the document and the existing wiring in main.js and
+  // terminal.js keeps working no matter where the element currently sits.
+  const controls = sideBottom ? query('.side-r', sideBottom) : null;
+  const terminalOpener = sideBottom ? query('.term-open', sideBottom) : null;
+
+  const brandLink = `<a class="brand" href="${homeHref}" data-c aria-label="Home"><b>${brandName}</b></a>`;
+
+  const bar = document.createElement('div');
+  bar.className = 'mbar';
+  bar.innerHTML = `
+    <div class="mbar-bar">
+      ${brandLink}
+      <button class="icon-button mnav-icon" type="button" id="mnav-open"
+        aria-expanded="false" aria-controls="mnav" aria-label="Open menu" title="Open menu">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+      </button>
+    </div>`;
+
+  const drawer = document.createElement('div');
+  drawer.id = 'mnav';
+  drawer.setAttribute('role', 'dialog');
+  drawer.setAttribute('aria-modal', 'true');
+  drawer.setAttribute('aria-label', 'Menu');
+  drawer.innerHTML = `
+    <div class="mbar-bar">
+      ${brandLink}
+      <button class="icon-button mnav-icon" type="button" id="mnav-close"
+        aria-label="Close menu" title="Close menu">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 5l14 14M19 5 5 19"/></svg>
+      </button>
+    </div>
+    <div class="mnav-body">
+      <nav class="mnav-list mnav-group" style="transition-delay: 0.05s" aria-label="Primary">${links}</nav>
+      <div class="mnav-foot mnav-group" style="transition-delay: 0.15s"></div>
+    </div>`;
+
+  document.body.append(bar, drawer);
+
+  const foot = query('.mnav-foot', drawer);
+  const openButton = query('#mnav-open', bar);
+  const closeButton = query('#mnav-close', drawer);
+  const openLinks = queryAll('.mnav-list a', drawer);
+
+  /* ---- Place the shared controls -------------------------------------- */
+  /* The terminal opener and the theme/sound controls must live in the drawer on
+     phones and back in the sidebar on desktop, so they are moved between the
+     two homes as the breakpoint changes. Moving (rather than cloning) keeps a
+     single #mu and a single .term-open, so the wiring in main.js and
+     terminal.js — both of which grabbed those elements at load — stays valid. */
+
+  function placeControls() {
+    if (!sideBottom) return;
+
+    const home = desktopQuery.matches ? sideBottom : foot;
+
+    if (terminalOpener && terminalOpener.parentElement !== home) home.append(terminalOpener);
+    if (controls && controls.parentElement !== home) home.append(controls);
+  }
+
+  placeControls();
+
+  /* ---- Open / close -------------------------------------------------- */
+
+  let isOpen = false;
+
+  function open() {
+    if (isOpen) return;
+    isOpen = true;
+    document.documentElement.style.overflow = 'hidden';
+    // The panel is always in the DOM, so flip the class on the next frame —
+    // otherwise the browser coalesces both and the fade is skipped.
+    requestAnimationFrame(() => drawer.classList.add('is-open'));
+    openButton.setAttribute('aria-expanded', 'true');
+    closeButton.focus();
+  }
+
+  function close() {
+    if (!isOpen) return;
+    isOpen = false;
+    drawer.classList.remove('is-open');
+    document.documentElement.style.overflow = '';
+    openButton.setAttribute('aria-expanded', 'false');
+    openButton.focus();
+  }
+
+  openButton.addEventListener('click', open);
+  closeButton.addEventListener('click', close);
+
+  // Following a link should never leave the drawer latched open behind the new
+  // page — bfcache can restore the document without re-running this script.
+  openLinks.forEach((link) => link.addEventListener('click', close));
+
+  document.addEventListener('keydown', (event) => {
+    if (!isOpen) return;
+
+    if (event.key === 'Escape') {
+      event.preventDefault();
+      close();
+      return;
+    }
+
+    // The drawer is a modal dialog, so Tab is kept inside it. The drawer holds
+    // only known controls, and `visibility: hidden` already removes it from the
+    // tab order while closed, so no visibility filtering is needed here.
+    if (event.key !== 'Tab') return;
+
+    const focusable = queryAll('a[href], button:not([disabled])', drawer);
+    if (!focusable.length) return;
+
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+
+    if (event.shiftKey && document.activeElement === first) {
+      event.preventDefault();
+      last.focus();
+    } else if (!event.shiftKey && document.activeElement === last) {
+      event.preventDefault();
+      first.focus();
+    }
+  });
+
+  // Crossing the breakpoint in either direction moves the shared controls to
+  // whichever surface is now visible. Growing past it also reveals the real
+  // sidebar, so the drawer must not stay latched open behind that.
+  desktopQuery.addEventListener('change', (event) => {
+    if (event.matches && isOpen) close();
+    placeControls();
+  });
+})();
+
+/* ==========================================================================
    INIT
    ========================================================================== */
 syncTheme();

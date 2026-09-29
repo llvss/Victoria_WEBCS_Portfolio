@@ -9,7 +9,7 @@
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=JetBrains+Mono:wght@400;500;700&family=Syne:wght@400;500;700&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="css/main.css" />
+    <link rel="stylesheet" href="/css/main.css" />
   </head>
 
   <body>
@@ -20,7 +20,7 @@
 
     <!-- Sidebar -->
     <aside>
-      <a class="brand" href="index.html" data-c aria-label="Home">
+      <a class="brand" href="/index.html" data-c aria-label="Home">
         <img class="logo" src="/public/img/logo-dark.png" alt="LogoniLoven">
         <b>Loven Victoria</b>
       </a>
@@ -36,6 +36,11 @@
 
       <div class="side-b">
         <div class="st"><i></i>Open for freelance</div>
+
+        <button class="term-open" type="button" aria-expanded="false" aria-controls="term">
+          open cmd <span class="kbd">ctrl</span> + <span class="kbd">`</span>
+        </button>
+
         <div class="side-r">
           <button id="mu" class="icon-button" type="button" aria-pressed="false" aria-label="Sound on" title="Sound on"></button>
           <div class="theme-options" role="group" aria-label="Theme">
@@ -54,6 +59,7 @@
 
       <!-- Projects -->
       <section id="projects" class="sec">
+        <h1 class="vh">Projects — Loven Victoria</h1>
         <span class="vt">01 — Selected work</span>
         <div class="sec-h">
           <h2>Projects</h2>
@@ -63,72 +69,140 @@
           A mix of web development, programming and UI/UX work from coursework, personal builds and
           hackathons.
         </p>
-        <div class="bento">
-          <article class="bx lg2">
-            <div class="mt"><span>01</span><span>2025</span></div>
-            <div class="big">01</div>
-            <h3>Project One</h3>
-            <p>Full-stack web app with a REST API, authentication and a responsive admin dashboard.</p>
+        <div class="ls">
+          <article class="pj">
+            <span class="n">01</span>
+            <div>
+              <h3>Project One</h3>
+              <p class="dm">Full-stack web app with a REST API, authentication and a responsive admin dashboard.</p>
+            </div>
             <div class="tg">
               <span class="tag">React</span>
               <span class="tag">Node.js</span>
               <span class="tag">PostgreSQL</span>
             </div>
-            <div class="lk">
-              <a href="#" data-c>Live ↗</a>
-              <a href="#" data-c>Code ↗</a>
-            </div>
+            <span class="y">2025</span>
           </article>
 
-          <div class="col">
-            <article class="bx">
-              <div class="mt"><span>02</span><span>2025</span></div>
-              <div class="big">02</div>
+          <article class="pj">
+            <span class="n">02</span>
+            <div>
               <h3>Project Two</h3>
-              <p>UI/UX case study: user research, wireframes and a tested interactive prototype.</p>
-              <div class="tg">
-                <span class="tag">Figma</span>
-                <span class="tag">UX Research</span>
-              </div>
-              <div class="lk">
-                <a href="#" data-c>Live ↗</a>
-                <a href="#" data-c>Code ↗</a>
-              </div>
-            </article>
-
-            <div class="pair">
-              <article class="bx sm">
-                <div class="mt"><span>03</span><span>2024</span></div>
-                <h3>Project Three</h3>
-                <p>Algorithms and data-structure toolkit for a programming course, fully unit tested.</p>
-                <div class="tg">
-                  <span class="tag">TypeScript</span>
-                  <span class="tag">Vitest</span>
-                </div>
-                <div class="lk">
-                  <a href="#" data-c>Live ↗</a>
-                  <a href="#" data-c>Code ↗</a>
-                </div>
-              </article>
-
-              <article class="bx sm">
-                <div class="mt"><span>04</span><span>2024</span></div>
-                <h3>Project Four</h3>
-                <p>Hackathon build: a working demo shipped in a single weekend with a small team.</p>
-                <div class="tg">
-                  <span class="tag">Hackathon</span>
-                  <span class="tag">API</span>
-                </div>
-                <div class="lk">
-                  <a href="#" data-c>Live ↗</a>
-                  <a href="#" data-c>Code ↗</a>
-                </div>
-              </article>
+              <p class="dm">UI/UX case study: user research, wireframes and a tested interactive prototype.</p>
             </div>
-          </div>
+            <div class="tg">
+              <span class="tag">Figma</span>
+              <span class="tag">UX Research</span>
+            </div>
+            <span class="y">2025</span>
+          </article>
+
+          <article class="pj">
+            <span class="n">03</span>
+            <div>
+              <h3>Project Three</h3>
+              <p class="dm">Algorithms and data-structure toolkit for a programming course, fully unit tested.</p>
+            </div>
+            <div class="tg">
+              <span class="tag">TypeScript</span>
+              <span class="tag">Vitest</span>
+            </div>
+            <span class="y">2024</span>
+          </article>
+
+          <article class="pj">
+            <span class="n">04</span>
+            <div>
+              <h3>Project Four</h3>
+              <p class="dm">Hackathon build: a working demo shipped in a single weekend with a small team.</p>
+            </div>
+            <div class="tg">
+              <span class="tag">Hackathon</span>
+              <span class="tag">API</span>
+            </div>
+            <span class="y">2024</span>
+          </article>
+
+          <article class="pj">
+            <span class="n">05</span>
+            <div>
+              <h3>Project Five</h3>
+              <p class="dm">Marketing site and CMS for a small business, with a component library and dark mode.</p>
+            </div>
+            <div class="tg">
+              <span class="tag">Next.js</span>
+              <span class="tag">Tailwind</span>
+            </div>
+            <span class="y">2025</span>
+          </article>
+
+          <article class="pj">
+            <span class="n">06</span>
+            <div>
+              <h3>Project Six</h3>
+              <p class="dm">REST microservice that ingests sensor data, validates it and streams aggregates onward.</p>
+            </div>
+            <div class="tg">
+              <span class="tag">Python</span>
+              <span class="tag">FastAPI</span>
+              <span class="tag">Docker</span>
+            </div>
+            <span class="y">2024</span>
+          </article>
+
+          <article class="pj">
+            <span class="n">07</span>
+            <div>
+              <h3>Project Seven</h3>
+              <p class="dm">Realtime chat client with presence, typing indicators and offline message queuing.</p>
+            </div>
+            <div class="tg">
+              <span class="tag">Vue</span>
+              <span class="tag">Firebase</span>
+            </div>
+            <span class="y">2023</span>
+          </article>
+
+          <article class="pj">
+            <span class="n">08</span>
+            <div>
+              <h3>Project Eight</h3>
+              <p class="dm">Booking system with availability rules, payment handling and an admin back office.</p>
+            </div>
+            <div class="tg">
+              <span class="tag">Express</span>
+              <span class="tag">Prisma</span>
+            </div>
+            <span class="y">2023</span>
+          </article>
+
+          <article class="pj">
+            <span class="n">09</span>
+            <div>
+              <h3>Project Nine</h3>
+              <p class="dm">Coursework build: a library management API with role-based access control and tests.</p>
+            </div>
+            <div class="tg">
+              <span class="tag">Java</span>
+              <span class="tag">Spring Boot</span>
+            </div>
+            <span class="y">2022</span>
+          </article>
+
+          <article class="pj">
+            <span class="n">10</span>
+            <div>
+              <h3>Project Ten</h3>
+              <p class="dm">Design system: 60+ accessible components, documented tokens and a style guide.</p>
+            </div>
+            <div class="tg">
+              <span class="tag">Figma</span>
+              <span class="tag">Storybook</span>
+            </div>
+            <span class="y">2022</span>
+          </article>
         </div>
       </section>
-    </main>
     </main>
 
     <footer>
@@ -144,16 +218,6 @@
     <div id="lens" aria-hidden="true"></div>
 
     <!-- Terminal -->
-    <button
-      id="term-launch"
-      class="term-launch"
-      type="button"
-      aria-expanded="false"
-      aria-controls="term"
-      aria-label="Open terminal"
-      title="Open terminal (Ctrl + `)"
-    >&gt;_</button>
-
     <div id="term" class="term" hidden>
       <div class="term-window" role="dialog" aria-label="Terminal" aria-modal="false">
         <div class="term-bar" id="term-bar">
@@ -191,7 +255,7 @@
       </div>
     </div>
 
-    <script src="js/main.js"></script>
-    <script src="js/terminal.js"></script>
+    <script src="/js/main.js"></script>
+    <script src="/js/terminal.js"></script>
   </body>
 </html>

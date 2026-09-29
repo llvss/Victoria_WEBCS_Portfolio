@@ -1,14 +1,14 @@
 /* ==========================================================================
    TERMINAL
    --------------------------------------------------------------------------
-   A macOS-flavoured terminal overlay. The `>_` launcher sits in the corner of
-   every page and opens a draggable window wired to a small fake filesystem that
-   mirrors the site's pages, so `ls`, `cd` and `cat` actually do something.
+   A macOS-flavoured terminal overlay. The sidebar carries a small text link
+   that opens a draggable window wired to a fake filesystem mirroring the site's
+   pages, so `ls`, `cd` and `cat` actually do something. Ctrl + ` also works.
    ========================================================================== */
 (function () {
   'use strict';
 
-  const launchButton = query('#term-launch');
+  const launchButton = query('.term-open');
   const terminal = query('#term');
   if (!launchButton || !terminal) return;
 
@@ -45,7 +45,18 @@
     },
     '~/projects': {
       page: 'projects.html',
-      entries: ['01-project-one.md', '02-project-two.md', '03-project-three.md', '04-project-four.md'],
+      entries: [
+        '01-project-one.md',
+        '02-project-two.md',
+        '03-project-three.md',
+        '04-project-four.md',
+        '05-project-five.md',
+        '06-project-six.md',
+        '07-project-seven.md',
+        '08-project-eight.md',
+        '09-project-nine.md',
+        '10-project-ten.md',
+      ],
     },
     '~/experience': {
       page: 'experience.html',
@@ -124,13 +135,62 @@
       '',
       'stack: Hackathon · API',
     ],
+    '~/projects/05-project-five.md': [
+      '# Project Five (2025)',
+      '',
+      'Marketing site and CMS for a small business, with a component',
+      'library and dark mode.',
+      '',
+      'stack: Next.js · Tailwind',
+    ],
+    '~/projects/06-project-six.md': [
+      '# Project Six (2024)',
+      '',
+      'REST microservice that ingests sensor data, validates it and',
+      'streams aggregates onward.',
+      '',
+      'stack: Python · FastAPI · Docker',
+    ],
+    '~/projects/07-project-seven.md': [
+      '# Project Seven (2023)',
+      '',
+      'Realtime chat client with presence, typing indicators and',
+      'offline message queuing.',
+      '',
+      'stack: Vue · Firebase',
+    ],
+    '~/projects/08-project-eight.md': [
+      '# Project Eight (2023)',
+      '',
+      'Booking system with availability rules, payment handling and',
+      'an admin back office.',
+      '',
+      'stack: Express · Prisma',
+    ],
+    '~/projects/09-project-nine.md': [
+      '# Project Nine (2022)',
+      '',
+      'Coursework build: a library management API with role-based',
+      'access control and tests.',
+      '',
+      'stack: Java · Spring Boot',
+    ],
+    '~/projects/10-project-ten.md': [
+      '# Project Ten (2022)',
+      '',
+      'Design system: 60+ accessible components, documented tokens',
+      'and a style guide.',
+      '',
+      'stack: Figma · Storybook',
+    ],
     '~/experience/roles.txt': [
       '2026 — Now    Fullstack Developer (Intern) · Tech Company, Manila',
       '2025 — 2026   Web Development Lead · University Org, Manila',
       '2024 — 2025   Frontend Developer (Part-time) · Freelance / Remote',
     ],
     '~/experience/resume.pdf': [
-      'resume.pdf is a binary file — open it from the Experience page.',
+      'resume.pdf is not bundled with the site — email',
+      'lovenponce@gmail.com to request a copy.',
     ],
     '~/affiliations/web-dev-committee.txt': [
       'Organization One — Web Development Committee (2025 — Now)',
@@ -649,6 +709,7 @@
     write('  A real terminal, wired to the portfolio filesystem.');
     write('  Try "ls", "cat about.txt", "pages" or "neofetch".', 'term-dim');
     write('  Type "help" for the full command list.', 'term-dim');
+    write('  Press Ctrl + ` or Escape to close.', 'term-dim');
     write('');
     scrollToEnd();
   }

@@ -63,6 +63,20 @@
 /* ==========================================================================
    Base
    ========================================================================== */
+/* Visible to screen readers, removed from the visual layout. Used for the
+   per-page <h1> on inner pages, where the large <h2> already carries the
+   visible page title. */
+.vh {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
 * {
   box-sizing: border-box;
   margin: 0;
@@ -191,6 +205,12 @@ aside {
 }
 
 .menu a:hover {
+  color: var(--blue);
+}
+
+/* Current page, set by spy() in main.js. */
+.menu a.on,
+.mnav-list a.on {
   color: var(--blue);
 }
 
@@ -641,6 +661,59 @@ h2 {
   display: grid;
   gap: 16px;
   grid-template-rows: auto auto;
+}
+
+/* The full Projects listing. Uses the same ruled-row pattern as Affiliations
+   (.ls + .pj) rather than cards, so all ten entries read as one even list:
+   the row height is driven by the content, and every column stays aligned
+   across rows because the grid columns are shared. */
+.pj {
+  display: grid;
+  grid-template-columns: 72px minmax(0, 1fr) minmax(0, 1.3fr) auto;
+  gap: 24px;
+  align-items: baseline;
+  border-top: 1px solid var(--line);
+  padding: 26px 16px;
+  margin: 0 -16px;
+}
+
+.pj:hover {
+  background: var(--ink);
+  color: var(--bg);
+}
+
+/* .tag draws its border with currentColor, so recolouring the text is enough
+   to flip the whole chip on hover. */
+.pj:hover .dm,
+.pj:hover .y,
+.pj:hover .tag {
+  color: var(--bg);
+}
+
+.pj .n {
+  font: 400 40px/1 var(--font-display);
+  -webkit-text-stroke: 1px currentColor;
+  color: transparent;
+}
+
+.pj h3 {
+  font: 500 22px/1.15 var(--font-display);
+  text-transform: uppercase;
+}
+
+.pj .dm {
+  font-size: 14px;
+}
+
+.pj .y {
+  font: 500 12px var(--font-mono);
+  letter-spacing: 0.12em;
+  color: var(--dim);
+}
+
+/* Tags live in their own column so they line up down the whole list. */
+.pj .tg {
+  align-self: start;
 }
 
 .pair {
@@ -1102,39 +1175,163 @@ footer {
 }
 
 /* ==========================================================================
+   Mobile menu
+   --------------------------------------------------------------------------
+   Below 900px the sidebar is replaced by a slim top bar with a hamburger, and
+   the links move into a full-screen drawer. Markup for the bar and the drawer
+   is built by main.js from the sidebar itself, so this file only styles it.
+   ========================================================================== */
+.mbar {
+  display: none;
+}
+
+.mbar-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  height: 56px;
+  padding: 0 20px;
+  border-bottom: 1px solid var(--line);
+  flex: none;
+}
+
+.mbar-bar b {
+  font: 700 15px/1.1 var(--font-display);
+}
+
+/* The hamburger and the drawer's close button share one icon-button look. */
+.mnav-icon {
+  width: 36px;
+  height: 36px;
+  flex: none;
+}
+
+.mnav-icon svg {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+}
+
+/* The drawer is full-bleed and sits above everything, so it is hidden with
+   `visibility` rather than just opacity: that keeps it out of the tab order and
+   the accessibility tree while closed, and stops it swallowing clicks. */
+#mnav {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0s linear 0.3s;
+}
+
+#mnav.is-open {
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 0.3s ease;
+}
+
+/* Desktop keeps the full-height sidebar, so the drawer is never shown. */
+@media (min-width: 901px) {
+  #mnav {
+    display: none;
+  }
+}
+
+/* Each group fades up in sequence once the panel is open, so the links arrive
+   instead of appearing all at once. */
+#mnav .mnav-group {
+  opacity: 0;
+  transform: translateY(12px);
+  transition: opacity 0.45s ease, transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+#mnav.is-open .mnav-group {
+  opacity: 1;
+  transform: none;
+}
+
+.mnav-body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 8px 20px 40px;
+  display: flex;
+  flex-direction: column;
+}
+
+.mnav-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.mnav-list a {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px 0;
+  border-bottom: 1px solid var(--line);
+  font: 700 clamp(22px, 7vw, 30px) / 1.1 var(--font-display);
+  text-transform: uppercase;
+  letter-spacing: 0.01em;
+}
+
+.mnav-list a:hover,
+.mnav-list a:focus-visible {
+  color: var(--blue);
+}
+
+.mnav-list a span {
+  font: 500 11px var(--font-mono);
+  letter-spacing: 0.16em;
+  color: var(--dim);
+}
+
+.mnav-foot {
+  margin-top: auto;
+  padding-top: 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #mnav,
+  #mnav .mnav-group {
+    transition: none;
+  }
+}
+
+/* ==========================================================================
    Terminal
    ========================================================================== */
-.term-launch {
-  position: fixed;
-  right: 24px;
-  bottom: 24px;
-  z-index: 45;
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  border: 1px solid var(--ink);
-  background: var(--bg);
-  color: var(--ink);
-  font: 700 13px/1 var(--font-mono);
-  letter-spacing: 0.02em;
-  display: grid;
-  place-items: center;
-  transition:
-    background 0.2s,
-    color 0.2s,
-    transform 0.2s;
+/* Terminal opener — a quiet text link in the sidebar, not a floating button */
+.term-open {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font: 700 11px var(--font-mono);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--dim);
+  text-align: left;
+  transition: color 0.2s;
 }
 
-.term-launch:hover {
-  background: var(--ink);
-  color: var(--bg);
-  transform: translateY(-2px);
-}
-
-.term-launch[aria-expanded='true'] {
-  background: var(--blue);
-  border-color: var(--blue);
-  color: #fff;
+.term-open .kbd {
+  font: 500 9px var(--font-mono);
+  letter-spacing: 0.1em;
+  color: var(--dim);
+  border: 1px solid var(--line);
+  padding: 3px 6px;
+  white-space: nowrap;
 }
 
 /* The window is a full-viewport scrim; .term-window is the draggable panel
@@ -1364,44 +1561,35 @@ footer {
     display: none;
   }
 
+  /* The sidebar is a full-height column on desktop only. On phones it is
+     replaced by the .mbar top bar plus the #mnav drawer. */
   aside {
+    display: none;
+  }
+
+  .mbar {
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
     right: 0;
-    bottom: auto;
-    width: auto;
-    height: 56px;
-    flex-direction: row;
-    align-items: center;
-    gap: 10px;
-    padding: 0 12px;
-    border-right: 0;
-    border-bottom: 1px solid var(--line);
-    overflow: visible;
+    z-index: 50;
+    background: var(--side);
   }
 
-  .brand b,
-  .st {
-    display: none;
-  }
-
-  .menu {
-    margin: 0 0 0 auto;
-    flex-direction: row;
-    gap: 0;
-    overflow-x: auto;
-  }
-
-  .menu a {
+  .mnav-icon {
+    width: 32px;
     height: 32px;
-    padding: 0 9px;
-    font-size: 10px;
   }
 
-  .menu a span + span {
+  /* Touch layouts have no Ctrl key, so the shortcut hint is dropped and the
+     label stands on its own. The opener is now inside the drawer. */
+  .mnav-foot .term-open .kbd {
     display: none;
   }
 
-  .side-b {
-    margin: 0;
+  .mnav-foot .term-open {
+    font-size: 12px;
   }
 
   .icon-button {
@@ -1450,6 +1638,17 @@ footer {
     grid-template-columns: 1fr;
   }
 
+  /* One project per stacked block on phones — the four-column row would
+     otherwise squeeze the title and description into unreadable slivers. */
+  .pj {
+    grid-template-columns: 44px 1fr;
+    gap: 8px 16px;
+  }
+
+  .pj .tg {
+    grid-column: 2;
+  }
+
   .ex {
     grid-template-columns: 1fr;
     gap: 8px;
@@ -1483,13 +1682,6 @@ footer {
     height: 100%;
     border-width: 1px 0 0;
     transform-origin: bottom center;
-  }
-
-  .term-launch {
-    right: 16px;
-    bottom: 16px;
-    width: 44px;
-    height: 44px;
   }
 
   .term-screen {

@@ -9,7 +9,7 @@
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=JetBrains+Mono:wght@400;500;700&family=Syne:wght@400;500;700&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="css/main.css" />
+    <link rel="stylesheet" href="/css/main.css" />
   </head>
 
   <body>
@@ -20,7 +20,7 @@
 
     <!-- Sidebar -->
     <aside>
-      <a class="brand" href="index.html" data-c aria-label="Home">
+      <a class="brand" href="/index.html" data-c aria-label="Home">
         <img class="logo" src="/public/img/logo-dark.png" alt="LogoniLoven">
         <b>Loven Victoria</b>
       </a>
@@ -36,6 +36,11 @@
 
       <div class="side-b">
         <div class="st"><i></i>Open for freelance</div>
+
+        <button class="term-open" type="button" aria-expanded="false" aria-controls="term">
+          open cmd <span class="kbd">ctrl</span> + <span class="kbd">`</span>
+        </button>
+
         <div class="side-r">
           <button id="mu" class="icon-button" type="button" aria-pressed="false" aria-label="Sound on" title="Sound on"></button>
           <div class="theme-options" role="group" aria-label="Theme">
@@ -54,10 +59,11 @@
 
       <!-- Recommendations -->
       <section id="recommendations" class="sec">
+        <h1 class="vh">Recommendations — Loven Victoria</h1>
         <span class="vt">05 — Kind words</span>
         <div class="sec-h">
           <h2>Recommendations</h2>
-          <a class="al" href="mailto:hello@lovenvictoria.dev?subject=Reference%20request" data-c>Ask for a reference →</a>
+          <a class="al" href="mailto:lovenponce@gmail.com?subject=Reference%20request" data-c>Ask for a reference →</a>
         </div>
         <p class="in">
           What the people I've worked with say about working with me.
@@ -95,7 +101,6 @@
         </div>
       </section>
     </main>
-    </main>
 
     <footer>
       <span>Loven Victoria</span>
@@ -110,16 +115,6 @@
     <div id="lens" aria-hidden="true"></div>
 
     <!-- Terminal -->
-    <button
-      id="term-launch"
-      class="term-launch"
-      type="button"
-      aria-expanded="false"
-      aria-controls="term"
-      aria-label="Open terminal"
-      title="Open terminal (Ctrl + `)"
-    >&gt;_</button>
-
     <div id="term" class="term" hidden>
       <div class="term-window" role="dialog" aria-label="Terminal" aria-modal="false">
         <div class="term-bar" id="term-bar">
@@ -157,7 +152,7 @@
       </div>
     </div>
 
-    <script src="js/main.js"></script>
-    <script src="js/terminal.js"></script>
+    <script src="/js/main.js"></script>
+    <script src="/js/terminal.js"></script>
   </body>
 </html>

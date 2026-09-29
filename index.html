@@ -6,13 +6,13 @@
     <title>Loven Victoria — Fullstack Developer, IT Student</title>
     <meta
       name="description"
-      content="Loven Victoria — fullstack developer and IT student based in Mabalacat, Pampanga."
+      content="Loven Victoria — fullstack developer and IT student building web applications, shipping side projects and contributing to open source."
     />
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=JetBrains+Mono:wght@400;500;700&family=Syne:wght@400;500;700&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="css/main.css" />
+    <link rel="stylesheet" href="/css/main.css" />
   </head>
 
   <body>
@@ -23,22 +23,27 @@
 
     <!-- Sidebar -->
     <aside>
-      <a class="brand" href="index.html" data-c aria-label="Home">
+      <a class="brand" href="/index.html" data-c aria-label="Home">
         <img class="logo" src="/public/img/logo-dark.png" alt="LogoniLoven">
         <b>Loven Victoria</b>
       </a>
 
       <nav class="menu" aria-label="Primary">
-        <a href="projects.html" data-c><span>Projects</span></a>
-        <a href="experience.html" data-c><span>Experience</span></a>
-        <a href="affiliations.html" data-c><span>Affiliations</span></a>
-        <a href="activity.html" data-c><span>Activity</span></a>
-        <a href="recommendations.html" data-c><span>Recommendations</span></a>
-        <a href="socials.html" data-c><span>Socials</span></a>
+        <a href="/html/projects.html" data-c><span>Projects</span></a>
+        <a href="/html/experience.html" data-c><span>Experience</span></a>
+        <a href="/html/affiliations.html" data-c><span>Affiliations</span></a>
+        <a href="/html/activity.html" data-c><span>Activity</span></a>
+        <a href="/html/recommendations.html" data-c><span>Recommendations</span></a>
+        <a href="/html/socials.html" data-c><span>Socials</span></a>
       </nav>
 
       <div class="side-b">
         <div class="st"><i></i>Open for freelance</div>
+
+        <button class="term-open" type="button" aria-expanded="false" aria-controls="term">
+          open cmd <span class="kbd">ctrl</span> + <span class="kbd">`</span>
+        </button>
+
         <div class="side-r">
           <button id="mu" class="icon-button" type="button" aria-pressed="false" aria-label="Sound on" title="Sound on"></button>
           <div class="theme-options" role="group" aria-label="Theme">
@@ -62,42 +67,362 @@
           <h1 class="name">Loven Victoria</h1>
 
           <p class="desc">
-            I'm currently a second-year computer science student at Holy Angel University. I currently learning new stuffs and building small projects. I enjoy building web applications, softwares, learning new technologies, and contributing to open-source projects.
-          </p>
-          
-          <p class="desc">
-            I'm an 18-year-old fullstack developer and IT student based in Mabalacat Pampanga.
+            I'm currently a second-year computer science student at the University of the Philippines, Manila. 
+            I enjoy building web applications, learning new technologies, and contributing to open-source projects.
           </p>
 
-          <p class="sub"><a href="https://github.com/llvss" target="_blank" rel="noopener" data-c>github <span aria-hidden="true">↗ </span></a><a href="https://www.linkedin.com/" target="_blank" rel="noopener" data-c>linkedin ↗ </a><a href="https://x.com/" target="_blank" rel="noopener" data-c>twitter ↗ </a><a href="https://www.instagram.com/" target="_blank" rel="noopener" data-c>instagram ↗ </a></p>
+          <p class="sub">
+            <a href="https://github.com/llvss" target="_blank" rel="noopener" data-c>github ↗</a>
+            <a href="https://www.linkedin.com/" target="_blank" rel="noopener" data-c>linkedin ↗</a>
+            <a href="https://www.instagram.com/" target="_blank" rel="noopener" data-c>instagram ↗</a>
+            <a href="mailto:lovenponce@gmail.com" data-c>email ↗</a>
+          </p>
 
           <div class="stats">
-            <div class="stat"><b>10+</b><span>Projects</span></div>
+            <div class="stat"><b>10</b><span>Projects</span></div>
             <div class="stat"><b>03</b><span>Affiliations</span></div>
             <div class="stat"><b>02</b><span>Core stacks</span></div>
-            <div class="stat"><b>2029</b><span>Graduating</span></div>
+            <div class="stat"><b>2026</b><span>Graduating</span></div>
           </div>
         </div>
       </section>
 
-      <!-- Page index -->
-      <section id="pages" class="sec">
-        <span class="vt">Index — Every page</span>
+      <!-- Projects -->
+      <section id="projects" class="sec">
+        <span class="vt">01 — Selected work</span>
         <div class="sec-h">
-          <h2>Sections</h2>
-          <a class="al" href="socials.html" data-c>Say hello →</a>
+          <h2>Projects</h2>
+          <a class="al" href="https://github.com/llvss?tab=repositories" target="_blank" rel="noopener" data-c>All projects →</a>
         </div>
         <p class="in">
-          Every part of this site now has its own address. Open one directly, or hit the
-          <strong>&gt;_</strong> button in the corner and type <code>pages</code> to move around.
+          A mix of web development, programming and UI/UX work from coursework, personal builds and
+          hackathons.
         </p>
-        <div id="ix" style="border-bottom: 1px solid var(--line)">
-          <a class="so" href="projects.html" data-c>Projects<span>Selected work ↗</span></a>
-          <a class="so" href="experience.html" data-c>Experience<span>Roles &amp; internships ↗</span></a>
-          <a class="so" href="affiliations.html" data-c>Affiliations<span>Communities ↗</span></a>
-          <a class="so" href="activity.html" data-c>Activity<span>Contribution graph ↗</span></a>
-          <a class="so" href="recommendations.html" data-c>Recommendations<span>Kind words ↗</span></a>
-          <a class="so" href="socials.html" data-c>Socials<span>Find me ↗</span></a>
+        <div class="bento">
+          <article class="bx lg2">
+            <div class="mt"><span>01</span><span>2025</span></div>
+            <div class="big">01</div>
+            <h3>Project One</h3>
+            <p>Full-stack web app with a REST API, authentication and a responsive admin dashboard.</p>
+            <div class="tg">
+              <span class="tag">React</span>
+              <span class="tag">Node.js</span>
+              <span class="tag">PostgreSQL</span>
+            </div>
+            <div class="lk">
+              <a href="#" data-c>Live ↗</a>
+              <a href="#" data-c>Code ↗</a>
+            </div>
+          </article>
+
+          <div class="col">
+            <article class="bx">
+              <div class="mt"><span>02</span><span>2025</span></div>
+              <div class="big">02</div>
+              <h3>Project Two</h3>
+              <p>UI/UX case study: user research, wireframes and a tested interactive prototype.</p>
+              <div class="tg">
+                <span class="tag">Figma</span>
+                <span class="tag">UX Research</span>
+              </div>
+              <div class="lk">
+                <a href="#" data-c>Live ↗</a>
+                <a href="#" data-c>Code ↗</a>
+              </div>
+            </article>
+
+            <div class="pair">
+              <article class="bx sm">
+                <div class="mt"><span>03</span><span>2024</span></div>
+                <h3>Project Three</h3>
+                <p>Algorithms and data-structure toolkit for a programming course, fully unit tested.</p>
+                <div class="tg">
+                  <span class="tag">TypeScript</span>
+                  <span class="tag">Vitest</span>
+                </div>
+                <div class="lk">
+                  <a href="#" data-c>Live ↗</a>
+                  <a href="#" data-c>Code ↗</a>
+                </div>
+              </article>
+
+              <article class="bx sm">
+                <div class="mt"><span>04</span><span>2024</span></div>
+                <h3>Project Four</h3>
+                <p>Hackathon build: a working demo shipped in a single weekend with a small team.</p>
+                <div class="tg">
+                  <span class="tag">Hackathon</span>
+                  <span class="tag">API</span>
+                </div>
+                <div class="lk">
+                  <a href="#" data-c>Live ↗</a>
+                  <a href="#" data-c>Code ↗</a>
+                </div>
+              </article>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Experience -->
+      <section id="experience" class="sec">
+        <span class="vt">02 — Experience</span>
+        <div class="sec-h">
+          <h2>Experience</h2>
+          <a class="al" href="mailto:lovenponce@gmail.com?subject=Resume%20request" data-c>Request résumé →</a>
+        </div>
+        <p class="in">
+          Roles, internships and freelance work — what I was responsible for and where.
+        </p>
+        <div class="ls">
+          <article class="ex">
+            <span class="y">2026 — Now</span>
+            <div>
+              <h3>Fullstack Developer (Intern)</h3>
+              <p class="dm">Tech Company — Manila, PH</p>
+            </div>
+            <p class="dm">
+              Building and shipping features end to end, from database schema to the interface, inside
+              an agile team.
+            </p>
+          </article>
+
+          <article class="ex">
+            <span class="y">2025 — 2026</span>
+            <div>
+              <h3>Web Development Lead</h3>
+              <p class="dm">University Org — Manila, PH</p>
+            </div>
+            <p class="dm">
+              Led a small team building internal web tools, ran code reviews and onboarded new
+              members.
+            </p>
+          </article>
+
+          <article class="ex">
+            <span class="y">2024 — 2025</span>
+            <div>
+              <h3>Frontend Developer (Part-time)</h3>
+              <p class="dm">Freelance / Remote</p>
+            </div>
+            <p class="dm">
+              Delivered client sites and dashboards, from wireframes through deployment and handoff.
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <!-- Affiliations -->
+      <section id="affiliations" class="sec">
+        <span class="vt">03 — Communities</span>
+        <div class="sec-h">
+          <h2>Affiliations</h2>
+          <a class="al" href="https://www.linkedin.com/" target="_blank" rel="noopener" data-c>All affiliations →</a>
+        </div>
+        <p class="in">Organizations, societies and communities I contribute to and build with.</p>
+        <div id="al" class="ls">
+          <article class="af">
+            <span class="n">01</span>
+            <div>
+              <h3>Organization One</h3>
+              <p class="dm">Member — Web Development Committee</p>
+            </div>
+            <p class="dm">
+              Building and maintaining internal web tools, reviewing pull requests and running
+              onboarding sessions.
+            </p>
+            <span class="tag">2025 — Now</span>
+          </article>
+
+          <article class="af">
+            <span class="n">02</span>
+            <div>
+              <h3>Organization Two</h3>
+              <p class="dm">Member — IT Student Society</p>
+            </div>
+            <p class="dm">
+              Helping organise tech talks, study groups and the annual campus coding challenge.
+            </p>
+            <span class="tag">2024 — Now</span>
+          </article>
+
+          <article class="af">
+            <span class="n">03</span>
+            <div>
+              <h3>Organization Three</h3>
+              <p class="dm">Participant — Hackathon Community</p>
+            </div>
+            <p class="dm">
+              Teaming up for weekend builds, shipping prototypes and demoing under time pressure.
+            </p>
+            <span class="tag">2025</span>
+          </article>
+        </div>
+      </section>
+
+      <!-- GitHub activity -->
+      <section id="github" class="sec">
+        <span class="vt">04 — Activity</span>
+        <div class="sec-h">
+          <h2>GitHub</h2>
+          <a class="al" href="https://github.com/llvss" target="_blank" rel="noopener" data-c>All activity →</a>
+        </div>
+        <p class="in">
+          Contribution history and the tech I reach for most.
+        </p>
+
+        <div class="stats" style="padding-left: 0" id="gst"></div>
+
+        <div class="gp">
+          <div class="gh">
+            <span>Contribution activity — <span id="gt">—</span></span>
+            <a href="https://github.com/llvss" target="_blank" rel="noopener" data-c>Open profile ↗</a>
+          </div>
+
+          <div class="gs">
+            <div class="gi">
+              <div class="gm" id="gm"></div>
+              <div class="gb">
+                <div class="gd">
+                  <span></span><span>Mon</span><span></span><span>Wed</span><span></span
+                  ><span>Fri</span><span></span>
+                </div>
+                <div class="gc" id="gc"></div>
+              </div>
+              <div class="gl">
+                <div class="sc">
+                  <span class="lb">Less</span>
+                  <i class="c"></i>
+                  <i class="c l1"></i>
+                  <i class="c l2"></i>
+                  <i class="c l3"></i>
+                  <i class="c l4"></i>
+                  <span class="lb">More</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="pn sk-pn">
+          <span class="lb">Tech stacks</span>
+          <div id="ts" class="ts">
+            <div class="sk">
+              <h3>Frontend</h3>
+              <p class="dm">Interfaces, component systems and design tokens.</p>
+              <div class="tg">
+                <span class="tag">TypeScript</span>
+                <span class="tag">React</span>
+                <span class="tag">Next.js</span>
+                <span class="tag">CSS</span>
+                <span class="tag">Tailwind</span>
+              </div>
+            </div>
+
+            <div class="sk">
+              <h3>Backend</h3>
+              <p class="dm">APIs, data modelling and auth.</p>
+              <div class="tg">
+                <span class="tag">Node.js</span>
+                <span class="tag">Express</span>
+                <span class="tag">PostgreSQL</span>
+                <span class="tag">Prisma</span>
+                <span class="tag">REST</span>
+              </div>
+            </div>
+
+            <div class="sk">
+              <h3>Tooling</h3>
+              <p class="dm">Build, test and ship workflow.</p>
+              <div class="tg">
+                <span class="tag">Git</span>
+                <span class="tag">Vite</span>
+                <span class="tag">Vitest</span>
+                <span class="tag">Docker</span>
+                <span class="tag">CI/CD</span>
+              </div>
+            </div>
+
+            <div class="sk">
+              <h3>Practices</h3>
+              <p class="dm">How the work gets planned and reviewed.</p>
+              <div class="tg">
+                <span class="tag">Agile</span>
+                <span class="tag">Code Review</span>
+                <span class="tag">Testing</span>
+                <span class="tag">Accessibility</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Recommendations -->
+      <section id="recommendations" class="sec">
+        <span class="vt">05 — Kind words</span>
+        <div class="sec-h">
+          <h2>Recommendations</h2>
+          <a class="al" href="mailto:lovenponce@gmail.com?subject=Reference%20request" data-c>Ask for a reference →</a>
+        </div>
+        <p class="in">
+          What the people I've worked with say about working with me.
+        </p>
+        <div class="rc-grid">
+          <article class="rc">
+            <div class="av ph" aria-hidden="true"></div>
+            <h3>Alex Rivera</h3>
+            <p class="dm">Engineering Manager, Tech Company</p>
+            <blockquote>
+              Reliable end to end. Takes a vague requirement and turns it into something shipped,
+              tested and easy for the rest of the team to maintain.
+            </blockquote>
+          </article>
+
+          <article class="rc">
+            <div class="av ph" aria-hidden="true"></div>
+            <h3>Jamie Cruz</h3>
+            <p class="dm">Team Lead, University Org</p>
+            <blockquote>
+              The person everyone asks when a project needs rescuing. Calm under deadline pressure
+              and genuinely good at breaking work down.
+            </blockquote>
+          </article>
+
+          <article class="rc">
+            <div class="av ph" aria-hidden="true"></div>
+            <h3>Sam Patel</h3>
+            <p class="dm">Product Designer, Freelance</p>
+            <blockquote>
+              Understands design intent properly and pushes back with better ideas. Our cleanest
+              handover of any collaborator so far.
+            </blockquote>
+          </article>
+        </div>
+      </section>
+
+      <!-- Socials -->
+      <section id="socials" class="sec">
+        <span class="vt">06 — Find me</span>
+        <div class="sec-h">
+          <h2>Socials</h2>
+          <a class="al" href="mailto:lovenponce@gmail.com" data-c>All socials →</a>
+        </div>
+        <p class="in">
+          Open to collaborations, internships and hackathon teams. The fastest way is email.
+        </p>
+        <div id="sl" style="border-bottom: 1px solid var(--line)">
+          <a class="so" href="https://github.com/llvss" target="_blank" rel="noopener" data-c>GitHub<span>@llvss ↗</span></a>
+          <a class="so" href="https://www.linkedin.com/" target="_blank" rel="noopener" data-c>LinkedIn<span>in/username ↗</span></a>
+          <a class="so" href="https://www.instagram.com/" target="_blank" rel="noopener" data-c>Instagram<span>@username ↗</span></a>
+          <button class="so" type="button" data-email="lovenponce@gmail.com" data-c>Email<span>Copy address ⧉</span></button>
+        </div>
+
+        <div class="cta">
+          <div>
+            <h3>Let's build something</h3>
+            <p>Have a project, a role, or an idea worth prototyping? My inbox is always open.</p>
+          </div>
+          <button class="b p" type="button" data-email="lovenponce@gmail.com" data-c>send a mail →</button>
         </div>
       </section>
     </main>
@@ -115,16 +440,6 @@
     <div id="lens" aria-hidden="true"></div>
 
     <!-- Terminal -->
-    <button
-      id="term-launch"
-      class="term-launch"
-      type="button"
-      aria-expanded="false"
-      aria-controls="term"
-      aria-label="Open terminal"
-      title="Open terminal (Ctrl + `)"
-    >&gt;_</button>
-
     <div id="term" class="term" hidden>
       <div class="term-window" role="dialog" aria-label="Terminal" aria-modal="false">
         <div class="term-bar" id="term-bar">
