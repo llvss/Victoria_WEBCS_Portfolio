@@ -316,12 +316,19 @@ function spy() {
 /* ==========================================================================
    THEME
    ========================================================================== */
+// Icons come from the shared sprite at /public/img/icons.svg, so the nav,
+// the drawer and these controls all reference one cached file instead of
+// inlining the same paths in every page. `stroke="currentColor"` resolves at
+// the <use> site, so each icon follows its button's colour.
+const ICON = (name) =>
+  `<svg class="ic" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="/public/img/icons.svg#i-${name}"></use></svg>`;
+
 const THEME_ICONS = {
-  soundOn: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19 5a10 10 0 0 1 0 14"/></svg>',
-  soundOff: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="m23 9-6 6"/><path d="m17 9 6 6"/></svg>',
-  system: '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="12" rx="1"/><path d="M8 20h8"/><path d="M12 16v4"/></svg>',
-  light: '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>',
-  dark: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 14.5A8.5 8.5 0 0 1 9.5 3.5 8.5 8.5 0 1 0 20.5 14.5z"/></svg>',
+  soundOn: ICON('soundOn'),
+  soundOff: ICON('soundOff'),
+  system: ICON('system'),
+  light: ICON('light'),
+  dark: ICON('dark'),
 };
 
 const systemTheme = matchMedia('(prefers-color-scheme: dark)');
@@ -668,9 +675,16 @@ document.addEventListener('click', async (event) => {
 
   /* ---- Build the markup --------------------------------------------- */
 
-  // The drawer mirrors the desktop nav, keeping the same order and labels.
+  // The drawer mirrors the desktop nav, keeping the same order, labels and
+  // icons. The icon markup is carried over verbatim from the source link so
+  // the two can never drift apart; `textContent` alone would silently drop it,
+  // since an <svg> contributes no text.
   const links = queryAll('a', menu)
-    .map((link) => `<a href="${link.getAttribute('href')}" data-c>${(link.textContent || '').trim()}</a>`)
+    .map((link) => {
+      const icon = query('svg', link);
+      const label = (link.textContent || '').trim();
+      return `<a href="${link.getAttribute('href')}" data-c>${icon ? icon.outerHTML : ''}<span>${label}</span></a>`;
+    })
     .join('');
 
   const homeHref = (brand && brand.getAttribute('href')) || '/';
@@ -692,7 +706,7 @@ document.addEventListener('click', async (event) => {
       ${brandLink}
       <button class="icon-button mnav-icon" type="button" id="mnav-open"
         aria-expanded="false" aria-controls="mnav" aria-label="Open menu" title="Open menu">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+        <svg class="ic" aria-hidden="true" focusable="false"><use href="/public/img/icons.svg#i-menu"></use></svg>
       </button>
     </div>`;
 
@@ -706,7 +720,7 @@ document.addEventListener('click', async (event) => {
       ${brandLink}
       <button class="icon-button mnav-icon" type="button" id="mnav-close"
         aria-label="Close menu" title="Close menu">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 5l14 14M19 5 5 19"/></svg>
+        <svg class="ic" aria-hidden="true" focusable="false"><use href="/public/img/icons.svg#i-close"></use></svg>
       </button>
     </div>
     <div class="mnav-body">

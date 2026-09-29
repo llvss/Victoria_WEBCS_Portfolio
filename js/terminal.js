@@ -41,6 +41,7 @@
         'activity/',
         'recommendations/',
         'socials/',
+        'gear/',
       ],
     },
     '~/projects': {
@@ -77,6 +78,10 @@
     '~/socials': {
       page: 'socials.html',
       entries: ['links.txt'],
+    },
+    '~/gear': {
+      page: 'gear.html',
+      entries: ['rig.txt', 'tools.txt', 'specs.txt'],
     },
   };
 
@@ -243,6 +248,25 @@
       'linkedin  https://www.linkedin.com/',
       'instagram https://www.instagram.com/',
       'email     lovenponce@gmail.com',
+    ],
+    '~/gear/rig.txt': [
+      'laptop    MacBook Pro 14" · Apple M3 Pro · 36 GB',
+      'display   LG UltraFine 27" · 3840 x 2160',
+      'keyboard  Keychron K2 · Gateron Brown',
+      'mouse     Logitech MX Master',
+    ],
+    '~/gear/tools.txt': [
+      'editor    VS Code · TypeScript, Python',
+      'shell     zsh + Starship',
+      'runtime   Node 22',
+      'design    Figma · CSS custom properties',
+    ],
+    '~/gear/specs.txt': [
+      'frontend  React, Next.js',
+      'backend   Node, Express',
+      'database  PostgreSQL',
+      'workflow  Git + GitHub · Vercel · GitHub Actions',
+      'this site hand-written HTML, CSS and JS · no dependencies',
     ],
   };
 

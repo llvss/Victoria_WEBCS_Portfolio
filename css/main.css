@@ -204,6 +204,33 @@ aside {
   text-transform: uppercase;
 }
 
+/* All icons come from the shared sprite (/public/img/icons.svg) via <use>.
+   The sprite sets fill/stroke/linecap on its own <svg> root, but those
+   presentation attributes do not cascade into a <use> shadow tree from an
+   external file in every engine, so each context restates what it needs.
+   `currentColor` then makes the glyph follow the link or button colour,
+   which is what drives the hover and active states. */
+.ic {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.menu a svg {
+  width: 15px;
+  height: 15px;
+  flex: none;
+}
+
+/* Nudge the label so the gap between icon and text matches the letter-spacing
+   the mono font applies to the caps. */
+.menu a span {
+  margin-left: auto;
+  padding-left: 12px;
+}
+
 .menu a:hover {
   color: var(--blue);
 }
@@ -212,6 +239,16 @@ aside {
 .menu a.on,
 .mnav-list a.on {
   color: var(--blue);
+}
+
+/* Gear is a secondary section rather than part of the main list, so it is set
+   apart from the entries above it. Matched on the href rather than a class
+   because the mobile drawer rebuilds its links from the sidebar markup and
+   keeps only the href and label — a class added here would not survive the
+   copy. Targeting the href separates Gear in the drawer at the same time. */
+.menu a[href$='gear.html'],
+.mnav-list a[href$='gear.html'] {
+  margin-top: 26px;
 }
 
 .side-b {
@@ -1087,6 +1124,136 @@ h2 {
 }
 
 /* ==========================================================================
+   Gear
+   --------------------------------------------------------------------------
+   One continuous column of items — no tabs, no clicking, just scrolling.
+
+   Each shot is a colour image rendered monochrome by default. Hovering the
+   card (or focusing it, so keyboard users get the same reveal) drops the
+   `grayscale()` filter, so the artwork comes up in colour. The filter is what
+   does the work, so the same file serves both states — there is no second
+   image to keep in sync.
+   ========================================================================== */
+.gear-group + .gear-group {
+  margin-top: 56px;
+  border-top: 1px solid var(--line);
+  padding-top: 56px;
+}
+
+.gear-group-h {
+  display: grid;
+  grid-template-columns: 0px 1fr;
+  align-items: baseline;
+  gap: 4px 16px;
+  margin-bottom: 24px;
+}
+
+/* The number echoes the .n treatment used by the project and affiliation rows. */
+.gear-n {
+  font: 400 40px/1 var(--font-display);
+  -webkit-text-stroke: 1px currentColor;
+  color: transparent;
+}
+
+.gear-group-h h2 {
+  font: 500 24px/1.1 var(--font-display);
+  text-transform: uppercase;
+}
+
+.gear-group-h p {
+  grid-column: 2;
+  margin: 0;
+  color: var(--dim);
+  font-size: 14px;
+}
+
+.gear-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 16px;
+}
+
+.gear-item {
+  border: 1px solid var(--line);
+  background: var(--bg);
+  padding: 20px;
+  transition: border-color 0.25s;
+}
+
+.gear-item:hover,
+.gear-item:focus-within {
+  border-color: var(--ink);
+}
+
+.gear-shot {
+  margin: 0 0 18px;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  background: var(--track-color);
+}
+
+.gear-shot img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* The monochrome state. 1.05 contrast keeps the line art from going flat. */
+  filter: grayscale(1) contrast(1.05);
+  transition: filter 0.45s ease, transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Hover or keyboard focus on the card reveals the colour artwork. */
+.gear-item:hover .gear-shot img,
+.gear-item:focus-within .gear-shot img {
+  filter: grayscale(0) contrast(1);
+  transform: scale(1.04);
+}
+
+.gear-item h3 {
+  font: 500 20px/1.15 var(--font-display);
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+
+/* Spec rows read as a definition list, so the key/value pairing is announced
+   correctly rather than as two loose strings. */
+.gear-specs {
+  margin: 0;
+}
+
+.gear-specs .sp {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  border-top: 1px solid var(--line);
+  padding: 10px 0 0;
+  margin-top: 10px;
+  font: 500 10px var(--font-mono);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.gear-specs dt {
+  color: var(--dim);
+}
+
+.gear-specs dd {
+  margin: 0;
+  text-align: right;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gear-shot img {
+    transition: filter 0.2s linear;
+  }
+
+  .gear-item:hover .gear-shot img,
+  .gear-item:focus-within .gear-shot img {
+    transform: none;
+  }
+}
+
+/* ==========================================================================
    Footer
    ========================================================================== */
 footer {
@@ -1210,10 +1377,6 @@ footer {
 .mnav-icon svg {
   width: 20px;
   height: 20px;
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 1.6;
-  stroke-linecap: round;
 }
 
 /* The drawer is full-bleed and sits above everything, so it is hidden with
@@ -1273,12 +1436,11 @@ footer {
 
 .mnav-list a {
   display: flex;
-  align-items: baseline;
+  align-items: center;
   justify-content: space-between;
   gap: 16px;
   padding: 18px 0;
-  border-bottom: 1px solid var(--line);
-  font: 700 clamp(22px, 7vw, 30px) / 1.1 var(--font-display);
+  font: 700 11px var(--font-mono);
   text-transform: uppercase;
   letter-spacing: 0.01em;
 }
@@ -1288,10 +1450,17 @@ footer {
   color: var(--blue);
 }
 
+/* Larger than the sidebar icons — the drawer is the primary nav on a phone. */
+.mnav-list a svg {
+  width: 20px;
+  height: 20px;
+  flex: none;
+}
+
+/* Pushes the label to the right, mirroring the sidebar's icon-then-text
+   layout while keeping the link full width for a comfortable tap target. */
 .mnav-list a span {
-  font: 500 11px var(--font-mono);
-  letter-spacing: 0.16em;
-  color: var(--dim);
+  margin-left: auto;
 }
 
 .mnav-foot {
@@ -1621,16 +1790,12 @@ footer {
     padding-left: 20px;
   }
 
-  .sec {
-    padding: 64px 20px 64px 32px;
-  }
-
   .sec-h {
     gap: 12px;
   }
 
   footer {
-    padding: 20px 20px 28px 32px;
+    padding: 20px 20px 28px;
   }
 
   .bento,
@@ -1638,14 +1803,17 @@ footer {
     grid-template-columns: 1fr;
   }
 
-  /* One project per stacked block on phones — the four-column row would
-     otherwise squeeze the title and description into unreadable slivers. */
+  /* `.pj` and `.af` both carry a number, a title block, a body and a trailing
+     meta value. Once the row collapses to two columns, every child from the
+     third onwards has to be pinned to column 2 — otherwise auto-placement drops
+     the trailing value into a fresh row under the number. */
   .pj {
     grid-template-columns: 44px 1fr;
     gap: 8px 16px;
   }
 
-  .pj .tg {
+  .pj > :nth-child(n + 3),
+  .af > :nth-child(n + 3) {
     grid-column: 2;
   }
 
@@ -1658,17 +1826,38 @@ footer {
     order: -1;
   }
 
+  /* The hero, the section headings and the stats row all share one left edge.
+     They drifted apart at 20 / 32 / 40px, so nothing lined up on a phone. */
+  .sec {
+    padding: 64px 20px 64px 20px;
+  }
+
+  .stats {
+    padding-left: 20px;
+  }
+
   .lg2 {
     min-height: 420px;
   }
 
-  .af {
-    grid-template-columns: 44px 1fr;
-    gap: 8px 16px;
+  /* The contribution graph is a fixed 860px canvas, so on a phone it stays
+     scrollable rather than being squeezed into an unreadable sliver. */
+  .gi {
+    min-width: 720px;
   }
 
-  .af > :nth-child(n + 3) {
-    grid-column: 2;
+  /* One gear card per row on phones — the auto-fit track would already collapse,
+     this just keeps the spacing consistent with the other panels. */
+  .gear-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .gear-group-h {
+    grid-template-columns: 44px 1fr;
+  }
+
+  .gear-n {
+    font-size: 32px;
   }
 
   /* Terminal goes full-width and docks to the bottom of the screen */
