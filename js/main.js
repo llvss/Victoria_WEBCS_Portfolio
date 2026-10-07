@@ -113,26 +113,41 @@ function renderGraph(contributions, total, publicRepos) {
       .join('');
   }
 
-  // Tooltip
+  // Position hover details immediately, keeping them inside the viewport.
   const tip = query('#tip');
   if (!tip) return;
 
-  graphGrid.addEventListener('pointerover', (event) => {
+  const hideTip = () => { tip.style.display = 'none'; };
+  const showTip = (event) => {
     const cell = event.target.closest('.c');
     if (!cell || !cell.dataset.d) {
-      tip.style.display = 'none';
+      hideTip();
       return;
     }
     tip.textContent = `${cell.dataset.n} contributions · ${cell.dataset.d}`;
     tip.style.display = 'block';
-  });
 
-  graphGrid.addEventListener('pointermove', (event) => {
-    tip.style.left = event.clientX + 'px';
-    tip.style.top = event.clientY + 'px';
-  });
+    const margin = 12;
+    const gap = 12;
+    const width = tip.offsetWidth;
+    const height = tip.offsetHeight;
+    const viewportWidth = document.documentElement.clientWidth;
+    const viewportHeight = document.documentElement.clientHeight;
+    const left = Math.max(margin, Math.min(
+      event.clientX - width / 2, viewportWidth - width - margin
+    ));
+    let top = event.clientY - height - gap;
+    if (top < margin) top = event.clientY + gap;
+    top = Math.max(margin, Math.min(top, viewportHeight - height - margin));
+    tip.style.left = left + 'px';
+    tip.style.top = top + 'px';
+  };
 
-  graphGrid.addEventListener('pointerleave', () => (tip.style.display = 'none'));
+  graphGrid.addEventListener('pointerover', showTip);
+  graphGrid.addEventListener('pointermove', showTip);
+  graphGrid.addEventListener('pointerleave', hideTip);
+  addEventListener('scroll', hideTip, { passive: true });
+  addEventListener('resize', hideTip);
 }
 
 async function graph() {
@@ -316,19 +331,24 @@ function spy() {
 /* ==========================================================================
    THEME
    ========================================================================== */
-// Icons come from the shared sprite at /public/img/icons.svg, so the nav,
-// the drawer and these controls all reference one cached file instead of
-// inlining the same paths in every page. `stroke="currentColor"` resolves at
-// the <use> site, so each icon follows its button's colour.
-const ICON = (name) =>
-  `<svg class="ic" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="/public/img/icons.svg#i-${name}"></use></svg>`;
+// Lucide is imported before this script on every page.
+const ICON_ATTRS = { class: 'ic', 'stroke-width': 1.5, 'aria-hidden': 'true', focusable: 'false' };
+lucide.createIcons({ attrs: ICON_ATTRS });
+
+// Return a rendered SVG so theme and sound updates need no second render pass.
+const ICON = (name) => {
+  const iconName = name.replace(/(^|-)(\w)/g, (_, separator, letter) => letter.toUpperCase());
+  const icon = lucide.createElement(lucide.icons[iconName]);
+  Object.entries(ICON_ATTRS).forEach(([attribute, value]) => icon.setAttribute(attribute, value));
+  return icon.outerHTML;
+};
 
 const THEME_ICONS = {
-  soundOn: ICON('soundOn'),
-  soundOff: ICON('soundOff'),
-  system: ICON('system'),
-  light: ICON('light'),
-  dark: ICON('dark'),
+  soundOn: ICON('volume-2'),
+  soundOff: ICON('volume-x'),
+  system: ICON('monitor'),
+  light: ICON('sun'),
+  dark: ICON('moon'),
 };
 
 const systemTheme = matchMedia('(prefers-color-scheme: dark)');
@@ -676,12 +696,10 @@ document.addEventListener('click', async (event) => {
   /* ---- Build the markup --------------------------------------------- */
 
   // The drawer mirrors the desktop nav, keeping the same order, labels and
-  // icons. The icon markup is carried over verbatim from the source link so
-  // the two can never drift apart; `textContent` alone would silently drop it,
-  // since an <svg> contributes no text.
+  // icons. Copy the decorative SVG as well as the text label.
   const links = queryAll('a', menu)
     .map((link) => {
-      const icon = query('svg', link);
+      const icon = query('.ic', link);
       const label = (link.textContent || '').trim();
       return `<a href="${link.getAttribute('href')}" data-c>${icon ? icon.outerHTML : ''}<span>${label}</span></a>`;
     })
@@ -706,7 +724,7 @@ document.addEventListener('click', async (event) => {
       ${brandLink}
       <button class="icon-button mnav-icon" type="button" id="mnav-open"
         aria-expanded="false" aria-controls="mnav" aria-label="Open menu" title="Open menu">
-        <svg class="ic" aria-hidden="true" focusable="false"><use href="/public/img/icons.svg#i-menu"></use></svg>
+        ${ICON('menu')}
       </button>
     </div>`;
 
@@ -720,7 +738,7 @@ document.addEventListener('click', async (event) => {
       ${brandLink}
       <button class="icon-button mnav-icon" type="button" id="mnav-close"
         aria-label="Close menu" title="Close menu">
-        <svg class="ic" aria-hidden="true" focusable="false"><use href="/public/img/icons.svg#i-close"></use></svg>
+        ${ICON('x')}
       </button>
     </div>
     <div class="mnav-body">
@@ -736,19 +754,18 @@ document.addEventListener('click', async (event) => {
   const openLinks = queryAll('.mnav-list a', drawer);
 
   /* ---- Place the shared controls -------------------------------------- */
-  /* The terminal opener and the theme/sound controls must live in the drawer on
-     phones and back in the sidebar on desktop, so they are moved between the
-     two homes as the breakpoint changes. Moving (rather than cloning) keeps a
-     single #mu and a single .term-open, so the wiring in main.js and
-     terminal.js — both of which grabbed those elements at load — stays valid. */
+  /* The terminal is desktop-only. Theme and sound controls move to the drawer
+     on phones, while the terminal opener stays in the hidden desktop sidebar. */
 
   function placeControls() {
     if (!sideBottom) return;
 
-    const home = desktopQuery.matches ? sideBottom : foot;
+    const controlHome = desktopQuery.matches ? sideBottom : foot;
 
-    if (terminalOpener && terminalOpener.parentElement !== home) home.append(terminalOpener);
-    if (controls && controls.parentElement !== home) home.append(controls);
+    if (terminalOpener && terminalOpener.parentElement !== sideBottom) sideBottom.append(terminalOpener);
+    if (controls && controls.parentElement !== controlHome) controlHome.append(controls);
+    const iconButton = query('.term-open-icon');
+    if (iconButton && iconButton.parentElement !== sideBottom) sideBottom.append(iconButton);
   }
 
   placeControls();
@@ -823,6 +840,200 @@ document.addEventListener('click', async (event) => {
 })();
 
 /* ==========================================================================
+   HERO SCROLL REVEAL
+   --------------------------------------------------------------------------
+   The hero stays pinned while scrolling fills the description word by word.
+   Once every word reaches --ink, the hero scrolls away into the next section.
+   A sticky container preserves native touch scrolling and momentum throughout.
+   ========================================================================== */
+function revealHero() {
+  // Only the home page carries the hero description.
+  const desc = query('.desc');
+  const hero = query('#home');
+  if (!desc || !hero) return;
+
+  const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* Split into words.
+     TreeWalker is used rather than splitting textContent so any inline markup
+     (e.g. the <strong> the stylesheet already accounts for) survives intact -
+     each text node is split on its own and only its words get wrapped. */
+  const walker = document.createTreeWalker(desc, NodeFilter.SHOW_TEXT);
+  const textNodes = [];
+  for (let node = walker.nextNode(); node; node = walker.nextNode()) textNodes.push(node);
+
+  const words = [];
+  textNodes.forEach((node) => {
+    const fragment = document.createDocumentFragment();
+    // Split on runs of whitespace, keeping the separators so the wrapped words
+    // reflow into exactly the same line breaks as the original text.
+    node.textContent.split(/(\s+)/).forEach((part) => {
+      if (!part) return;
+      if (/^\s+$/.test(part)) {
+        fragment.appendChild(document.createTextNode(part));
+        return;
+      }
+      const span = document.createElement('span');
+      span.className = 'w';
+      span.textContent = part;
+      fragment.appendChild(span);
+      words.push(span);
+    });
+    node.replaceWith(fragment);
+  });
+
+  if (!words.length) return;
+
+  const total = words.length;
+
+  // Reduced motion skips the pinned animation and shows the finished text.
+  if (reduceMotion) {
+    words.forEach((word) => word.style.setProperty('--w', '1'));
+    return;
+  }
+
+  const clamp01 = (value) => Math.min(1, Math.max(0, value));
+
+  // A sticky hero uses real scroll distance for the reveal. The browser keeps
+  // ownership of touch gestures and inertia throughout, including the instant
+  // the finished paragraph starts moving away with the rest of the page.
+  const track = document.createElement('div');
+  track.className = 'hero-reveal';
+  hero.before(track);
+  track.appendChild(hero);
+
+  let distance = 1;
+  let frame = 0;
+  const paint = () => {
+    frame = 0;
+    const progress = clamp01(-track.getBoundingClientRect().top / distance);
+    const reach = progress * (total + 0.5);
+    words.forEach((word, index) => {
+      word.style.setProperty('--w', clamp01((reach - index) / 1.5).toFixed(3));
+    });
+  };
+
+  const schedulePaint = () => {
+    if (!frame) frame = requestAnimationFrame(paint);
+  };
+
+  const measure = () => {
+    distance = Math.max(1, hero.offsetHeight);
+    track.style.height = (hero.offsetHeight + distance) + 'px';
+    // Adding the reveal distance moves the first content section down.
+    alignSectionGuide();
+    schedulePaint();
+  };
+
+  addEventListener('scroll', schedulePaint, { passive: true });
+  addEventListener('resize', measure, { passive: true });
+  document.fonts?.ready.then(measure);
+  measure();
+}
+
+/* ==========================================================================
+   PROJECT THUMBNAILS + HOVER PREVIEWS
+   ========================================================================== */
+function initProjectPreviews() {
+  const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
+  const hoverPointer = matchMedia('(hover: hover) and (pointer: fine)');
+
+  queryAll('.project-thumbnail[data-preview]').forEach((image) => {
+    const card = image.closest('.project-card');
+    const media = image.closest('.project-media');
+    let thumbnail = image.getAttribute('src');
+    let hovered = false;
+    let focused = false;
+    let playing = false;
+    let generation = 0;
+    let gifData = null;
+    let currentPreview = null;
+
+    const retirePreview = () => {
+      const preview = currentPreview;
+      currentPreview = null;
+      if (!preview) return;
+      const visible = preview.classList.contains('is-visible');
+      preview.classList.remove('is-visible');
+      const cleanup = () => {
+        preview.remove();
+        URL.revokeObjectURL(preview.src);
+      };
+      // Keep the outgoing layer for the full 350ms fade, then release it.
+      if (visible) setTimeout(cleanup, 400);
+      else cleanup();
+    };
+
+    const update = (restart = false) => {
+      const active = !reducedMotion.matches && (hovered || focused);
+      if (active && playing && !restart) return;
+      playing = active;
+      const request = ++generation;
+      retirePreview();
+      if (!active) return;
+
+      // Download once, but create a fresh image resource for each hover.
+      // Reusing the original GIF URL can resume a cached animation timeline.
+      if (!gifData) {
+        gifData = fetch(image.dataset.preview)
+          .then((response) => {
+            if (!response.ok) throw new Error('Project preview unavailable');
+            return response.blob();
+          })
+          .catch((error) => { gifData = null; throw error; });
+      }
+      gifData.then((blob) => {
+        if (request !== generation || !playing) return;
+        const preview = new Image(1920, 1080);
+        preview.className = 'project-preview';
+        preview.alt = '';
+        preview.setAttribute('aria-hidden', 'true');
+        currentPreview = preview;
+        preview.onload = () => {
+          // Paint the transparent layer before starting its fade, even cached.
+          requestAnimationFrame(() => requestAnimationFrame(() => {
+            if (request === generation && playing) preview.classList.add('is-visible');
+          }));
+        };
+        preview.onerror = () => {
+          if (request !== generation) return;
+          playing = false;
+          retirePreview();
+        };
+        media.appendChild(preview);
+        preview.src = URL.createObjectURL(blob);
+      }).catch(() => {
+        if (request === generation) playing = false;
+      });
+    };
+
+    const fallback = () => {
+      if (image.getAttribute('src') !== thumbnail) return;
+      thumbnail = '/public/img/projects/placeholder.svg';
+      image.alt = card.querySelector('h3').textContent + ' — thumbnail coming soon';
+      if (image.getAttribute('src') !== thumbnail) image.src = thumbnail;
+    };
+    image.addEventListener('error', fallback);
+    if (image.complete && !image.naturalWidth) fallback();
+
+    card.addEventListener('pointerenter', (event) => {
+      hovered = event.pointerType !== 'touch' && hoverPointer.matches;
+      update(hovered);
+    });
+    card.addEventListener('pointerleave', () => { hovered = false; update(); });
+    card.addEventListener('focusin', (event) => {
+      focused = event.target.matches(':focus-visible');
+      update();
+    });
+    card.addEventListener('focusout', (event) => {
+      if (!card.contains(event.relatedTarget)) { focused = false; update(); }
+    });
+    reducedMotion.addEventListener('change', () => update());
+    hoverPointer.addEventListener('change', () => { hovered = false; update(); });
+  });
+}
+
+/* ==========================================================================
    INIT
    ========================================================================== */
 syncTheme();
@@ -835,7 +1046,8 @@ function alignSectionGuide() {
   if (guide && firstSection) guide.style.top = `${firstSection.offsetTop}px`;
 }
 
-[graph, spy, fit, alignSectionGuide].forEach((initStep) => {
+// revealHero is last so the word spans exist before the first paint measurement.
+[initProjectPreviews, graph, spy, fit, alignSectionGuide, revealHero].forEach((initStep) => {
   try {
     initStep();
   } catch (error) {

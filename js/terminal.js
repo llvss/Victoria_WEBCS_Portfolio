@@ -59,25 +59,13 @@
         '10-project-ten.md',
       ],
     },
-    '~/experience': {
-      page: 'experience.html',
-      entries: ['roles.txt', 'resume.pdf'],
-    },
     '~/affiliations': {
       page: 'affiliations.html',
       entries: ['web-dev-committee.txt', 'it-student-society.txt', 'hackathon-community.txt'],
     },
-    '~/activity': {
-      page: 'activity.html',
-      entries: ['contributions.log', 'stacks.txt'],
-    },
     '~/recommendations': {
       page: 'recommendations.html',
       entries: ['alex-rivera.txt', 'jamie-cruz.txt', 'sam-patel.txt'],
-    },
-    '~/socials': {
-      page: 'socials.html',
-      entries: ['links.txt'],
     },
     '~/gear': {
       page: 'gear.html',

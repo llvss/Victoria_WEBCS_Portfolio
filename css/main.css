@@ -99,7 +99,9 @@ body {
   background: var(--bg);
   color: var(--ink);
   font: 400 16px/1.6 var(--font-sans);
-  overflow-x: hidden;
+  /* Clip sideways overflow without creating a scroll container that would
+     prevent the hero from sticking to the viewport. */
+  overflow-x: clip;
 }
 
 main {
@@ -195,8 +197,9 @@ aside {
 
 .menu a {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-start;
   align-items: center;
+  gap: 12px;
   height: 25px;
   padding: 0 18px;
   font: 700 11px var(--font-mono);
@@ -204,31 +207,29 @@ aside {
   text-transform: uppercase;
 }
 
-/* All icons come from the shared sprite (/public/img/icons.svg) via <use>.
-   The sprite sets fill/stroke/linecap on its own <svg> root, but those
-   presentation attributes do not cascade into a <use> shadow tree from an
-   external file in every engine, so each context restates what it needs.
-   `currentColor` then makes the glyph follow the link or button colour,
-   which is what drives the hover and active states. */
+/* Lucide outline icons use a 1.5px stroke and inherit control colours. */
 .ic {
+  display: inline-block;
+  width: 1em;
+  height: 1em;
   fill: none;
   stroke: currentColor;
-  stroke-width: 1.6;
+  stroke-width: 1.5;
   stroke-linecap: round;
   stroke-linejoin: round;
-}
-
-.menu a svg {
-  width: 15px;
-  height: 15px;
+  line-height: 1;
+  text-align: center;
   flex: none;
 }
 
-/* Nudge the label so the gap between icon and text matches the letter-spacing
-   the mono font applies to the caps. */
+.menu a .ic {
+  width: 15px;
+  font-size: 15px;
+}
+
+/* Fixed-width icons keep the left-aligned labels in one column. */
 .menu a span {
-  margin-left: auto;
-  padding-left: 12px;
+  text-align: left;
 }
 
 .menu a:hover {
@@ -312,14 +313,9 @@ aside {
   color: var(--bg);
 }
 
-.icon-button svg {
+.icon-button .ic {
   width: 18px;
-  height: 18px;
-  fill: none;
-  stroke: currentColor;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  stroke-width: 2;
+  font-size: 18px;
 }
 
 /* ==========================================================================
@@ -449,6 +445,13 @@ aside {
   z-index: 1;
 }
 
+/* The extra height is the scroll distance used to reveal the description.
+   At the end of this track the fully revealed hero leaves the viewport. */
+.hero-reveal > #home {
+  position: sticky;
+  top: 0;
+}
+
 #dz {
   position: absolute;
   right: 0;
@@ -492,6 +495,22 @@ aside {
 .desc strong {
   color: var(--ink);
   font-weight: 500;
+}
+
+/* Scroll reveal --------------------------------------------------------------
+   main.js wraps every word of the description in a span and drives `--w` from
+   0 to 1 as the hero scrolls away, so the paragraph fills from --dim to --ink
+   one word at a time. `--w` is a unitless 0..1, hence the * 100% below.
+
+   color-mix is used instead of an opacity fade for two reasons: it interpolates
+   between the *resolved* palette values, so it follows the theme morph and the
+   light theme for free; and the un-revealed end of the range is exactly --dim,
+   so the text stays fully legible at rest rather than fading towards invisible.
+
+   If color-mix is unsupported the declaration is dropped and the span inherits
+   --dim from .desc, which is the same resting state - it just never lights up. */
+.desc .w {
+  color: color-mix(in oklab, var(--dim), var(--ink) calc(var(--w, 0) * 100%));
 }
 
 .row {
@@ -593,6 +612,11 @@ h2 {
 .al {
   flex: none;
   display: inline-block;
+  /* Pushes the link to the right edge of .sec-h. `justify-content:
+     space-between` only works while the row stays on one line — once the
+     flex container wraps, the single wrapped item falls back to the start
+     edge. `margin-left: auto` keeps the link hard right in both cases. */
+  margin-left: auto;
   border-bottom: 1px solid var(--line);
   padding-bottom: 5px;
   font: 500 11px var(--font-mono);
@@ -652,6 +676,83 @@ h2 {
   object-position: top;
 }
 
+/* Fixed media space keeps thumbnail/GIF swaps from shifting the cards. */
+.project-card {
+  min-width: 0;
+}
+
+/* Stretch the title link over the card while keeping Live/Code independent. */
+.project-card-link::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  cursor: pointer;
+}
+
+.project-card-link:focus-visible {
+  outline: none;
+}
+
+.project-card-link:focus-visible::after {
+  outline: 2px solid var(--blue);
+  outline-offset: 3px;
+}
+
+.project-card .lk {
+  position: relative;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.project-card .lk a {
+  pointer-events: auto;
+}
+
+/* Keep tags and links aligned when descriptions wrap to different lengths. */
+.project-card .tg {
+  margin-top: auto;
+}
+
+.project-media {
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  flex: 0 0 auto;
+  background: var(--side);
+}
+
+.project-media .project-thumbnail,
+.project-media .project-preview {
+  display: block;
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center;
+}
+
+/* Keep the thumbnail underneath so both fade directions have an image. */
+.project-media .project-preview {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 350ms ease-in-out;
+}
+
+.project-media .project-preview.is-visible {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .project-media .project-preview,
+  .project-media .project-preview.is-visible {
+    opacity: 0;
+    transition: none;
+  }
+}
+
 .big {
   flex: 1;
   margin-top: auto;
@@ -686,7 +787,8 @@ h2 {
 
 .bento {
   display: grid;
-  grid-template-columns: 7fr 5fr;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-auto-rows: 1fr;
   gap: 16px;
 }
 
@@ -762,6 +864,28 @@ h2 {
 /* ==========================================================================
    Affiliations
    ========================================================================== */
+.af-logo {
+  width: 60px;
+  height: 60px;
+  margin-top: 8px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: var(--bg);
+  border: 1px solid var(--line);
+  display: block;
+  flex-shrink: 0;
+  align-self: start;
+}
+
+/* Start black & white, then reveal the original color on hover. */
+.af-logo {
+  filter: grayscale(1) brightness(0.85);
+  transition: filter 0.35s ease;
+}
+
+.af:hover .af-logo {
+  filter: grayscale(0) brightness(1);
+}
 .ls {
   border-bottom: 1px solid var(--line);
 }
@@ -828,13 +952,17 @@ h2 {
 }
 
 .gi {
-  min-width: 860px;
+  --contribution-gap: clamp(1px, 0.25vw, 3px);
+  width: 100%;
+  max-width: 881px; /* Cap desktop cells at 13px. */
+  min-width: 0;
+  margin-inline: auto;
 }
 
 .gm {
   display: grid;
-  grid-auto-flow: column;
-  grid-auto-columns: 15px;
+  grid-template-columns: repeat(53, minmax(0, 1fr));
+  gap: var(--contribution-gap);
   margin-left: 36px;
   margin-bottom: 6px;
   height: 14px;
@@ -848,29 +976,44 @@ h2 {
 }
 
 .gb {
-  display: flex;
+  position: relative;
+  display: grid;
+  grid-template-columns: 28px minmax(0, 1fr);
   gap: 8px;
 }
 
 .gd {
-  display: grid;
-  grid-template-rows: repeat(7, 12px);
-  gap: 3px;
+  position: absolute;
+  inset: 0 auto 0 0;
   width: 28px;
+  display: grid;
+  grid-template-rows: repeat(7, minmax(0, 1fr));
+  gap: var(--contribution-gap);
 }
 
 .gd span {
-  font: 500 9px/12px var(--font-mono);
+  display: flex;
+  align-items: center;
+  font: 500 clamp(7px, 0.8vw, 9px)/1 var(--font-mono);
   color: var(--dim);
   text-transform: uppercase;
 }
 
 .gc {
+  grid-column: 2;
   display: grid;
   grid-auto-flow: column;
-  grid-template-rows: repeat(7, 12px);
-  grid-auto-columns: 12px;
-  gap: 3px;
+  grid-template-columns: repeat(53, minmax(0, 1fr));
+  grid-template-rows: repeat(7, auto);
+  gap: var(--contribution-gap);
+}
+
+/* Fill each week column while preserving square day cells. */
+.gc .c {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1;
 }
 
 .c {
@@ -921,12 +1064,13 @@ h2 {
   pointer-events: none;
   background: var(--ink);
   color: var(--bg);
-  font: 700 10px var(--font-mono);
-  padding: 6px 10px;
-  white-space: nowrap;
+  font: 700 11px/1.4 var(--font-mono);
+  max-width: calc(100vw - 24px);
+  padding: 8px 12px;
+  white-space: normal;
   display: none;
-  transform: translate(-50%, -140%);
 }
+
 
 /* ==========================================================================
    Tech stacks
@@ -1030,10 +1174,19 @@ h2 {
   margin-bottom: 6px;
 }
 
-/* Placeholder for a photo that has not been added yet */
+/* Placeholder for a photo that has not been added yet. It shows the person's
+   two-letter initials instead of an empty box. */
 .av.ph {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   background: var(--track-color);
   border: 1px dashed var(--line);
+  font: 500 16px/1 var(--font-mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--dim);
+  user-select: none;
 }
 
 .rc h3 {
@@ -1059,6 +1212,38 @@ h2 {
   font: 400 40px/0.6 var(--font-display);
   color: var(--dim);
   margin-bottom: 6px;
+}
+
+
+/* Compact, text-only cards on the dedicated recommendations page. */
+.rc-grid--compact {
+  width: 100%;
+  max-width: 960px;
+  margin-inline: auto;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
+  gap: 12px;
+}
+
+.rc-grid--compact .rc {
+  min-width: 0;
+  padding: 16px;
+  gap: 6px;
+}
+
+.rc-grid--compact .rc h3 {
+  font-size: 18px;
+}
+
+.rc-grid--compact .rc blockquote {
+  margin-top: 4px;
+  padding-top: 10px;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.rc-grid--compact .rc blockquote::before {
+  font-size: 32px;
+  margin-bottom: 4px;
 }
 
 .pn {
@@ -1169,14 +1354,14 @@ h2 {
 
 .gear-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: 16px;
+  grid-template-columns: repeat(auto-fit, minmax(168px, 1fr));
+  gap: 12px;
 }
 
 .gear-item {
   border: 1px solid var(--line);
   background: var(--bg);
-  padding: 20px;
+  padding: 14px;
   transition: border-color 0.25s;
 }
 
@@ -1186,8 +1371,8 @@ h2 {
 }
 
 .gear-shot {
-  margin: 0 0 18px;
-  aspect-ratio: 4 / 3;
+  margin: 0 0 12px;
+  aspect-ratio: 1 / 1;
   overflow: hidden;
   background: var(--track-color);
 }
@@ -1210,9 +1395,9 @@ h2 {
 }
 
 .gear-item h3 {
-  font: 500 20px/1.15 var(--font-display);
+  font: 500 15px/1.2 var(--font-display);
   text-transform: uppercase;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
 }
 
 /* Spec rows read as a definition list, so the key/value pairing is announced
@@ -1221,14 +1406,14 @@ h2 {
   margin: 0;
 }
 
+/* The boxes are narrow, so the key/value pair stacks rather than sharing one
+   row — a long value (Logitech MX Master) would otherwise wrap out of the
+   card. Same definition-list semantics, just a vertical layout. */
 .gear-specs .sp {
-  display: flex;
-  justify-content: space-between;
-  gap: 16px;
   border-top: 1px solid var(--line);
-  padding: 10px 0 0;
-  margin-top: 10px;
-  font: 500 10px var(--font-mono);
+  padding-top: 7px;
+  margin-top: 7px;
+  font: 500 9px/1.5 var(--font-mono);
   letter-spacing: 0.12em;
   text-transform: uppercase;
 }
@@ -1238,8 +1423,7 @@ h2 {
 }
 
 .gear-specs dd {
-  margin: 0;
-  text-align: right;
+  margin: 3px 0 0;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -1374,9 +1558,9 @@ footer {
   flex: none;
 }
 
-.mnav-icon svg {
+.mnav-icon .ic {
   width: 20px;
-  height: 20px;
+  font-size: 20px;
 }
 
 /* The drawer is full-bleed and sits above everything, so it is hidden with
@@ -1437,7 +1621,7 @@ footer {
 .mnav-list a {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-start;
   gap: 16px;
   padding: 18px 0;
   font: 700 11px var(--font-mono);
@@ -1451,24 +1635,22 @@ footer {
 }
 
 /* Larger than the sidebar icons — the drawer is the primary nav on a phone. */
-.mnav-list a svg {
+.mnav-list a .ic {
   width: 20px;
-  height: 20px;
-  flex: none;
+  font-size: 20px;
 }
 
-/* Pushes the label to the right, mirroring the sidebar's icon-then-text
-   layout while keeping the link full width for a comfortable tap target. */
 .mnav-list a span {
-  margin-left: auto;
+  text-align: left;
 }
 
 .mnav-foot {
-  margin-top: auto;
-  padding-top: 32px;
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid var(--line);
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 12px;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -1492,6 +1674,10 @@ footer {
   color: var(--dim);
   text-align: left;
   transition: color 0.2s;
+}
+
+.term-open-icon {
+  display: none;
 }
 
 .term-open .kbd {
@@ -1590,18 +1776,15 @@ footer {
   padding: 0;
 }
 
-.term-dot svg {
+.term-dot .ic {
   width: 7px;
-  height: 7px;
-  stroke: rgba(0, 0, 0, 0.55);
-  stroke-width: 2.5;
-  stroke-linecap: round;
-  fill: none;
+  font-size: 7px;
+  color: rgba(0, 0, 0, 0.55);
   opacity: 0;
   transition: opacity 0.12s;
 }
 
-.term-dots:hover .term-dot svg {
+.term-dots:hover .term-dot .ic {
   opacity: 1;
 }
 
@@ -1722,7 +1905,7 @@ footer {
   }
 
   .v2 {
-    left: 20px;
+    display: none;
   }
 
   .vt,
@@ -1751,19 +1934,9 @@ footer {
     height: 32px;
   }
 
-  /* Touch layouts have no Ctrl key, so the shortcut hint is dropped and the
-     label stands on its own. The opener is now inside the drawer. */
-  .mnav-foot .term-open .kbd {
+  /* The terminal opener remains in the desktop-only sidebar. */
+  .term-open {
     display: none;
-  }
-
-  .mnav-foot .term-open {
-    font-size: 12px;
-  }
-
-  .icon-button {
-    width: 32px;
-    height: 32px;
   }
 
   section,
@@ -1812,8 +1985,19 @@ footer {
     gap: 8px 16px;
   }
 
-  .pj > :nth-child(n + 3),
-  .af > :nth-child(n + 3) {
+  .af {
+    grid-template-columns: 56px 1fr;
+    gap: 8px 16px;
+    padding: 20px 16px;
+  }
+
+  .af-logo {
+    width: 56px;
+    height: 56px;
+  }
+
+  .af > :nth-child(n + 3),
+  .ex > :nth-child(n + 2) {
     grid-column: 2;
   }
 
@@ -1838,12 +2022,6 @@ footer {
 
   .lg2 {
     min-height: 420px;
-  }
-
-  /* The contribution graph is a fixed 860px canvas, so on a phone it stays
-     scrollable rather than being squeezed into an unreadable sliver. */
-  .gi {
-    min-width: 720px;
   }
 
   /* One gear card per row on phones — the auto-fit track would already collapse,

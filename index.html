@@ -29,13 +29,10 @@
       </a>
 
       <nav class="menu" aria-label="Primary">
-        <a href="/html/projects.html" data-c><svg class="ic" aria-hidden="true" focusable="false"><use href="/public/img/icons.svg#i-projects"></use></svg><span>Projects</span></a>
-        <a href="/html/experience.html" data-c><svg class="ic" aria-hidden="true" focusable="false"><use href="/public/img/icons.svg#i-experience"></use></svg><span>Experience</span></a>
-        <a href="/html/affiliations.html" data-c><svg class="ic" aria-hidden="true" focusable="false"><use href="/public/img/icons.svg#i-affiliations"></use></svg><span>Affiliations</span></a>
-        <a href="/html/activity.html" data-c><svg class="ic" aria-hidden="true" focusable="false"><use href="/public/img/icons.svg#i-activity"></use></svg><span>Activity</span></a>
-        <a href="/html/recommendations.html" data-c><svg class="ic" aria-hidden="true" focusable="false"><use href="/public/img/icons.svg#i-recommendations"></use></svg><span>Recommendations</span></a>
-        <a href="/html/socials.html" data-c><svg class="ic" aria-hidden="true" focusable="false"><use href="/public/img/icons.svg#i-socials"></use></svg><span>Socials</span></a>
-        <a href="/html/gear.html" data-c><svg class="ic" aria-hidden="true" focusable="false"><use href="/public/img/icons.svg#i-gear"></use></svg><span>Gear</span></a>
+        <a href="/html/projects.html" data-c><i class="ic" data-lucide="code" aria-hidden="true"></i><span>Projects</span></a>
+        <a href="/html/affiliations.html" data-c><i class="ic" data-lucide="users" aria-hidden="true"></i><span>Affiliations</span></a>
+        <a href="/html/recommendations.html" data-c><i class="ic" data-lucide="message-circle" aria-hidden="true"></i><span>Recommendations</span></a>
+        <a href="/html/gear.html" data-c><i class="ic" data-lucide="monitor" aria-hidden="true"></i><span>Gear</span></a>
 
         <div class="line"></div>
       </nav>
@@ -45,6 +42,16 @@
 
         <button class="term-open" type="button" aria-expanded="false" aria-controls="term">
           open cmd <span class="kbd">ctrl</span> + <span class="kbd">`</span>
+        </button>
+
+        <button class="term-open-icon" type="button" aria-label="Open terminal" title="Open terminal" hidden>
+          <svg class="ic" data-lucide="terminal" aria-hidden="true">
+            <polyline points="4 17 10 11 4 11"></polyline>
+            <polyline points="12 11 18 11 18 17"></polyline>
+            <line x1="14" y1="1" x2="14" y2="7"></line>
+            <line x1="8" y1="1" x2="8" y2="7"></line>
+            <line x1="2" y1="15" x2="22" y2="15"></line>
+          </svg>
         </button>
 
         <div class="side-r">
@@ -70,22 +77,21 @@
           <h1 class="name">Loven Victoria</h1>
 
           <p class="desc">
-            I'm currently a second-year computer science student at the University of the Philippines, Manila. 
+            I'm currently a second-year computer science student at Holy Angel University, Angeles City. 
             I enjoy building web applications, learning new technologies, and contributing to open-source projects.
           </p>
 
           <p class="sub">
             <a href="https://github.com/llvss" target="_blank" rel="noopener" data-c>github ↗</a>
-            <a href="https://www.linkedin.com/" target="_blank" rel="noopener" data-c>linkedin ↗</a>
-            <a href="https://www.instagram.com/" target="_blank" rel="noopener" data-c>instagram ↗</a>
+            <a href="https://www.linkedin.com/in/loven-ponce-p-victoria-5b6279387/" target="_blank" rel="noopener" data-c>linkedin ↗</a>
+            <a href="https://www.instagram.com/l.lponsi/" target="_blank" rel="noopener" data-c>instagram ↗</a>
             <a href="mailto:lovenponce@gmail.com" data-c>email ↗</a>
           </p>
 
           <div class="stats">
             <div class="stat"><b>10</b><span>Projects</span></div>
             <div class="stat"><b>03</b><span>Affiliations</span></div>
-            <div class="stat"><b>02</b><span>Core stacks</span></div>
-            <div class="stat"><b>2026</b><span>Graduating</span></div>
+            <div class="stat"><b>2029</b><span>Graduating</span></div>
           </div>
         </div>
       </section>
@@ -102,68 +108,94 @@
           hackathons.
         </p>
         <div class="bento">
-          <article class="bx lg2">
+          <article class="bx project-card">
             <div class="mt"><span>01</span><span>2025</span></div>
-            <div class="big">01</div>
-            <h3>Project One</h3>
-            <p>Full-stack web app with a REST API, authentication and a responsive admin dashboard.</p>
+            <div class="project-media">
+              <img class="project-thumbnail"
+                src="/public/img/projects/terra-guard-thumbnail.png"
+                data-preview="/public/img/projects/terra-guard-preview.gif"
+                alt="Terra Guard project preview"
+                width="1920" height="1080" loading="lazy" decoding="async" />
+            </div>
+            <h3><a class="project-card-link"  data-c>Terra Guard</a></h3>
+            <p>TerraGuard uses satellite data to check if government infrastructure is actually being built, or if the structures were already there before the contract started.</p>
             <div class="tg">
-              <span class="tag">React</span>
+              <span class="tag">Next.js</span>
+              <span class="tag">Python</span>
+              <span class="tag">Vercel</span>
               <span class="tag">Node.js</span>
-              <span class="tag">PostgreSQL</span>
             </div>
             <div class="lk">
-              <a href="#" data-c>Live ↗</a>
-              <a href="#" data-c>Code ↗</a>
+              <a href="https://terraguard-satellite.vercel.app/" data-c>Live ↗</a>
             </div>
           </article>
 
-          <div class="col">
-            <article class="bx">
-              <div class="mt"><span>02</span><span>2025</span></div>
-              <div class="big">02</div>
-              <h3>Project Two</h3>
-              <p>UI/UX case study: user research, wireframes and a tested interactive prototype.</p>
-              <div class="tg">
-                <span class="tag">Figma</span>
-                <span class="tag">UX Research</span>
-              </div>
-              <div class="lk">
-                <a href="#" data-c>Live ↗</a>
-                <a href="#" data-c>Code ↗</a>
-              </div>
-            </article>
-
-            <div class="pair">
-              <article class="bx sm">
-                <div class="mt"><span>03</span><span>2024</span></div>
-                <h3>Project Three</h3>
-                <p>Algorithms and data-structure toolkit for a programming course, fully unit tested.</p>
-                <div class="tg">
-                  <span class="tag">TypeScript</span>
-                  <span class="tag">Vitest</span>
-                </div>
-                <div class="lk">
-                  <a href="#" data-c>Live ↗</a>
-                  <a href="#" data-c>Code ↗</a>
-                </div>
-              </article>
-
-              <article class="bx sm">
-                <div class="mt"><span>04</span><span>2024</span></div>
-                <h3>Project Four</h3>
-                <p>Hackathon build: a working demo shipped in a single weekend with a small team.</p>
-                <div class="tg">
-                  <span class="tag">Hackathon</span>
-                  <span class="tag">API</span>
-                </div>
-                <div class="lk">
-                  <a href="#" data-c>Live ↗</a>
-                  <a href="#" data-c>Code ↗</a>
-                </div>
-              </article>
+          <article class="bx project-card">
+            <div class="mt"><span>02</span><span>2025</span></div>
+            <div class="project-media">
+              <img class="project-thumbnail"
+                src="/public/img/projects/atin-thumbnail.png"
+                data-preview="/public/img/projects/atin-preview.gif"
+                alt="Project Two project preview"
+                width="1920" height="1080" loading="lazy" decoding="async" />
             </div>
-          </div>
+            <h3><a class="project-card-link"  data-c>Atin</a></h3>
+            <p>ATIN is a platform built for Filipino-made products and the businesses behind them. We connect verified local sellers with consumers seeking authentic, quality-made goods — creating a space where local products are found first, not buried beneath imported listings. What began as a pop-up initiative in Angeles City is the foundation for a growing digital marketplace built around one standard: every seller on ATIN is Filipino-owned, verified, and worth discovering</p>
+            <div class="tg">
+              <span class="tag">JavaScript</span>
+              <span class="tag">Vite</span>
+              <span class="tag">Tailwind CSS</span>
+              <span class="tag">Node.js</span>
+              <span class="tag">Express</span>
+              <span class="tag">PostgreSQL</span>
+              <span class="tag">Supabase</span>
+              <span class="tag">Resend</span>
+              <span class="tag">Vercel</span>
+            </div>
+            <div class="lk">
+              <a href="https://www.atin-site.shop/" data-c>Live ↗</a>
+            </div>
+          </article>
+
+          <article class="bx project-card">
+            <div class="mt"><span>03</span><span>2024</span></div>
+            <div class="project-media">
+              <img class="project-thumbnail"
+                src="/public/img/projects/qrgen-thumbnail.png"
+                data-preview="/public/img/projects/qrgen-preview.gif"
+                alt="Project Three project preview"
+                width="1920" height="1080" loading="lazy" decoding="async" />
+            </div>
+            <h3><a class="project-card-link"  data-c>QR Code Generator</a></h3>
+            <p>I created this website because I noticed that canva removed its qr code feature. I wanted to provide a simple, easy-to-use alternative for generating QR codes for my colleagues and friends.</p>
+            <div class="tg">
+              <span class="tag">TypeScript</span>
+              <span class="tag">Vitest</span>
+            </div>
+            <div class="lk">
+              <a href="#" data-c>Live ↗</a>
+            </div>
+          </article>
+
+          <article class="bx project-card">
+            <div class="mt"><span>04</span><span>2024</span></div>
+            <div class="project-media">
+              <img class="project-thumbnail"
+                src="/public/img/projects/gwacalc-thumbnail.png"
+                data-preview="/public/img/projects/gwacalc-preview.gif"
+                alt="Project Four project preview"
+                width="1920" height="1080" loading="lazy" decoding="async" />
+            </div>
+            <h3><a class="project-card-link"  data-c>Project Four</a></h3>
+            <p>Hackathon build: a working demo shipped in a single weekend with a small team.</p>
+            <div class="tg">
+              <span class="tag">Hackathon</span>
+              <span class="tag">API</span>
+            </div>
+            <div class="lk">
+              <a href="#" data-c>Live ↗</a>
+            </div>
+          </article>
         </div>
       </section>
 
@@ -172,44 +204,42 @@
         <span class="vt">02 — Experience</span>
         <div class="sec-h">
           <h2>Experience</h2>
-          <a class="al" href="mailto:lovenponce@gmail.com?subject=Resume%20request" data-c>Request résumé →</a>
+          <a class="al" href="mailto:lovenponce@gmail.com?subject=Resume%20request?body=Please%20send%20me%20your%20updated%20resume." data-c>Request CV →</a>
         </div>
         <p class="in">
           Roles, internships and freelance work — what I was responsible for and where.
         </p>
         <div class="ls">
           <article class="ex">
-            <span class="y">2026 — Now</span>
+            <span class="y">2025 — Present</span>
             <div>
-              <h3>Fullstack Developer (Intern)</h3>
-              <p class="dm">Tech Company — Manila, PH</p>
+              <h3>Fulltime College Student</h3>
+              <p class="dm">Holy Angel University — Angeles City, PH</p>
             </div>
             <p class="dm">
-              Building and shipping features end to end, from database schema to the interface, inside
-              an agile team.
+              Pursuing a Bachelor of Science in Computer Science, focusing on software development, web technologies, and programming languages. Engaging in coursework, projects, and extracurricular activities to enhance technical skills and knowledge.
             </p>
           </article>
 
           <article class="ex">
-            <span class="y">2025 — 2026</span>
+            <span class="y">2024 - 2025</span>
             <div>
-              <h3>Web Development Lead</h3>
-              <p class="dm">University Org — Manila, PH</p>
-            </div>
-            <p class="dm">
-              Led a small team building internal web tools, ran code reviews and onboarded new
-              members.
-            </p>
-          </article>
-
-          <article class="ex">
-            <span class="y">2024 — 2025</span>
-            <div>
-              <h3>Frontend Developer (Part-time)</h3>
+              <h3>Content Creator Video Editor</h3>
               <p class="dm">Freelance / Remote</p>
             </div>
             <p class="dm">
-              Delivered client sites and dashboards, from wireframes through deployment and handoff.
+              editing FiveM gameplay videos for YouTube, creating thumbnails and promotional content for social media platforms. Collaborating with clients to understand their vision and deliver high-quality video content that meets their needs.
+            </p>
+          </article>
+
+          <article class="ex">
+            <span class="y">2021 — 2026</span>
+            <div>
+              <h3>FiveM Developer</h3>
+              <p class="dm">Freelance / Remote</p>
+            </div>
+            <p class="dm">
+              FiveM is a modification framework for GTA V, allowing you to play multiplayer on customized dedicated servers. I created custom scripts, and server-side gameplay for roleplay servers, including a custom inventory system, vehicle management system, and etc.
             </p>
           </article>
         </div>
@@ -217,48 +247,47 @@
 
       <!-- Affiliations -->
       <section id="affiliations" class="sec">
-        <span class="vt">03 — Communities</span>
+        <span class="vt">03 — Affiliations</span>
         <div class="sec-h">
           <h2>Affiliations</h2>
-          <a class="al" href="https://www.linkedin.com/" target="_blank" rel="noopener" data-c>All affiliations →</a>
+          <a class="al" href="/html/affiliations.html" target="_blank" rel="noopener" data-c>All affiliations →</a>
         </div>
         <p class="in">Organizations, societies and communities I contribute to and build with.</p>
         <div id="al" class="ls">
           <article class="af">
-            <span class="n">01</span>
+            <img class="af-logo" src="/public/img/logo/cscsoc.jpg" alt="Affiliation logo" />
             <div>
-              <h3>Organization One</h3>
-              <p class="dm">Member — Web Development Committee</p>
+              <h3>CSC-SOC</h3>
+              <p class="dm">Councilor — Committee on Events Management</p>
             </div>
             <p class="dm">
-              Building and maintaining internal web tools, reviewing pull requests and running
-              onboarding sessions.
+              Organizing and managing events, workshops, and seminars for the Foxes at Holy Angel University. Collaborating with team members to ensure successful execution of events.
             </p>
-            <span class="tag">2025 — Now</span>
+            <span class="tag">2026 - Present</span>
           </article>
 
           <article class="af">
-            <span class="n">02</span>
+            <img class="af-logo" src="" alt="Affiliation logo" />
             <div>
-              <h3>Organization Two</h3>
-              <p class="dm">Member — IT Student Society</p>
+              <h3>CSC-SOC</h3>
+              <p class="dm">Associate Leader — Committee on Events Management</p>
             </div>
             <p class="dm">
-              Helping organise tech talks, study groups and the annual campus coding challenge.
+              Assisting in the planning and execution of events, workshops, and seminars for the Foxes at Holy Angel University. Supporting the committee leader in managing team members and ensuring smooth event operations.
             </p>
-            <span class="tag">2024 — Now</span>
+            <span class="tag">2025 — 2026</span>
           </article>
 
           <article class="af">
-            <span class="n">03</span>
+            <img class="af-logo" src="" alt="Affiliation logo" />
             <div>
-              <h3>Organization Three</h3>
-              <p class="dm">Participant — Hackathon Community</p>
+              <h3>Juventus SYM-FIN</h3>
+              <p class="dm">President — Religious Organization</p>
             </div>
             <p class="dm">
-              Teaming up for weekend builds, shipping prototypes and demoing under time pressure.
+              Leading and coordinating activities, events, and initiatives for the religious organization. Fostering a sense of community and spiritual growth among members through various programs and outreach efforts.
             </p>
-            <span class="tag">2025</span>
+            <span class="tag">2023 - 2024</span>
           </article>
         </div>
       </section>
@@ -268,7 +297,6 @@
         <span class="vt">04 — Activity</span>
         <div class="sec-h">
           <h2>GitHub</h2>
-          <a class="al" href="https://github.com/llvss" target="_blank" rel="noopener" data-c>All activity →</a>
         </div>
         <p class="in">
           Contribution history and the tech I reach for most.
@@ -312,48 +340,38 @@
           <div id="ts" class="ts">
             <div class="sk">
               <h3>Frontend</h3>
-              <p class="dm">Interfaces, component systems and design tokens.</p>
               <div class="tg">
+                <span class="tag">JavaScript</span>
                 <span class="tag">TypeScript</span>
                 <span class="tag">React</span>
                 <span class="tag">Next.js</span>
-                <span class="tag">CSS</span>
-                <span class="tag">Tailwind</span>
+                <span class="tag">Vue.js</span>
+                <span class="tag">Tailwind CSS</span>
+                <span class="tag">Vite</span>
+                <span class="tag">Prettier</span>
               </div>
             </div>
 
             <div class="sk">
               <h3>Backend</h3>
-              <p class="dm">APIs, data modelling and auth.</p>
               <div class="tg">
                 <span class="tag">Node.js</span>
-                <span class="tag">Express</span>
-                <span class="tag">PostgreSQL</span>
-                <span class="tag">Prisma</span>
-                <span class="tag">REST</span>
+                <span class="tag">Python</span>
+                <span class="tag">Java</span>
+                <span class="tag">PHP</span>
+                <span class="tag">MySQL</span>
               </div>
             </div>
 
             <div class="sk">
               <h3>Tooling</h3>
-              <p class="dm">Build, test and ship workflow.</p>
               <div class="tg">
                 <span class="tag">Git</span>
+                <span class="tag">GitHub</span>
                 <span class="tag">Vite</span>
-                <span class="tag">Vitest</span>
-                <span class="tag">Docker</span>
-                <span class="tag">CI/CD</span>
-              </div>
-            </div>
-
-            <div class="sk">
-              <h3>Practices</h3>
-              <p class="dm">How the work gets planned and reviewed.</p>
-              <div class="tg">
-                <span class="tag">Agile</span>
-                <span class="tag">Code Review</span>
-                <span class="tag">Testing</span>
-                <span class="tag">Accessibility</span>
+                <span class="tag">Codex</span>
+                <span class="tag">Cline</span>
+                <span class="tag">Claude AI</span>
               </div>
             </div>
           </div>
@@ -365,39 +383,52 @@
         <span class="vt">05 — Kind words</span>
         <div class="sec-h">
           <h2>Recommendations</h2>
-          <a class="al" href="mailto:lovenponce@gmail.com?subject=Reference%20request" data-c>Ask for a reference →</a>
+          <a class="al" href="/html/recommendations.html" data-c>All Recommendations →</a>
         </div>
         <p class="in">
           What the people I've worked with say about working with me.
         </p>
         <div class="rc-grid">
           <article class="rc">
-            <div class="av ph" aria-hidden="true"></div>
-            <h3>Alex Rivera</h3>
-            <p class="dm">Engineering Manager, Tech Company</p>
+            <img class="av" src="/public/img/recommendation/fourth.jpg" alt="Fourth" />
+            <h3>Francisco Olpindo IV</h3>
+            <p class="dm">AWS Student Builder Group (HAU) — President</p>
             <blockquote>
-              Reliable end to end. Takes a vague requirement and turns it into something shipped,
-              tested and easy for the rest of the team to maintain.
+              alpha fox ka na, councilor ka pa 🔥
+              <br>
+              <br>
+              Last year, you carried as alpha fox—hustle, jokes, at presence na di mo pinababayaan. Ngayon as councilor for events management, you’re still the same: chill pero gumagalaw, malambing pero matino.
+              <br>
+              <br>
+              Thank you sa pagbuhat ng vibes at sa pag-aalaga ng crowd. Hindi madali mag-ayos ng events pero ikaw, parang laro lang. The best ka talaga.
             </blockquote>
           </article>
 
           <article class="rc">
-            <div class="av ph" aria-hidden="true"></div>
-            <h3>Jamie Cruz</h3>
-            <p class="dm">Team Lead, University Org</p>
+            <img class="av" src="/public/img/recommendation/lj.jpg" alt="LJ Oraye" />
+            <h3>Louse Justine Oraye</h3>
+            <p class="dm">CSC-SOC — Governor</p>
             <blockquote>
-              The person everyone asks when a project needs rescuing. Calm under deadline pressure
-              and genuinely good at breaking work down.
+              Loven has always been someone who has a genuine heart for service. Whenever there is an opportunity for him to help others, he willingly extends his time, effort, and skills without hesitation. He believes that even small acts of service can make a meaningful difference, which is why he consistently tries to be someone others can rely on.
+              <br>
+              <br>
+              Aside from his willingness to serve, Loven is also a hardworking and dedicated Computer Science student. He takes his responsibilities seriously and continues to put effort into improving his skills and knowledge in his field. Despite the challenges that come with being a Computer Science student, he remains committed to learning, growing, and doing his best in everything he takes on.
+              <br>
+              <br>
+              His dedication to both service and his studies reflects his character as someone who is responsible, determined, and willing to go the extra mile. He does not only focus on his own growth but also values the opportunity to contribute and be of help to the people around him.
             </blockquote>
           </article>
 
           <article class="rc">
-            <div class="av ph" aria-hidden="true"></div>
-            <h3>Sam Patel</h3>
-            <p class="dm">Product Designer, Freelance</p>
+            <img class="av" src="/public/img/recommendation/dannah.jpg" alt="Dannah" />
+            <h3>Dannah</h3>
+            <p class="dm">Codegeeks — Vice President</p>
+            <p class="dm">CSC-SOC — Vice Governor</p>
             <blockquote>
-              Understands design intent properly and pushes back with better ideas. Our cleanest
-              handover of any collaborator so far.
+              Working with Loven makes you feel at ease. He knows what he wants, he is decisive, and he gives you a clear sense of direction, so you never feel lost while working with him. I feel comfortable working with him because he knows a lot and is always able to bring good ideas to the table. He is also easy to work with because he creates a comfortable atmosphere where you can be yourself, communicate openly, and focus on getting things done.
+              <br>
+              <br>
+              When you work with him, you know you are in good hands because he always puts in the effort and takes initiative. He is not someone who needs to be told what to do at every step because he understands what needs to be done and takes action on his own. He is someone I can rely on, and I appreciate how he makes collaboration feel easier while still making sure he does his part and gives his best to the work.
             </blockquote>
           </article>
         </div>
@@ -408,16 +439,15 @@
         <span class="vt">06 — Find me</span>
         <div class="sec-h">
           <h2>Socials</h2>
-          <a class="al" href="mailto:lovenponce@gmail.com" data-c>All socials →</a>
         </div>
         <p class="in">
           Open to collaborations, internships and hackathon teams. The fastest way is email.
         </p>
         <div id="sl" style="border-bottom: 1px solid var(--line)">
           <a class="so" href="https://github.com/llvss" target="_blank" rel="noopener" data-c>GitHub<span>@llvss ↗</span></a>
-          <a class="so" href="https://www.linkedin.com/" target="_blank" rel="noopener" data-c>LinkedIn<span>in/username ↗</span></a>
-          <a class="so" href="https://www.instagram.com/" target="_blank" rel="noopener" data-c>Instagram<span>@username ↗</span></a>
-          <button class="so" type="button" data-email="lovenponce@gmail.com" data-c>Email<span>Copy address ⧉</span></button>
+          <a class="so" href="https://www.linkedin.com/in/loven-ponce-p-victoria-5b6279387//" target="_blank" rel="noopener" data-c>LinkedIn<span>Loven Ponce P. Victoria↗</span></a>
+          <a class="so" href="https://www.instagram.com/l.lponsi/" target="_blank" rel="noopener" data-c>Instagram<span>@l.lponsi ↗</span></a>
+          <a class="so" href="https://www.facebook.com/l.lponsi" target="_blank" rel="noopener" data-c>Facebook<span>Loven P. Victoria ↗</span></a>
         </div>
 
         <div class="cta">
@@ -434,7 +464,7 @@
     <footer>
       <span>Loven Victoria</span>
       <span>Fullstack Developer — IT Student</span>
-      <span>Manila, PH · UTC+8</span>
+      <span>Mabalacat, Pampanga, PH · UTC+8</span>
     </footer>
 
     <!-- UI overlays -->
@@ -449,13 +479,13 @@
         <div class="term-bar" id="term-bar">
           <div class="term-dots">
             <button class="term-dot r" type="button" data-term="close" aria-label="Close terminal" title="Close">
-              <svg class="ic" aria-hidden="true" focusable="false"><use href="/public/img/icons.svg#i-dotClose"></use></svg>
+              <i class="ic" data-lucide="x" aria-hidden="true"></i>
             </button>
             <button class="term-dot y" type="button" data-term="minimise" aria-label="Minimise terminal" title="Minimise">
-              <svg class="ic" aria-hidden="true" focusable="false"><use href="/public/img/icons.svg#i-dotMin"></use></svg>
+              <i class="ic" data-lucide="minus" aria-hidden="true"></i>
             </button>
             <button class="term-dot g" type="button" data-term="zoom" aria-pressed="false" aria-label="Zoom terminal" title="Zoom">
-              <svg class="ic" aria-hidden="true" focusable="false"><use href="/public/img/icons.svg#i-dotZoom"></use></svg>
+              <i class="ic" data-lucide="maximize-2" aria-hidden="true"></i>
             </button>
           </div>
           <span class="term-title" id="term-title">loven@loven: ~ — lvsh</span>
@@ -481,6 +511,7 @@
       </div>
     </div>
 
+    <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
     <script src="js/main.js"></script>
     <script src="js/terminal.js"></script>
   </body>

@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="540" viewBox="0 0 960 540">
+  <rect width="960" height="540" fill="#161616"/>
+  <g transform="translate(0 -30)" fill="none" stroke="#555" stroke-width="2">
+    <rect x="408" y="204" width="144" height="108"/>
+    <circle cx="450" cy="240" r="12"/>
+    <path d="m408 294 42-30 30 18 36-42 36 54"/>
+  </g>
+  <text x="480" y="335" fill="#aaa" text-anchor="middle" font-family="monospace" font-size="18" letter-spacing="3">THUMBNAIL COMING SOON</text>
+</svg>
