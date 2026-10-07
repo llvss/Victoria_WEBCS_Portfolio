@@ -1,12 +1,11 @@
 {
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "outputDirectory": ".",
   "rewrites": [
     { "source": "/", "destination": "/index.html" },
     { "source": "/projects", "destination": "/html/projects.html" },
     { "source": "/affiliations", "destination": "/html/affiliations.html" },
     { "source": "/recommendations", "destination": "/html/recommendations.html" },
-    { "source": "/gear", "destination": "/html/gear.html" },
-    { "source": "/experience", "destination": "/html/experience.html" },
-    { "source": "/activity", "destination": "/html/activity.html" },
-    { "source": "/socials", "destination": "/html/socials.html" }
+    { "source": "/gear", "destination": "/html/gear.html" }
   ]
 }
