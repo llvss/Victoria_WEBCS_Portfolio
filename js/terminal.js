@@ -84,7 +84,7 @@
   const FILES = {
     '~/about.txt': [
       'Loven Victoria',
-      'Fullstack developer & IT student, Mabalacat Pampanga, PH.',
+      'Fullstack developer & CS Student, Mabalacat Pampanga, PH.',
       '',
       'Second-year Computer Science student at Holy Angel University.',
       'I build web applications, ship side projects and contribute to',
@@ -191,7 +191,7 @@
       'and runs onboarding sessions.',
     ],
     '~/affiliations/it-student-society.txt': [
-      'Organization Two — IT Student Society (2024 — Now)',
+      'Organization Two — CS Student Society (2024 — Now)',
       'Helps organise tech talks, study groups and the annual campus',
       'coding challenge.',
     ],
@@ -444,7 +444,7 @@
     },
 
     whoami() {
-      write('loven victoria — fullstack developer & it student');
+      write('loven victoria — fullstack developer & CS Student');
       write('second-year computer science, holy angel university');
       write('based in mabalacat, pampanga, ph · utc+8');
     },
@@ -500,7 +500,7 @@
       write('  Host: lovenvictoria.dev');
       write('  Pages: ' + Object.keys(DIRECTORIES).length);
       write('  Stack: TypeScript · React · Node.js · PostgreSQL');
-      write('  Role:  Fullstack developer & IT student');
+      write('  Role:  Fullstack developer & CS Student');
       write('');
       write('  ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄', 'term-dim');
       write('  [' + ink + ']   [' + blue + ']   [', 'term-dim');
