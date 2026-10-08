@@ -104,6 +104,62 @@ body {
   overflow-x: clip;
 }
 
+/* Page loader keeps the first paint intentional while assets initialise. */
+#page-loader {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: grid;
+  place-content: center;
+  gap: 16px;
+  background: var(--bg);
+  color: var(--dim);
+  font: 500 10px/1 var(--font-mono);
+  letter-spacing: 0.18em;
+  text-align: center;
+  text-transform: uppercase;
+  transition: opacity 0.35s ease, visibility 0s linear 0.35s;
+}
+
+.loader-logo {
+  width: 72px;
+  height: 72px;
+  margin-inline: auto;
+  object-fit: contain;
+  animation: loader-logo-settle 0.85s ease-in-out both;
+}
+
+#page-loader.is-leaving {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+@keyframes loader-logo-settle {
+  from {
+    filter: grayscale(0);
+    opacity: 1;
+    transform: scale(0.9);
+  }
+  to {
+    filter: grayscale(1);
+    opacity: 0.62;
+    transform: scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .loader-logo {
+    animation: none;
+    filter: grayscale(1);
+    opacity: 0.62;
+  }
+
+  #page-loader {
+    transition: none;
+  }
+}
+
 main {
   position: relative;
 }
@@ -111,6 +167,10 @@ main {
 a {
   color: inherit;
   text-decoration: none;
+}
+
+img {
+  max-width: 100%;
 }
 
 button {
@@ -1979,6 +2039,12 @@ footer {
   }
 
   .bot {
+    padding: 0 20px;
+  }
+
+  /* Keep the hero's stat cards aligned with the mobile content edge. */
+  #home .stats {
+    margin-left: -20px;
     padding-left: 20px;
   }
 
@@ -2071,5 +2137,33 @@ footer {
   /* No dragging on touch layouts — the window is already full-screen */
   .term-bar {
     cursor: default;
+  }
+}
+
+/* Narrow phones need a little more room for long headings and dense content. */
+@media (max-width: 480px) {
+  h2 {
+    font-size: clamp(32px, 10.5vw, 40px);
+  }
+
+  .lg2 {
+    min-height: 0;
+  }
+
+  /* The activity graph remains legible and scrolls inside its own panel. */
+  .gi {
+    min-width: 560px;
+  }
+
+  .so {
+    flex-wrap: wrap;
+  }
+
+  .dm,
+  .desc,
+  .in,
+  .rc blockquote,
+  .cta p {
+    overflow-wrap: anywhere;
   }
 }

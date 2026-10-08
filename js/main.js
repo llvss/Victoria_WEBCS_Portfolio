@@ -378,11 +378,10 @@ function syncTheme() {
 
   // Logo artwork is inverted per theme: the light-theme mark is dark-on-light,
   // so it only reads correctly on a light background (and vice versa).
-  const logo = query('.logo');
-  if (logo) {
-    const source = `/public/img/logo-${resolvedTheme}.png`;
+  const source = `/public/img/logo-${resolvedTheme}.png`;
+  queryAll('.logo, .loader-logo').forEach((logo) => {
     if (logo.getAttribute('src') !== source) logo.setAttribute('src', source);
-  }
+  });
 
   queryAll('.theme-option').forEach((button) => {
     const isActive = button.dataset.theme === theme;
@@ -398,6 +397,17 @@ queryAll('.theme-option').forEach((button) => {
     setTheme(button.dataset.theme);
   });
 });
+
+function dismissPageLoader() {
+  const loader = query('#page-loader');
+  if (!loader) return;
+
+  // Keep the logo visible long enough for its settling animation to read.
+  setTimeout(() => loader.classList.add('is-leaving'), 650);
+}
+
+if (document.readyState === 'complete') dismissPageLoader();
+else addEventListener('load', dismissPageLoader, { once: true });
 
 systemTheme.addEventListener('change', () => {
   // The OS flipped while the user is on "system" — let the palette morph too.
