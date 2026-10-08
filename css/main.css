@@ -1155,6 +1155,8 @@ h2 {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
   gap: 16px;
+  /* Keep each recommendation card as tall as its own content. */
+  align-items: start;
 }
 
 .rc {
@@ -1220,12 +1222,17 @@ h2 {
   width: 100%;
   max-width: 960px;
   margin-inline: auto;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
-  gap: 12px;
+  /* Flow cards into the available vertical space instead of fixed grid rows. */
+  display: block;
+  column-width: 240px;
+  column-gap: 12px;
 }
 
 .rc-grid--compact .rc {
   min-width: 0;
+  width: 100%;
+  margin: 0 0 12px;
+  break-inside: avoid;
   padding: 16px;
   gap: 6px;
 }
@@ -1326,11 +1333,9 @@ h2 {
 }
 
 .gear-group-h {
-  display: grid;
-  grid-template-columns: 0px 1fr;
-  align-items: baseline;
-  gap: 4px 16px;
-  margin-bottom: 24px;
+  display: flex;
+  justify-content: center;
+  margin-bottom: 26px;
 }
 
 /* The number echoes the .n treatment used by the project and affiliation rows. */
@@ -1338,50 +1343,63 @@ h2 {
   font: 400 40px/1 var(--font-display);
   -webkit-text-stroke: 1px currentColor;
   color: transparent;
+  display: none;
 }
 
 .gear-group-h h2 {
   font: 500 24px/1.1 var(--font-display);
   text-transform: uppercase;
+  text-align: center;
 }
 
 .gear-group-h p {
-  grid-column: 2;
-  margin: 0;
-  color: var(--dim);
-  font-size: 14px;
+  display: none;
 }
 
 .gear-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(168px, 1fr));
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
   gap: 12px;
+  width: 100%;
+  max-width: 960px;
+  margin-inline: auto;
 }
 
 .gear-item {
   border: 1px solid var(--line);
   background: var(--bg);
-  padding: 14px;
-  transition: border-color 0.25s;
+  aspect-ratio: 1 / 1;
+  flex: 0 1 180px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: background-color 0.25s, border-color 0.25s, color 0.25s;
 }
 
 .gear-item:hover,
 .gear-item:focus-within {
+  background: #fff;
   border-color: var(--ink);
+  color: #000;
 }
 
 .gear-shot {
-  margin: 0 0 12px;
+  width: 100%;
+  margin: 0;
   aspect-ratio: 1 / 1;
-  overflow: hidden;
-  background: var(--track-color);
+  flex: 1;
+  overflow: visible;
+  background: transparent;
 }
 
 .gear-shot img {
   display: block;
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
+  padding: 18px;
   /* The monochrome state. 1.05 contrast keeps the line art from going flat. */
   filter: grayscale(1) contrast(1.05);
   transition: filter 0.45s ease, transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
@@ -1397,13 +1415,14 @@ h2 {
 .gear-item h3 {
   font: 500 15px/1.2 var(--font-display);
   text-transform: uppercase;
-  margin-bottom: 8px;
+  margin: 10px 0 0;
+  text-align: center;
 }
 
 /* Spec rows read as a definition list, so the key/value pairing is announced
    correctly rather than as two loose strings. */
 .gear-specs {
-  margin: 0;
+  display: none;
 }
 
 /* The boxes are narrow, so the key/value pair stacks rather than sharing one
@@ -2022,12 +2041,6 @@ footer {
 
   .lg2 {
     min-height: 420px;
-  }
-
-  /* One gear card per row on phones — the auto-fit track would already collapse,
-     this just keeps the spacing consistent with the other panels. */
-  .gear-grid {
-    grid-template-columns: 1fr;
   }
 
   .gear-group-h {
