@@ -1215,6 +1215,12 @@ h2 {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
   gap: 16px;
+}
+
+.rc-grid-sub {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 16px;
   /* Keep each recommendation card as tall as its own content. */
   align-items: start;
 }
@@ -1280,7 +1286,7 @@ h2 {
 /* Compact, text-only cards on the dedicated recommendations page. */
 .rc-grid--compact {
   width: 100%;
-  max-width: 960px;
+  max-width: 1400px;
   margin-inline: auto;
   /* Flow cards into the available vertical space instead of fixed grid rows. */
   display: block;
