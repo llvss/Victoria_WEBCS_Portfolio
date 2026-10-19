@@ -1,8 +1,5 @@
-﻿/* ==========================================================================
-   Tokens
-   ========================================================================== */
-/* Registered as <color> so the palette can actually be interpolated. Without
-   this, a custom property flips instantly and the theme change snaps. */
+
+
 @property --bg {
   syntax: '<color>';
   inherits: true;
@@ -60,12 +57,8 @@
   --side: #f2f2f2;
 }
 
-/* ==========================================================================
-   Base
-   ========================================================================== */
-/* Visible to screen readers, removed from the visual layout. Used for the
-   per-page <h1> on inner pages, where the large <h2> already carries the
-   visible page title. */
+
+
 .vh {
   position: absolute;
   width: 1px;
@@ -99,12 +92,11 @@ body {
   background: var(--bg);
   color: var(--ink);
   font: 400 16px/1.6 var(--font-sans);
-  /* Clip sideways overflow without creating a scroll container that would
-     prevent the hero from sticking to the viewport. */
+
   overflow-x: clip;
 }
 
-/* Page loader keeps the first paint intentional while assets initialise. */
+
 #page-loader {
   position: fixed;
   inset: 0;
@@ -191,7 +183,7 @@ footer {
   scroll-margin-top: 0;
 }
 
-/* Vertical guide lines */
+
 .v {
   position: absolute;
   top: 0;
@@ -203,9 +195,7 @@ footer {
 
 .v2 { left: calc(var(--gutter-wide) - 12px); }
 
-/* ==========================================================================
-   Sidebar (fixed)
-   ========================================================================== */
+
 aside {
   position: fixed;
   left: 0;
@@ -237,7 +227,7 @@ aside {
   justify-content: center;
   font: 700 16px var(--font-display);
 }
-  
+
 .logo {
   width: 40px;
   height: 40px;
@@ -267,7 +257,7 @@ aside {
   text-transform: uppercase;
 }
 
-/* Lucide outline icons use a 1.5px stroke and inherit control colours. */
+
 .ic {
   display: inline-block;
   width: 1em;
@@ -287,7 +277,7 @@ aside {
   font-size: 15px;
 }
 
-/* Fixed-width icons keep the left-aligned labels in one column. */
+
 .menu a span {
   text-align: left;
 }
@@ -296,17 +286,13 @@ aside {
   color: var(--blue);
 }
 
-/* Current page, set by spy() in main.js. */
+
 .menu a.on,
 .mnav-list a.on {
   color: var(--blue);
 }
 
-/* Gear is a secondary section rather than part of the main list, so it is set
-   apart from the entries above it. Matched on the href rather than a class
-   because the mobile drawer rebuilds its links from the sidebar markup and
-   keeps only the href and label — a class added here would not survive the
-   copy. Targeting the href separates Gear in the drawer at the same time. */
+
 .menu a[href$='gear.html'],
 .mnav-list a[href$='gear.html'] {
   margin-top: 26px;
@@ -349,9 +335,7 @@ aside {
   border: 0;
 }
 
-/* .theme-option + .theme-option {
-  border-left: 1px solid var(--ink);
-} */
+
 
 .icon-button {
   width: 36px;
@@ -378,9 +362,7 @@ aside {
   font-size: 18px;
 }
 
-/* ==========================================================================
-   Overlays: progress rail, crosshair, readout, toast
-   ========================================================================== */
+
 #rail {
   position: fixed;
   top: 0;
@@ -443,9 +425,7 @@ aside {
   display: block;
 }
 
-/* ==========================================================================
-   Shared components
-   ========================================================================== */
+
 .b {
   display: inline-block;
   border: 1px solid var(--ink);
@@ -490,23 +470,19 @@ aside {
   color: var(--dim);
 }
 
-/* ==========================================================================
-   Hero
-   ========================================================================== */
+
 #home {
   position: relative;
   min-height: 100vh;
   padding-top: 0;
   display: flex;
   flex-direction: column;
-  /* The hero is a single bottom-anchored block, so the page height (and every
-     section below it) is unchanged from the previous two-block layout. */
+
   justify-content: flex-end;
   z-index: 1;
 }
 
-/* The extra height is the scroll distance used to reveal the description.
-   At the end of this track the fully revealed hero leaves the viewport. */
+
 .hero-reveal > #home {
   position: sticky;
   top: 0;
@@ -544,7 +520,7 @@ aside {
   text-decoration: underline;
 }
 
-/* Hero description, sitting under the subtitle. */
+
 .desc {
   margin: 0 0 26px 4px;
   font-size: 17px;
@@ -557,18 +533,7 @@ aside {
   font-weight: 500;
 }
 
-/* Scroll reveal --------------------------------------------------------------
-   main.js wraps every word of the description in a span and drives `--w` from
-   0 to 1 as the hero scrolls away, so the paragraph fills from --dim to --ink
-   one word at a time. `--w` is a unitless 0..1, hence the * 100% below.
 
-   color-mix is used instead of an opacity fade for two reasons: it interpolates
-   between the *resolved* palette values, so it follows the theme morph and the
-   light theme for free; and the un-revealed end of the range is exactly --dim,
-   so the text stays fully legible at rest rather than fading towards invisible.
-
-   If color-mix is unsupported the declaration is dropped and the span inherits
-   --dim from .desc, which is the same resting state - it just never lights up. */
 .desc .w {
   color: color-mix(in oklab, var(--dim), var(--ink) calc(var(--w, 0) * 100%));
 }
@@ -627,9 +592,7 @@ aside {
   margin-bottom: 32px;
 }
 
-/* ==========================================================================
-   Sections
-   ========================================================================== */
+
 .sec {
   position: relative;
   z-index: 1;
@@ -660,7 +623,7 @@ h2 {
   color: var(--dim);
 }
 
-/* Section header row: title on the left, "view all" text link on the right */
+
 .sec-h {
   display: flex;
   align-items: flex-end;
@@ -672,10 +635,7 @@ h2 {
 .al {
   flex: none;
   display: inline-block;
-  /* Pushes the link to the right edge of .sec-h. `justify-content:
-     space-between` only works while the row stays on one line — once the
-     flex container wraps, the single wrapped item falls back to the start
-     edge. `margin-left: auto` keeps the link hard right in both cases. */
+
   margin-left: auto;
   border-bottom: 1px solid var(--line);
   padding-bottom: 5px;
@@ -693,9 +653,7 @@ h2 {
   border-color: var(--ink);
 }
 
-/* ==========================================================================
-   Projects (bento)
-   ========================================================================== */
+
 .bx {
   position: relative;
   background: var(--bg);
@@ -736,12 +694,12 @@ h2 {
   object-position: top;
 }
 
-/* Fixed media space keeps thumbnail/GIF swaps from shifting the cards. */
+
 .project-card {
   min-width: 0;
 }
 
-/* Stretch the title link over the card while keeping Live/Code independent. */
+
 .project-card-link::after {
   content: '';
   position: absolute;
@@ -769,7 +727,7 @@ h2 {
   pointer-events: auto;
 }
 
-/* Keep tags and links aligned when descriptions wrap to different lengths. */
+
 .project-card .tg {
   margin-top: auto;
 }
@@ -794,7 +752,7 @@ h2 {
   object-position: center;
 }
 
-/* Keep the thumbnail underneath so both fade directions have an image. */
+
 .project-media .project-preview {
   opacity: 0;
   pointer-events: none;
@@ -862,10 +820,7 @@ h2 {
   grid-template-rows: auto auto;
 }
 
-/* The full Projects listing. Uses the same ruled-row pattern as Affiliations
-   (.ls + .pj) rather than cards, so all ten entries read as one even list:
-   the row height is driven by the content, and every column stays aligned
-   across rows because the grid columns are shared. */
+
 .pj {
   display: grid;
   grid-template-columns: 72px minmax(0, 1fr) minmax(0, 1.3fr) auto;
@@ -881,8 +836,7 @@ h2 {
   color: var(--bg);
 }
 
-/* .tag draws its border with currentColor, so recolouring the text is enough
-   to flip the whole chip on hover. */
+
 .pj:hover .dm,
 .pj:hover .y,
 .pj:hover .tag {
@@ -910,7 +864,7 @@ h2 {
   color: var(--dim);
 }
 
-/* Tags live in their own column so they line up down the whole list. */
+
 .pj .tg {
   align-self: start;
 }
@@ -921,9 +875,7 @@ h2 {
   gap: 16px;
 }
 
-/* ==========================================================================
-   Affiliations
-   ========================================================================== */
+
 .af-logo {
   width: 60px;
   height: 60px;
@@ -937,7 +889,7 @@ h2 {
   align-self: start;
 }
 
-/* Start black & white, then reveal the original color on hover. */
+
 .af-logo {
   filter: grayscale(1) brightness(0.85);
   transition: filter 0.35s ease;
@@ -985,9 +937,7 @@ h2 {
   font-size: 14px;
 }
 
-/* ==========================================================================
-   GitHub activity
-   ========================================================================== */
+
 .gp {
   border: 1px solid var(--line);
   padding: 20px;
@@ -1014,7 +964,7 @@ h2 {
 .gi {
   --contribution-gap: clamp(1px, 0.25vw, 3px);
   width: 100%;
-  max-width: 881px; /* Cap desktop cells at 13px. */
+  max-width: 881px;
   min-width: 0;
   margin-inline: auto;
 }
@@ -1068,7 +1018,7 @@ h2 {
   gap: var(--contribution-gap);
 }
 
-/* Fill each week column while preserving square day cells. */
+
 .gc .c {
   display: block;
   width: 100%;
@@ -1132,9 +1082,7 @@ h2 {
 }
 
 
-/* ==========================================================================
-   Tech stacks
-   ========================================================================== */
+
 .sk-pn {
   margin-top: 40px;
 }
@@ -1167,9 +1115,7 @@ h2 {
   margin-top: auto;
 }
 
-/* ==========================================================================
-   Experience
-   ========================================================================== */
+
 .ex {
   display: grid;
   grid-template-columns: 160px 1fr 1.3fr;
@@ -1208,9 +1154,7 @@ h2 {
   font-size: 14px;
 }
 
-/* ==========================================================================
-   Recommendations
-   ========================================================================== */
+
 .rc-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
@@ -1221,7 +1165,7 @@ h2 {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
   gap: 16px;
-  /* Keep each recommendation card as tall as its own content. */
+
   align-items: start;
 }
 
@@ -1242,8 +1186,7 @@ h2 {
   margin-bottom: 6px;
 }
 
-/* Placeholder for a photo that has not been added yet. It shows the person's
-   two-letter initials instead of an empty box. */
+
 .av.ph {
   display: flex;
   align-items: center;
@@ -1283,12 +1226,12 @@ h2 {
 }
 
 
-/* Compact, text-only cards on the dedicated recommendations page. */
+
 .rc-grid--compact {
   width: 100%;
   max-width: 1400px;
   margin-inline: auto;
-  /* Flow cards into the available vertical space instead of fixed grid rows. */
+
   display: block;
   column-width: 240px;
   column-gap: 12px;
@@ -1330,9 +1273,7 @@ h2 {
   margin-bottom: 18px;
 }
 
-/* ==========================================================================
-   Socials + CTA
-   ========================================================================== */
+
 .so {
   display: flex;
   justify-content: space-between;
@@ -1381,17 +1322,7 @@ h2 {
   max-width: 46ch;
 }
 
-/* ==========================================================================
-   Gear
-   --------------------------------------------------------------------------
-   One continuous column of items — no tabs, no clicking, just scrolling.
 
-   Each shot is a colour image rendered monochrome by default. Hovering the
-   card (or focusing it, so keyboard users get the same reveal) drops the
-   `grayscale()` filter, so the artwork comes up in colour. The filter is what
-   does the work, so the same file serves both states — there is no second
-   image to keep in sync.
-   ========================================================================== */
 .gear-group + .gear-group {
   margin-top: 56px;
   border-top: 1px solid var(--line);
@@ -1404,7 +1335,7 @@ h2 {
   margin-bottom: 26px;
 }
 
-/* The number echoes the .n treatment used by the project and affiliation rows. */
+
 .gear-n {
   font: 400 40px/1 var(--font-display);
   -webkit-text-stroke: 1px currentColor;
@@ -1466,12 +1397,12 @@ h2 {
   height: 100%;
   object-fit: contain;
   padding: 18px;
-  /* The monochrome state. 1.05 contrast keeps the line art from going flat. */
+
   filter: grayscale(1) contrast(1.05);
   transition: filter 0.45s ease, transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* Hover or keyboard focus on the card reveals the colour artwork. */
+
 .gear-item:hover .gear-shot img,
 .gear-item:focus-within .gear-shot img {
   filter: grayscale(0) contrast(1);
@@ -1485,15 +1416,12 @@ h2 {
   text-align: center;
 }
 
-/* Spec rows read as a definition list, so the key/value pairing is announced
-   correctly rather than as two loose strings. */
+
 .gear-specs {
   display: none;
 }
 
-/* The boxes are narrow, so the key/value pair stacks rather than sharing one
-   row — a long value (Logitech MX Master) would otherwise wrap out of the
-   card. Same definition-list semantics, just a vertical layout. */
+
 .gear-specs .sp {
   border-top: 1px solid var(--line);
   padding-top: 7px;
@@ -1522,9 +1450,7 @@ h2 {
   }
 }
 
-/* ==========================================================================
-   Footer
-   ========================================================================== */
+
 footer {
   position: relative;
   z-index: 1;
@@ -1540,9 +1466,7 @@ footer {
   color: var(--dim);
 }
 
-/* ==========================================================================
-   Cursor glow + name lens
-   ========================================================================== */
+
 #glow {
   position: fixed;
   left: 0;
@@ -1592,12 +1516,7 @@ footer {
   will-change: transform;
 }
 
-/* ==========================================================================
-   Theme morph
-   The palette is declared as animatable <color> above, so switching theme
-   interpolates every colour instead of snapping. Nothing fades out, so the
-   page never blanks or flashes.
-   ========================================================================== */
+
 @media (prefers-reduced-motion: no-preference) {
   :root {
     transition:
@@ -1610,13 +1529,7 @@ footer {
   }
 }
 
-/* ==========================================================================
-   Mobile menu
-   --------------------------------------------------------------------------
-   Below 900px the sidebar is replaced by a slim top bar with a hamburger, and
-   the links move into a full-screen drawer. Markup for the bar and the drawer
-   is built by main.js from the sidebar itself, so this file only styles it.
-   ========================================================================== */
+
 .mbar {
   display: none;
 }
@@ -1636,7 +1549,7 @@ footer {
   font: 700 15px/1.1 var(--font-display);
 }
 
-/* The hamburger and the drawer's close button share one icon-button look. */
+
 .mnav-icon {
   width: 36px;
   height: 36px;
@@ -1648,9 +1561,7 @@ footer {
   font-size: 20px;
 }
 
-/* The drawer is full-bleed and sits above everything, so it is hidden with
-   `visibility` rather than just opacity: that keeps it out of the tab order and
-   the accessibility tree while closed, and stops it swallowing clicks. */
+
 #mnav {
   position: fixed;
   inset: 0;
@@ -1669,15 +1580,14 @@ footer {
   transition: opacity 0.3s ease;
 }
 
-/* Desktop keeps the full-height sidebar, so the drawer is never shown. */
+
 @media (min-width: 901px) {
   #mnav {
     display: none;
   }
 }
 
-/* Each group fades up in sequence once the panel is open, so the links arrive
-   instead of appearing all at once. */
+
 #mnav .mnav-group {
   opacity: 0;
   transform: translateY(12px);
@@ -1719,7 +1629,7 @@ footer {
   color: var(--blue);
 }
 
-/* Larger than the sidebar icons — the drawer is the primary nav on a phone. */
+
 .mnav-list a .ic {
   width: 20px;
   font-size: 20px;
@@ -1745,10 +1655,8 @@ footer {
   }
 }
 
-/* ==========================================================================
-   Terminal
-   ========================================================================== */
-/* Terminal opener — a quiet text link in the sidebar, not a floating button */
+
+
 .term-open {
   display: flex;
   align-items: center;
@@ -1774,8 +1682,7 @@ footer {
   white-space: nowrap;
 }
 
-/* The window is a full-viewport scrim; .term-window is the draggable panel
-   inside it, so clicking anywhere off the panel dismisses the terminal. */
+
 .term {
   display: none;
   position: fixed;
@@ -1824,13 +1731,13 @@ footer {
   opacity: 0;
 }
 
-/* The green light zooms the panel to fill the scrim. */
+
 .term.is-zoomed .term-window {
   width: 100%;
   height: 100%;
 }
 
-/* Title bar with the macOS traffic lights */
+
 .term-bar {
   display: flex;
   align-items: center;
@@ -1903,7 +1810,7 @@ footer {
   border-color: var(--ink);
 }
 
-/* Scrollback */
+
 .term-screen {
   flex: 1;
   min-height: 0;
@@ -1944,7 +1851,7 @@ footer {
 
 [data-t='light'] .term-error { color: #d1293d; }
 
-/* Prompt row */
+
 .term-form {
   flex: none;
   display: flex;
@@ -1979,9 +1886,7 @@ footer {
   background: color-mix(in srgb, var(--blue) 6%, transparent);
 }
 
-/* ==========================================================================
-   Responsive (<= 900px)
-   ========================================================================== */
+
 @media (max-width: 900px) {
   :root {
     --gutter-narrow: 0px;
@@ -1998,8 +1903,7 @@ footer {
     display: none;
   }
 
-  /* The sidebar is a full-height column on desktop only. On phones it is
-     replaced by the .mbar top bar plus the #mnav drawer. */
+
   aside {
     display: none;
   }
@@ -2019,7 +1923,7 @@ footer {
     height: 32px;
   }
 
-  /* The terminal opener remains in the desktop-only sidebar. */
+
   .term-open {
     display: none;
   }
@@ -2048,7 +1952,7 @@ footer {
     padding: 0 20px;
   }
 
-  /* Keep the hero's stat cards aligned with the mobile content edge. */
+
   #home .stats {
     margin-left: -20px;
     padding-left: 20px;
@@ -2067,10 +1971,7 @@ footer {
     grid-template-columns: 1fr;
   }
 
-  /* `.pj` and `.af` both carry a number, a title block, a body and a trailing
-     meta value. Once the row collapses to two columns, every child from the
-     third onwards has to be pinned to column 2 — otherwise auto-placement drops
-     the trailing value into a fresh row under the number. */
+
   .pj {
     grid-template-columns: 44px 1fr;
     gap: 8px 16px;
@@ -2101,8 +2002,7 @@ footer {
     order: -1;
   }
 
-  /* The hero, the section headings and the stats row all share one left edge.
-     They drifted apart at 20 / 32 / 40px, so nothing lined up on a phone. */
+
   .sec {
     padding: 64px 20px 64px 20px;
   }
@@ -2123,7 +2023,7 @@ footer {
     font-size: 32px;
   }
 
-  /* Terminal goes full-width and docks to the bottom of the screen */
+
   .term {
     padding: 56px 0 0;
     align-items: stretch;
@@ -2140,13 +2040,13 @@ footer {
     font-size: 12px;
   }
 
-  /* No dragging on touch layouts — the window is already full-screen */
+
   .term-bar {
     cursor: default;
   }
 }
 
-/* Narrow phones need a little more room for long headings and dense content. */
+
 @media (max-width: 480px) {
   h2 {
     font-size: clamp(32px, 10.5vw, 40px);
@@ -2156,7 +2056,7 @@ footer {
     min-height: 0;
   }
 
-  /* The activity graph remains legible and scrolls inside its own panel. */
+
   .gi {
     min-width: 560px;
   }

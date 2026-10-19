@@ -1,6 +1,3 @@
-/* ==========================================================================
-   Helpers
-   ========================================================================== */
 const query = (selector, root = document) => root.querySelector(selector);
 const queryAll = (selector, root = document) => [...root.querySelectorAll(selector)];
 const GITHUB_USER = 'llvss';
@@ -9,20 +6,15 @@ const THEME_STORAGE_KEY = 'lv-theme';
 const MUTED_STORAGE_KEY = 'lv-muted';
 const CLICK_SFX_SRC = '/public/sfx/button-click.mp3';
 const CLICK_SFX_VOL = 0.3;
-const CLICK_SFX_GAP = 40; // ms — stops machine-gunning on rapid repeat clicks
+const CLICK_SFX_GAP = 40;
 const HOVER_SFX_SRC = '/public/sfx/button-hover.mp3';
 const HOVER_SFX_VOL = 0.35;
-const HOVER_SFX_GAP = 60; // ms — stops machine-gunning when sweeping across a row
+const HOVER_SFX_GAP = 60;
 
-// Anything that should react to click and hover feedback.
 const CLICKABLE_SELECTOR = 'button,[data-c],.bx,.af,.so';
 const HOVER_SFX_SELECTOR = CLICKABLE_SELECTOR;
 
-/* ==========================================================================
-   GITHUB CONTRIBUTION GRAPH
-   ========================================================================== */
 function renderGraph(contributions, total, publicRepos) {
-  // Only the Activity page carries the graph markup.
   const graphGrid = query('#gc');
   if (!graphGrid) return;
 
@@ -33,7 +25,6 @@ function renderGraph(contributions, total, publicRepos) {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
-  // Start of the grid: WEEKS*7 days back, rewound to the previous Sunday.
   const gridStart = new Date(today);
   gridStart.setDate(gridStart.getDate() - (WEEKS * 7 - 1));
   gridStart.setDate(gridStart.getDate() - gridStart.getDay());
@@ -84,7 +75,6 @@ function renderGraph(contributions, total, publicRepos) {
   query('#gc').innerHTML = cells;
   query('#gm').innerHTML = monthLabels;
 
-  // Streaks
   let runningStreak = 0;
   let longestStreak = 0;
   let currentStreak = 0;
@@ -113,7 +103,6 @@ function renderGraph(contributions, total, publicRepos) {
       .join('');
   }
 
-  // Position hover details immediately, keeping them inside the viewport.
   const tip = query('#tip');
   if (!tip) return;
 
@@ -179,10 +168,6 @@ async function graph() {
   }
 }
 
-/* ==========================================================================
-   DITHERED ART — the object turns as you move the cursor
-   ========================================================================== */
-/* 4x4 ordered-dither threshold matrix, normalised to 0..1 */
 const BAYER_THRESHOLDS = [0, 8, 2, 10, 12, 4, 14, 6, 3, 11, 1, 9, 15, 7, 13, 5].map(
   (value) => (value + 0.5) / 16
 );
@@ -191,7 +176,6 @@ let gridWidth = 0;
 let gridHeight = 0;
 let angle = 0.42;
 const PIXEL_SIZE = 5;
-// Only the home page carries the dithered hero canvas.
 const canvas = query('#dz');
 const context = canvas ? canvas.getContext('2d') : null;
 
@@ -217,7 +201,6 @@ function draw() {
 
   for (let row = 0; row < gridHeight; row++) {
     for (let column = 0; column < gridWidth; column++) {
-      // Rotate into the object's local space, then apply the silhouette rules.
       const localX = (column - gridWidth * 0.62) / gridHeight;
       const localY = (row - gridHeight * 0.5) / gridHeight;
       const rotatedX = localX * cosAngle + localY * sinAngle;
@@ -251,16 +234,10 @@ function turn(pointerX, pointerY) {
   }
 }
 
-// The dither is painted in a flat --ink colour, so it cannot interpolate on its
-// own. While the palette morphs it would keep the old ink, so repaint once the
-// --ink transition lands on its final value.
 document.documentElement.addEventListener('transitionend', (event) => {
   if (event.target === document.documentElement && event.propertyName === '--ink') draw();
 });
 
-/* ==========================================================================
-   CURSOR GUIDES
-   ========================================================================== */
 const finePointer = matchMedia('(hover:hover) and (pointer:fine)').matches;
 
 if (finePointer) {
@@ -283,15 +260,6 @@ if (finePointer) {
   );
 }
 
-/* ==========================================================================
-   NAV STATE (active page + progress rail)
-   --------------------------------------------------------------------------
-   Every nav item is its own page now, so the "active" link is resolved from
-   the current filename instead of from the scroll position. The progress rail
-   still tracks scroll, but within the current page.
-   ========================================================================== */
-// Resolves to e.g. "index.html" for both "/" and "/index.html", so the site
-// works when opened straight from the filesystem as well as from a server.
 function currentPageFile() {
   const lastSegment = location.pathname.split('/').filter(Boolean).pop();
   return (lastSegment || 'index.html').toLowerCase();
@@ -328,14 +296,9 @@ function spy() {
   update();
 }
 
-/* ==========================================================================
-   THEME
-   ========================================================================== */
-// Lucide is imported before this script on every page.
 const ICON_ATTRS = { class: 'ic', 'stroke-width': 1.5, 'aria-hidden': 'true', focusable: 'false' };
 lucide.createIcons({ attrs: ICON_ATTRS });
 
-// Return a rendered SVG so theme and sound updates need no second render pass.
 const ICON = (name) => {
   const iconName = name.replace(/(^|-)(\w)/g, (_, separator, letter) => letter.toUpperCase());
   const icon = lucide.createElement(lucide.icons[iconName]);
@@ -362,8 +325,6 @@ function setTheme(nextTheme) {
   try {
     localStorage.setItem(THEME_STORAGE_KEY, nextTheme);
   } catch (error) {}
-  // The morph itself is a CSS transition on the palette, so there is nothing
-  // to orchestrate here - just apply the new values and let them blend.
   syncTheme();
 }
 
@@ -376,8 +337,6 @@ function syncTheme() {
 
   document.documentElement.dataset.t = resolvedTheme;
 
-  // Logo artwork is inverted per theme: the light-theme mark is dark-on-light,
-  // so it only reads correctly on a light background (and vice versa).
   const source = `/public/img/logo-${resolvedTheme}.png`;
   queryAll('.logo, .loader-logo').forEach((logo) => {
     if (logo.getAttribute('src') !== source) logo.setAttribute('src', source);
@@ -402,7 +361,6 @@ function dismissPageLoader() {
   const loader = query('#page-loader');
   if (!loader) return;
 
-  // Keep the logo visible long enough for its settling animation to read.
   setTimeout(() => loader.classList.add('is-leaving'), 650);
 }
 
@@ -410,15 +368,9 @@ if (document.readyState === 'complete') dismissPageLoader();
 else addEventListener('load', dismissPageLoader, { once: true });
 
 systemTheme.addEventListener('change', () => {
-  // The OS flipped while the user is on "system" — let the palette morph too.
   if (theme === 'system') syncTheme();
 });
 
-/* ==========================================================================
-   CLICK SOUND
-   --------------------------------------------------------------------------
-   Preloaded audio clip, played from one delegated pointerdown listener.
-   Shares the `muted` flag, so the sound toggle silences it too. */
 const clickSfx = new Audio(CLICK_SFX_SRC);
 clickSfx.preload = 'auto';
 clickSfx.volume = CLICK_SFX_VOL;
@@ -433,8 +385,6 @@ let lastClickAt = -Infinity;
 function playClickSound() {
   if (muted) return;
   const now = performance.now();
-  // -Infinity (not 0) so the very first click is never swallowed by the gap
-  // check, even if it happens <40ms after page load.
   if (now - lastClickAt < CLICK_SFX_GAP) return;
   lastClickAt = now;
   try {
@@ -447,12 +397,6 @@ document.addEventListener('pointerdown', (event) => {
   if (event.target.closest(CLICKABLE_SELECTOR)) playClickSound();
 });
 
-/* ==========================================================================
-   HOVER SFX
-   -------------------------------------------------------------------------- */
-/* Every button (and the button-like elements that share their look) plays
-   public/sfx/button-hover.mp3 on hover. Reuses the existing `muted` flag so
-   the sound toggle silences hovers too. */
 const hoverSfx = new Audio(HOVER_SFX_SRC);
 hoverSfx.preload = 'auto';
 hoverSfx.volume = HOVER_SFX_VOL;
@@ -471,29 +415,23 @@ function playHoverSound() {
 }
 
 if (finePointer) {
-  // pointerover bubbles (pointerenter does not), so one delegated listener
-  // covers every button, including ones added to the page later.
   document.addEventListener(
     'pointerover',
     (event) => {
       if (event.pointerType === 'touch') return;
       const element = event.target.closest(HOVER_SFX_SELECTOR);
       if (!element) return;
-      // Ignore moves that stay inside the same button (e.g. onto a child span).
       if (element.contains(event.relatedTarget)) return;
       playHoverSound();
     },
     { passive: true }
   );
 
-  // Keyboard users get the same feedback when tabbing to a button.
   document.addEventListener('focusin', (event) => {
     const element = event.target.closest(HOVER_SFX_SELECTOR);
     if (element && element.matches(':focus-visible')) playHoverSound();
   });
 
-  // Autoplay policies block audio until a gesture; unlock both clips silently
-  // so the very first hover/click is not swallowed.
   const unlockAudio = () => {
     if (muted) return;
     for (const clip of [clickSfx, hoverSfx]) {
@@ -531,9 +469,6 @@ if (soundToggle) {
   syncSoundToggle();
 }
 
-/* ==========================================================================
-   COPY EMAIL + TOAST
-   ========================================================================== */
 let toastTimer;
 function toast(message) {
   const element = query('#toast');
@@ -552,7 +487,6 @@ document.addEventListener('click', async (event) => {
       await navigator.clipboard.writeText(emailAddress);
       toast('Copied to clipboard!');
     } catch (error) {
-      // Fallback for browsers/contexts without the async clipboard API
       const fallbackInput = document.createElement('textarea');
       fallbackInput.value = emailAddress;
       fallbackInput.style.cssText = 'position:fixed;opacity:0';
@@ -571,9 +505,6 @@ document.addEventListener('click', async (event) => {
   if (event.target.closest('a[href="#"]')) event.preventDefault();
 });
 
-/* ==========================================================================
-   CURSOR GLOW + NAME LENS
-   ========================================================================== */
 (function () {
   if (!finePointer) return;
 
@@ -585,7 +516,6 @@ document.addEventListener('click', async (event) => {
   const LENS_RADIUS = 95;
   const reduceMotion = matchMedia('(prefers-reduced-motion:reduce)').matches;
 
-  // Target vs. current position for the glow, the lens, and the lens scale.
   let pointerX = 0;
   let pointerY = 0;
   let glowX = 0;
@@ -597,7 +527,6 @@ document.addEventListener('click', async (event) => {
   let seenPointer = false;
   let animationRunning = false;
 
-  // Easing factors (1 = instant, lower = lazier follow).
   const glowEase = reduceMotion ? 1 : 0.12;
   const lensEase = reduceMotion ? 1 : 0.22;
   const scaleEase = reduceMotion ? 1 : 0.16;
@@ -682,17 +611,6 @@ document.addEventListener('click', async (event) => {
   });
 })();
 
-/* ==========================================================================
-   MOBILE MENU
-   --------------------------------------------------------------------------
-   Below 900px the sidebar is hidden and this builds a top bar with a
-   hamburger plus a full-screen drawer. The markup is generated from the
-   sidebar that is already in the page, so the two can never drift apart and
-   no page needs duplicate nav markup.
-
-   Follows the pattern on bryllim.com: reveal the panel, lock the page scroll,
-   then add `.is-open` on the next frame so the transition actually plays.
-   ========================================================================== */
 (function () {
   'use strict';
 
@@ -703,10 +621,7 @@ document.addEventListener('click', async (event) => {
 
   const desktopQuery = matchMedia('(min-width: 901px)');
 
-  /* ---- Build the markup --------------------------------------------- */
 
-  // The drawer mirrors the desktop nav, keeping the same order, labels and
-  // icons. Copy the decorative SVG as well as the text label.
   const links = queryAll('a', menu)
     .map((link) => {
       const icon = query('.ic', link);
@@ -719,9 +634,6 @@ document.addEventListener('click', async (event) => {
   const brandEl = brand && brand.querySelector('b');
   const brandName = brandEl ? brandEl.textContent : '';
 
-  // The sound and theme controls are MOVED, never cloned, so there is only ever
-  // one #mu / .term-open in the document and the existing wiring in main.js and
-  // terminal.js keeps working no matter where the element currently sits.
   const controls = sideBottom ? query('.side-r', sideBottom) : null;
   const terminalOpener = sideBottom ? query('.term-open', sideBottom) : null;
 
@@ -763,9 +675,6 @@ document.addEventListener('click', async (event) => {
   const closeButton = query('#mnav-close', drawer);
   const openLinks = queryAll('.mnav-list a', drawer);
 
-  /* ---- Place the shared controls -------------------------------------- */
-  /* The terminal is desktop-only. Theme and sound controls move to the drawer
-     on phones, while the terminal opener stays in the hidden desktop sidebar. */
 
   function placeControls() {
     if (!sideBottom) return;
@@ -780,7 +689,6 @@ document.addEventListener('click', async (event) => {
 
   placeControls();
 
-  /* ---- Open / close -------------------------------------------------- */
 
   let isOpen = false;
 
@@ -788,8 +696,6 @@ document.addEventListener('click', async (event) => {
     if (isOpen) return;
     isOpen = true;
     document.documentElement.style.overflow = 'hidden';
-    // The panel is always in the DOM, so flip the class on the next frame —
-    // otherwise the browser coalesces both and the fade is skipped.
     requestAnimationFrame(() => drawer.classList.add('is-open'));
     openButton.setAttribute('aria-expanded', 'true');
     closeButton.focus();
@@ -807,8 +713,6 @@ document.addEventListener('click', async (event) => {
   openButton.addEventListener('click', open);
   closeButton.addEventListener('click', close);
 
-  // Following a link should never leave the drawer latched open behind the new
-  // page — bfcache can restore the document without re-running this script.
   openLinks.forEach((link) => link.addEventListener('click', close));
 
   document.addEventListener('keydown', (event) => {
@@ -820,9 +724,6 @@ document.addEventListener('click', async (event) => {
       return;
     }
 
-    // The drawer is a modal dialog, so Tab is kept inside it. The drawer holds
-    // only known controls, and `visibility: hidden` already removes it from the
-    // tab order while closed, so no visibility filtering is needed here.
     if (event.key !== 'Tab') return;
 
     const focusable = queryAll('a[href], button:not([disabled])', drawer);
@@ -840,34 +741,19 @@ document.addEventListener('click', async (event) => {
     }
   });
 
-  // Crossing the breakpoint in either direction moves the shared controls to
-  // whichever surface is now visible. Growing past it also reveals the real
-  // sidebar, so the drawer must not stay latched open behind that.
   desktopQuery.addEventListener('change', (event) => {
     if (event.matches && isOpen) close();
     placeControls();
   });
 })();
 
-/* ==========================================================================
-   HERO SCROLL REVEAL
-   --------------------------------------------------------------------------
-   The hero stays pinned while scrolling fills the description word by word.
-   Once every word reaches --ink, the hero scrolls away into the next section.
-   A sticky container preserves native touch scrolling and momentum throughout.
-   ========================================================================== */
 function revealHero() {
-  // Only the home page carries the hero description.
   const desc = query('.desc');
   const hero = query('#home');
   if (!desc || !hero) return;
 
   const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  /* Split into words.
-     TreeWalker is used rather than splitting textContent so any inline markup
-     (e.g. the <strong> the stylesheet already accounts for) survives intact -
-     each text node is split on its own and only its words get wrapped. */
   const walker = document.createTreeWalker(desc, NodeFilter.SHOW_TEXT);
   const textNodes = [];
   for (let node = walker.nextNode(); node; node = walker.nextNode()) textNodes.push(node);
@@ -875,8 +761,6 @@ function revealHero() {
   const words = [];
   textNodes.forEach((node) => {
     const fragment = document.createDocumentFragment();
-    // Split on runs of whitespace, keeping the separators so the wrapped words
-    // reflow into exactly the same line breaks as the original text.
     node.textContent.split(/(\s+)/).forEach((part) => {
       if (!part) return;
       if (/^\s+$/.test(part)) {
@@ -896,7 +780,6 @@ function revealHero() {
 
   const total = words.length;
 
-  // Reduced motion skips the pinned animation and shows the finished text.
   if (reduceMotion) {
     words.forEach((word) => word.style.setProperty('--w', '1'));
     return;
@@ -904,9 +787,6 @@ function revealHero() {
 
   const clamp01 = (value) => Math.min(1, Math.max(0, value));
 
-  // A sticky hero uses real scroll distance for the reveal. The browser keeps
-  // ownership of touch gestures and inertia throughout, including the instant
-  // the finished paragraph starts moving away with the rest of the page.
   const track = document.createElement('div');
   track.className = 'hero-reveal';
   hero.before(track);
@@ -930,7 +810,6 @@ function revealHero() {
   const measure = () => {
     distance = Math.max(1, hero.offsetHeight);
     track.style.height = (hero.offsetHeight + distance) + 'px';
-    // Adding the reveal distance moves the first content section down.
     alignSectionGuide();
     schedulePaint();
   };
@@ -941,9 +820,6 @@ function revealHero() {
   measure();
 }
 
-/* ==========================================================================
-   PROJECT THUMBNAILS + HOVER PREVIEWS
-   ========================================================================== */
 function initProjectPreviews() {
   const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
   const hoverPointer = matchMedia('(hover: hover) and (pointer: fine)');
@@ -969,7 +845,6 @@ function initProjectPreviews() {
         preview.remove();
         URL.revokeObjectURL(preview.src);
       };
-      // Keep the outgoing layer for the full 350ms fade, then release it.
       if (visible) setTimeout(cleanup, 400);
       else cleanup();
     };
@@ -982,8 +857,6 @@ function initProjectPreviews() {
       retirePreview();
       if (!active) return;
 
-      // Download once, but create a fresh image resource for each hover.
-      // Reusing the original GIF URL can resume a cached animation timeline.
       if (!gifData) {
         gifData = fetch(image.dataset.preview)
           .then((response) => {
@@ -1000,7 +873,6 @@ function initProjectPreviews() {
         preview.setAttribute('aria-hidden', 'true');
         currentPreview = preview;
         preview.onload = () => {
-          // Paint the transparent layer before starting its fade, even cached.
           requestAnimationFrame(() => requestAnimationFrame(() => {
             if (request === generation && playing) preview.classList.add('is-visible');
           }));
@@ -1043,20 +915,14 @@ function initProjectPreviews() {
   });
 }
 
-/* ==========================================================================
-   INIT
-   ========================================================================== */
 syncTheme();
 
-// Pins the vertical guide to the top of the first content section, so it never
-// runs through the hero. On inner pages the first section starts at the top.
 function alignSectionGuide() {
   const guide = query('.v2');
   const firstSection = query('main .sec');
   if (guide && firstSection) guide.style.top = `${firstSection.offsetTop}px`;
 }
 
-// revealHero is last so the word spans exist before the first paint measurement.
 [initProjectPreviews, graph, spy, fit, alignSectionGuide, revealHero].forEach((initStep) => {
   try {
     initStep();

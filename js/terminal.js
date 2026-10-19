@@ -1,10 +1,3 @@
-/* ==========================================================================
-   TERMINAL
-   --------------------------------------------------------------------------
-   A macOS-flavoured terminal overlay. The sidebar carries a small text link
-   that opens a draggable window wired to a fake filesystem mirroring the site's
-   pages, so `ls`, `cd` and `cat` actually do something. Ctrl + ` also works.
-   ========================================================================== */
 (function () {
   'use strict';
 
@@ -26,9 +19,6 @@
   const zoomButton = query('[data-term="zoom"]');
   const [minimiseButton] = queryAll('[data-term="minimise"]');
 
-  /* ---------------------------------------------------------------------
-     Fake filesystem: one directory per page, with a few readable files.
-     --------------------------------------------------------------------- */
   const DIRECTORIES = {
     '~': {
       page: 'index.html',
@@ -80,7 +70,6 @@
     email: 'mailto:lovenponce@gmail.com',
   };
 
-  // Files are keyed by their full path so `cat` can find them from any directory.
   const FILES = {
     '~/about.txt': [
       'Loven Victoria',
@@ -258,28 +247,19 @@
     ],
   };
 
-  /* ---------------------------------------------------------------------
-     State
-     --------------------------------------------------------------------- */
   let cwd = '~';
   const history = [];
   let historyIndex = 0;
   let zoomed = false;
 
-  // "index.html" for both "/" and "/index.html", so the site behaves the same
-  // when opened from a server or straight off the filesystem.
   function currentPageFile() {
     const lastSegment = location.pathname.split('/').filter(Boolean).pop();
     return (lastSegment || 'index.html').toLowerCase();
   }
 
-  /* ---------------------------------------------------------------------
-     Output helpers
-     --------------------------------------------------------------------- */
   function write(text, variant) {
     const line = document.createElement('div');
     line.className = variant ? 'term-line ' + variant : 'term-line';
-    // A non-breaking space keeps blank lines from collapsing to zero height.
     line.textContent = text === '' ? ' ' : text;
     screen.appendChild(line);
   }
@@ -292,8 +272,6 @@
     screen.scrollTop = screen.scrollHeight;
   }
 
-  // Echo the command back with its prompt so the transcript reads like a real
-  // session rather than a log dump.
   function echo(command) {
     const line = document.createElement('div');
     line.className = 'term-line term-echo';
@@ -310,8 +288,6 @@
     screen.appendChild(line);
   }
 
-  // The prompt, the window title and the echoed commands all show the working
-  // directory, so they are all kept in step here.
   function syncPrompt() {
     const prompt = `loven@loven ${cwd} %`;
     promptLabel.textContent = prompt;
@@ -322,11 +298,6 @@
     screen.textContent = '';
   }
 
-  /* ---------------------------------------------------------------------
-     Path resolution
-     --------------------------------------------------------------------- */
-  // Resolves user input against the current directory into a known directory
-  // or file key, or null when nothing matches.
   function resolve(target) {
     if (!target) return null;
 
@@ -340,7 +311,6 @@
     else if (path.startsWith('/')) path = '~' + path;
     else if (!path.startsWith('~')) path = cwd + '/' + path;
 
-    // Walk the segments so `..` is handled the way it reads.
     const stack = [];
     for (const segment of path.split('/').filter(Boolean)) {
       if (segment === '~') stack.length = 0;
@@ -352,9 +322,6 @@
     return DIRECTORIES[normalised] || FILES[normalised] ? normalised : null;
   }
 
-  /* ---------------------------------------------------------------------
-     Commands
-     --------------------------------------------------------------------- */
   const COMMANDS = {
     ls(args) {
       const target = args[0] ? resolve(args[0]) : cwd;
@@ -464,7 +431,6 @@
     neofetch() {
       const uptime = Math.round((Date.now() - performance.timeOrigin) / 1000);
       const theme = document.documentElement.dataset.t || 'dark';
-      // Neofetch prints hex swatches, so convert the computed rgb() values.
       const hex = (variable) => {
         const value = getComputedStyle(document.documentElement)
           .getPropertyValue(variable)
@@ -635,9 +601,6 @@
 
   };
 
-  /* ---------------------------------------------------------------------
-     Dispatch
-     --------------------------------------------------------------------- */
   function run(raw) {
     const command = raw.trim();
     if (!command) return;
@@ -666,7 +629,6 @@
     scrollToEnd();
   }
 
-  // Tab-completion across command names, then the current directory's entries.
   function complete() {
     const value = input.value;
     const parts = value.split(/\s+/);
@@ -694,12 +656,8 @@
     }
   }
 
-  /* ---------------------------------------------------------------------
-     Open / close
-     --------------------------------------------------------------------- */
   function open() {
     terminal.hidden = false;
-    // Force a reflow so the opening transition always plays.
     void terminal.offsetWidth;
     terminal.classList.add('is-open');
     launchButton.setAttribute('aria-expanded', 'true');
@@ -726,9 +684,6 @@
     scrollToEnd();
   }
 
-  /* ---------------------------------------------------------------------
-     Wiring
-     --------------------------------------------------------------------- */
   form.addEventListener('submit', (event) => {
     event.preventDefault();
     const value = input.value;
@@ -758,7 +713,6 @@
       return;
     }
 
-    // Ctrl + L clears the screen, like a real terminal.
     if (event.key === 'l' && event.ctrlKey) {
       event.preventDefault();
       clearScreen();
@@ -777,12 +731,10 @@
     input.focus();
   });
 
-  // Clicking the scrim (the overlay behind the window) dismisses it.
   terminal.addEventListener('pointerdown', (event) => {
     if (event.target === terminal) close();
   });
 
-  // The yellow button tucks the window away, then it springs back.
   minimiseButton?.addEventListener('click', () => {
     terminal.classList.add('is-minimised');
     input.blur();
@@ -797,7 +749,6 @@
   zoomButton?.addEventListener('click', () => {
     zoomed = !zoomed;
     terminal.classList.toggle('is-zoomed', zoomed);
-    // Reset any drag offset so the zoomed window fills the scrim cleanly.
     if (zoomed) {
       termWindow.style.left = '';
       termWindow.style.top = '';
@@ -807,7 +758,6 @@
   });
 
   document.addEventListener('keydown', (event) => {
-    // Ctrl/Cmd + ` toggles the terminal, the way a real one is summoned.
     if ((event.ctrlKey || event.metaKey) && event.key === '`') {
       event.preventDefault();
       if (terminal.hidden) open();
@@ -818,9 +768,6 @@
     if (event.key === 'Escape' && !terminal.hidden) close();
   });
 
-  /* ---------------------------------------------------------------------
-     Dragging
-     --------------------------------------------------------------------- */
   let dragging = null;
 
   titleBar.addEventListener('pointerdown', (event) => {
@@ -836,11 +783,9 @@
     if (!dragging) return;
 
     const width = termWindow.offsetWidth;
-    // Clamped so the window can never be dragged out of reach.
     const left = Math.min(Math.max(event.clientX - dragging.offsetX, -width + 90), innerWidth - 90);
     const top = Math.min(Math.max(event.clientY - dragging.offsetY, 0), innerHeight - 44);
 
-    // The scrim stays pinned full-screen; only the panel is repositioned.
     termWindow.style.position = 'fixed';
     termWindow.style.left = left + 'px';
     termWindow.style.top = top + 'px';
@@ -857,7 +802,6 @@
   titleBar.addEventListener('pointerup', endDrag);
   titleBar.addEventListener('pointercancel', endDrag);
 
-  // Re-centre the window if the viewport shrinks below its size.
   addEventListener('resize', () => {
     termWindow.style.left = '';
     termWindow.style.top = '';
